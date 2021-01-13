@@ -1,6 +1,6 @@
 # Getting Started
 ## Introduction
-Almost every modern web application interacts with a database. Express Framework Boilerplate makes interacting with databases extremely simple across a variety of supported databases using raw SQL, a fluent query builder. Express Framework Builder uses [knex](http://knexjs.org) as a library to work with databases. Knex.js (pronounced /kəˈnɛks/) is a "batteries included" SQL query builder for:
+Almost every modern web application interacts with a database. Sosise makes interacting with databases extremely simple across a variety of supported databases using raw SQL, a fluent query builder. Express Framework Builder uses [knex](http://knexjs.org) as a library to work with databases. Knex.js (pronounced /kəˈnɛks/) is a "batteries included" SQL query builder for:
 - `Postgres`
 - `MSSQL`
 - `MySQL`
@@ -12,7 +12,7 @@ Almost every modern web application interacts with a database. Express Framework
 > Please visit [knex website](http://knexjs.org) for full documentation.
 
 ## Configuration
-The configuration for Express Framework Boilerplate database services is located in your application's config/database.ts configuration file. In this file, you may define all of your database connections, as well as specify which connection should be used by default. Most of the configuration options within this file are driven by the values of your application's environment variables. Examples for most of Express Framework Boilerplate supported database systems are provided in this file.
+The configuration for Sosise database services is located in your application's config/database.ts configuration file. In this file, you may define all of your database connections, as well as specify which connection should be used by default. Most of the configuration options within this file are driven by the values of your application's environment variables. Examples for most of Sosise supported database systems are provided in this file.
 
 ## Queries
 As an example we will take a look at a simple repository that is responsible for database interaction:

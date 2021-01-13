@@ -1,6 +1,6 @@
 # Directory Structure
 ## Introduction
-The default application structure is intended to provide a great starting point for both large and small applications. But you are free to organize your application however you like. Express Framework Boilerplate imposes almost no restrictions on where any given class is located.
+The default application structure is intended to provide a great starting point for both large and small applications. But you are free to organize your application however you like. Sosise imposes almost no restrictions on where any given class is located.
 
 ## The src Directory
 ### The App Directory
