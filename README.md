@@ -3,4 +3,4 @@ Sosise is a web application boilerplate with an expressive, elegant syntax. A So
 
 This project contains the documentation for [sosise](https://github.com/sosise/sosise) project.
 
-Documentation is available at https://sosise.github.io/sosise-docs/#/
+Documentation is available at https://sosise.github.io/sosise-docs
