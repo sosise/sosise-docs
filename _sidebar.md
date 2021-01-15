@@ -16,6 +16,7 @@
     - [Error Handling](documentation/error-handling)
     - [Logging](documentation/logging)
     - [Sentry](documentation/sentry)
+    - [Helpers](documentation/helpers)
 - Security
     - [Hashing](security/hashing)
 - Database
