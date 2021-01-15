@@ -86,7 +86,7 @@ Options, like arguments, are another form of user input. Options are prefixed by
  */
 protected options: OptionType[] = [
     // Options can be boolean
-    { flag: '-d, --debug', description: 'Show debug information', required: false },
+    { flag: '-d, --debug', description: 'Show debug information' },
 ];
 ```
 
@@ -105,7 +105,7 @@ Next, let's take a look at an option that expects a value. Example below:
  */
 protected options: OptionType[] = [
     // Options can pass some values
-    { flag: '-s, --since <since>', description: 'Report since', required: false },
+    { flag: '-s, --since <since>', description: 'Report since' },
 ];
 ```
 
@@ -124,13 +124,13 @@ Next, let's take a look at an options that have default value. Example below:
  */
 protected options: OptionType[] = [
     // Options can be boolean
-    { flag: '-d, --debug', description: 'Show debug information', default: false, required: false },
+    { flag: '-d, --debug', description: 'Show debug information', default: false },
 
     // Options can pass some values
-    { flag: '-s, --since <since>', description: 'Report since', default: '29.12.2020', required: false },
+    { flag: '-s, --since <since>', description: 'Report since', default: '29.12.2020' },
 
     // Options can pass some values
-    { flag: '-t, --to <to>', description: 'Report to', default: dayjs().format('YYYY-MM-DD'), required: false },
+    { flag: '-t, --to <to>', description: 'Report to', default: dayjs().format('YYYY-MM-DD') },
 ];
 ```
 
