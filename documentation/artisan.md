@@ -54,10 +54,10 @@ export default class DoSomeExampleExportCommand extends BaseCommand {
      */
     protected options: OptionType[] = [
         // Options can be boolean
-        { flag: '-d, --debug', description: 'Show debug information' },
+        { flag: '-d, --debug', description: 'Show debug information', required: false },
 
         // Options can pass some values
-        { flag: '-s, --since <since>', description: 'Report since', default: '29.12.2020' },
+        { flag: '-s, --since <since>', description: 'Report since', default: '29.12.2020', required: false },
     ];
 
     /**
@@ -86,7 +86,7 @@ Options, like arguments, are another form of user input. Options are prefixed by
  */
 protected options: OptionType[] = [
     // Options can be boolean
-    { flag: '-d, --debug', description: 'Show debug information' },
+    { flag: '-d, --debug', description: 'Show debug information', required: false },
 ];
 ```
 
@@ -105,7 +105,7 @@ Next, let's take a look at an option that expects a value. Example below:
  */
 protected options: OptionType[] = [
     // Options can pass some values
-    { flag: '-s, --since <since>', description: 'Report since' },
+    { flag: '-s, --since <since>', description: 'Report since', required: false },
 ];
 ```
 
@@ -124,17 +124,32 @@ Next, let's take a look at an options that have default value. Example below:
  */
 protected options: OptionType[] = [
     // Options can be boolean
-    { flag: '-d, --debug', description: 'Show debug information', default: false },
+    { flag: '-d, --debug', description: 'Show debug information', default: false, required: false },
 
     // Options can pass some values
-    { flag: '-s, --since <since>', description: 'Report since', default: '29.12.2020' },
+    { flag: '-s, --since <since>', description: 'Report since', default: '29.12.2020', required: false },
 
     // Options can pass some values
-    { flag: '-t, --to <to>', description: 'Report to', default: dayjs().format('YYYY-MM-DD') },
+    { flag: '-t, --to <to>', description: 'Report to', default: dayjs().format('YYYY-MM-DD'), required: false },
 ];
 ```
 
 In this example, if you don't pass options to the command default values will be taken `false`, `29.12.2020`, `%today-date%`
+
+#### Required options
+Next, let's take a look at an `required` option. Example below:
+
+```typescript
+/**
+ * Command options
+ */
+protected options: OptionType[] = [
+    // Options can pass some values
+    { flag: '-t, --to <to>', description: 'Report to', required: true },
+];
+```
+
+> Please note that an option is only then required when it's `required` property isset to true and it does not has default value
 
 ## Preventing double execution of your commands
 ```typescript
