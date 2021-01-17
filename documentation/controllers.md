@@ -1,6 +1,6 @@
 # Controllers
 ## Introduction
-Instead of defining all of your request handling logic as closures in your route files, you may wish to organize this behavior using "controller" classes. Controllers can group related request handling logic into a single class. For example, a UserController class might handle all incoming requests related to users, including showing, creating, updating, and deleting users. By default, controllers are stored in the app/Http/Controllers directory.
+Instead of defining all of your request handling logic as closures in your route files, you may wish to organize this behavior using "controller" classes. Controllers can group related request handling logic into a single class. For example, a UserController class might handle all incoming requests related to users, including showing, creating, updating, and deleting users. By default, controllers are stored in the `app/Http/Controllers` directory.
 
 ## Writing Controllers
 ### Create using artisan
@@ -48,4 +48,4 @@ router.get('/example', (request: Request, response: Response, next: NextFunction
 
 When an incoming request matches the specified route URI, the `example` method on the ExampleController class will be invoked and the route parameters will be passed to the method.
 
-> Please note, that every async operation in your controller methods must be wrapped with `try/catch` block and, see example above. This is needed because of right exception handling.
+> Please note, that every async operation in your controller methods must be wrapped with `try/catch` block, see example above. This is needed because of right exception handling.
