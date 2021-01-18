@@ -17,6 +17,10 @@
     - [Logging](documentation/logging)
     - [Sentry](documentation/sentry)
     - [Helpers](documentation/helpers)
+- Digging Deeper
+    - [Service Provider](digging-deeper/service-provider)
+    - [HTTP Request](digging-deeper/http-request)
+    - [HTTP Response](digging-deeper/http-response)
 - Security
     - [Hashing](security/hashing)
 - Database

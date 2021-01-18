@@ -11,7 +11,7 @@ router.get('/', (request: Request, response: Response, next: NextFunction) => {
 ```
 
 ## The Default Route File
-All Sosise routes are defined in your route file, which is located in the routes directory. This file is automatically loaded by your application.
+All Sosise routes are defined in your route file, which is located in the `src/routes` directory. This file is automatically loaded by the application.
 
 ## Available Router Methods
 ### The router allows you to register routes that respond to any HTTP verb:
@@ -77,42 +77,42 @@ router.get('/random.text', (request: Request, response: Response, next: NextFunc
 });
 ```
 
-#### This route path will match acd and abcd.
+#### This route path will match `acd` and `abcd`.
 ```typescript
 router.get('/ab?cd', (request: Request, response: Response, next: NextFunction) => {
     new IndexController().index(request, response, next);
 });
 ```
 
-#### This route path will match abcd, abbcd, abbbcd, and so on.
+#### This route path will match `abcd`, `abbcd`, `abbbcd`, and so on.
 ```typescript
 router.get('/ab+cd', (request: Request, response: Response, next: NextFunction) => {
     new IndexController().index(request, response, next);
 });
 ```
 
-#### This route path will match abcd, abxcd, abRANDOMcd, ab123cd, and so on.
+#### This route path will match `abcd`, `abxcd`, `abRANDOMcd`, `ab123cd`, and so on.
 ```typescript
 router.get('/ab*cd', (request: Request, response: Response, next: NextFunction) => {
     new IndexController().index(request, response, next);
 });
 ```
 
-#### This route path will match /abe and /abcde.
+#### This route path will match `abe` and `abcde`.
 ```typescript
 router.get('/ab(cd)?e', (request: Request, response: Response, next: NextFunction) => {
     new IndexController().index(request, response, next);
 });
 ```
 
-#### This route path will match anything with an "a" in it.
+#### This route path will match anything with an `"a"` in it.
 ```typescript
 router.get(/a/, (request: Request, response: Response, next: NextFunction) => {
     new IndexController().index(request, response, next);
 });
 ```
 
-#### This route path will match butterfly and dragonfly, but not butterflyman, dragonflyman, and so on.
+#### This route path will match `butterfly` and `dragonfly`, but not `butterflyman`, `dragonflyman`, and so on.
 ```typescript
 router.get(/.*fly$/, (request: Request, response: Response, next: NextFunction) => {
     new IndexController().index(request, response, next);
