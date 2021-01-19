@@ -72,6 +72,34 @@ export default class AfterMiddleware {
 }
 ```
 
+### How to get response body in the middleware
+Sometimes you may need to get `response body` in the middleware. Take a look at example below:
+
+```typescript
+import { Request, Response, NextFunction } from 'express';
+
+export default class ExampleMiddleware {
+    /**
+     * This method handles the middleware
+     */
+    public handle(request: Request, response: Response, next: NextFunction): void {
+        // Patch the response send method to get body out of that
+        const originalSend = response.send;
+        response.send = function () {
+            const responseBody = arguments[0];
+            if (typeof responseBody === 'string') {
+                console.log(responseBody);
+            }
+            return originalSend.apply(response, arguments);
+        };
+
+        next();
+    }
+}
+```
+
+> This is a little bit tricky, in this example we are patching the `response.send()` method with additional code
+
 ## Registering Middleware
 ### Global Middleware
 If you want a middleware to run during every HTTP request to your application, list the middleware class in the `middlewares` property of your `app/Http/Middlewares/Kernel.ts` class.
