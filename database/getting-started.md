@@ -1,4 +1,7 @@
 # Getting Started
+
+> THIS PAGE IS OUTDATED! I will fix it soon!
+
 ## Introduction
 Almost every modern web application interacts with a database. Sosise makes interacting with databases extremely simple across a variety of supported databases using raw SQL, a fluent query builder. Express Framework Builder uses [knex](http://knexjs.org) as a library to work with databases. Knex.js (pronounced /kəˈnɛks/) is a "batteries included" SQL query builder for:
 - `Postgres`
