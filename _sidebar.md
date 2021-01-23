@@ -18,7 +18,7 @@
     - [Sentry](documentation/sentry)
     - [Helpers](documentation/helpers)
 - Digging Deeper
-    - [Service Provider](digging-deeper/service-provider)
+    - [IOC](digging-deeper/ioc)
     - [HTTP Request](digging-deeper/http-request)
     - [HTTP Response](digging-deeper/http-response)
     - [Collections](digging-deeper/collections)

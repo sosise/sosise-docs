@@ -40,9 +40,6 @@ The `Libraries` folder can be used for everything that does not fit in other fol
 ### The Repositories Directory
 The `Repositories` directory contains all repositories of your application.
 
-### The ServiceProviders Directory
-The `ServiceProviders` directory contains simple IOC binding class.
-
 ### The Services Directory
 The `Services` directory contains all services of your application. Please put your application logics to services.
 

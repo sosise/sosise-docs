@@ -31,7 +31,7 @@ Let's take a look at an example command.
 
 ```typescript
 import commander from 'commander';
-import BaseCommand, { OptionType } from '../../Libraries/Command/BaseCommand';
+import BaseCommand, { OptionType } from 'sosise-core/build/Command/BaseCommand';
 
 export default class DoSomeExampleExportCommand extends BaseCommand {
     /**
@@ -88,6 +88,13 @@ protected options: OptionType[] = [
     // Options can be boolean
     { flag: '-d, --debug', description: 'Show debug information' },
 ];
+
+/**
+ * Execute the console command
+ */
+public async handle(cli: commander.Command): Promise<void> {
+    console.log(cli.debug);
+}
 ```
 
 In this example, the --debug or -d switch may be specified when calling the Artisan command. If the --debug switch is passed, the value of the option will be `true`. Otherwise, the value will be `undefined`:
@@ -107,6 +114,13 @@ protected options: OptionType[] = [
     // Options can pass some values
     { flag: '-s, --since <since>', description: 'Report since' },
 ];
+
+/**
+ * Execute the console command
+ */
+public async handle(cli: commander.Command): Promise<void> {
+    console.log(cli.since);
+}
 ```
 
 In this example, the user may pass a value for the option like so. If the option is not specified when invoking the command, its value will be `undefined`.
@@ -132,6 +146,13 @@ protected options: OptionType[] = [
     // Options can pass some values
     { flag: '-t, --to <to>', description: 'Report to', default: dayjs().format('YYYY-MM-DD') },
 ];
+
+/**
+ * Execute the console command
+ */
+public async handle(cli: commander.Command): Promise<void> {
+    console.log(cli.debug, cli.since, cli.to);
+}
 ```
 
 In this example, if you don't pass options to the command default values will be taken `false`, `29.12.2020`, `%today-date%`
@@ -147,6 +168,13 @@ protected options: OptionType[] = [
     // Options can pass some values
     { flag: '-t, --to <to>', description: 'Report to', required: true },
 ];
+
+/**
+ * Execute the console command
+ */
+public async handle(cli: commander.Command): Promise<void> {
+    console.log(cli.to);
+}
 ```
 
 > Please note that an option is only then required when it's `required` property isset to true and it does not has default value
