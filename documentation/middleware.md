@@ -5,7 +5,7 @@ Middleware provide a convenient mechanism for inspecting and filtering HTTP requ
 ## Defining Middleware
 To create a new middleware, use the `make:middleware` Artisan command:
 
-```ts
+```sh
 ./artisan make:middleware EnsureTokenIsValidMiddleware
 ```
 
