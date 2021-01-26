@@ -66,7 +66,7 @@ export default class OrderCreatingUnifier {
 > Please visit [validator website](https://github.com/mikeerickson/validatorjs) for full documentation.
 
 ## Usage
-Now let's see in a example how to use unifiers in `controller`:
+Now let's see in an example how to use unifiers in `controller`:
 
 ```typescript
 import { Request, Response, NextFunction } from 'express';

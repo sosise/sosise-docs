@@ -42,7 +42,7 @@ export default class DoSomeExampleExportCommand extends BaseCommand {
     /**
      * Command description
      */
-    protected description: string = 'This is a example command';
+    protected description: string = 'This is an example command';
 
     /**
      * When command is executed prevent from double execution
