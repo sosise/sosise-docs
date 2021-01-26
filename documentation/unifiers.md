@@ -80,8 +80,8 @@ export default class IndexController {
     public async index(request: Request, response: Response, next: NextFunction) {
         try {
             // Instantiate unifier
-            // At this step all request params are validated and mapped
-            const unifier = new OrderCreatingUnifier(request.params);
+            // At this step request body is validated and mapped
+            const unifier = new OrderCreatingUnifier(request.body);
 
             // Now we can use unifier params
             console.log(unifier.customerId);
