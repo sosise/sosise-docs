@@ -173,3 +173,29 @@ The methods on the response object (response) in the following table can send a 
 |res.send()|Send a response of various types.|
 |res.sendFile()|Send a file as an octet stream.|
 |res.sendStatus()|Set the response status code and send its string representation as the response body.|
+
+## Using middlewares in routes
+If you want to use middleware in a specific route, create a new middleware, instantiate it in `src/routes/api.ts` and use in particular route, let's take a loot at example below:
+
+```typescript
+import express from 'express';
+import { Request, Response, NextFunction } from 'express';
+import IndexController from '../app/Http/Controllers/IndexController';
+import ExampleMiddleware from '../app/Http/Middlewares/ExampleMiddleware';
+const router = express.Router();
+
+// Instantiate example middleware
+const exampleMiddleware = new ExampleMiddleware();
+
+// IndexController
+router.get('/', exampleMiddleware.handle, (request: Request, response: Response, next: NextFunction) => {
+    new IndexController().index(request, response, next);
+});
+
+export default router;
+```
+
+> As you can see we use the handle method as a second argument in a route.
+> This approach allows you to use specific `middlewares` in needed routes, for example if you do not want to use a global middleware.
+
+> Also note that using middleware directly in a route, allows you to get `request.route` in this particular middleware, which would be inaccessable otherwise.

@@ -103,29 +103,3 @@ export default class ExampleMiddleware {
 ## Registering Middleware
 ### Global Middleware
 If you want a middleware to run during every HTTP request to your application, list the middleware class in the `middlewares` property of your `app/Http/Middlewares/Kernel.ts` class.
-
-## Using middlewares in routes
-If you want to use middleware in a specific route, create a new middleware, instantiate it in `src/routes/api.ts` and use in particular route, let's take a loot at example below:
-
-```typescript
-import express from 'express';
-import { Request, Response, NextFunction } from 'express';
-import IndexController from '../app/Http/Controllers/IndexController';
-import ExampleMiddleware from '../app/Http/Middlewares/ExampleMiddleware';
-const router = express.Router();
-
-// Instantiate example middleware
-const exampleMiddleware = new ExampleMiddleware();
-
-// IndexController
-router.get('/', exampleMiddleware.handle, (request: Request, response: Response, next: NextFunction) => {
-    new IndexController().index(request, response, next);
-});
-
-export default router;
-```
-
-> As you can see we use the handle method as a second argument in a route.
-> This approach allows you to use specific `middlewares` in needed routes, for example if you do not want to use a global middleware.
-
-> Also note that using middleware directly in a route, allows you to get `request.route` in this particular middleware, which would be inaccessable otherwise.
