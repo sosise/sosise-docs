@@ -16,7 +16,7 @@ Every command also includes a "help" screen which displays and describes the com
 ## Writing Commands
 In addition to the commands provided with Artisan, you may build your custom commands. Commands are stored in the app/Console/Commands directory.
 
-### Generating Commands
+## Generating Commands
 To create a new command, you may use the make:command Artisan command. This command will create a new command class in the app/Console/Commands directory.
 
 > Please note that you `must` specify `Command` postfix when you are creating commands, otherwise the command will `not` be registered.
@@ -103,7 +103,7 @@ In this example, the --debug or -d switch may be specified when calling the Arti
 ./artisan example:command --debug
 ```
 
-#### Options With Values
+### Options With Values
 Next, let's take a look at an option that expects a value. Example below:
 
 ```typescript
@@ -129,7 +129,7 @@ In this example, the user may pass a value for the option like so. If the option
 ./artisan example:command --since 01.01.2021
 ```
 
-#### Options with default values
+### Options with default values
 Next, let's take a look at an options that have default value. Example below:
 
 ```typescript
@@ -157,7 +157,7 @@ public async handle(cli: commander.Command): Promise<void> {
 
 In this example, if you don't pass options to the command default values will be taken `false`, `29.12.2020`, `%today-date%`
 
-#### Required options
+### Required options
 Next, let's take a look at an `required` option. Example below:
 
 ```typescript

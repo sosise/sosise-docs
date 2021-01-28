@@ -5,7 +5,7 @@ Since HTTP driven applications are stateless, sessions provide a way to store in
 Sosise ships with a variety of session backends that are accessed through an expressive, unified API. Support for popular backends such as File, Memory, if you need more, please let me know.
 
 ## Configuration
-Your application's session configuration file is stored at `config/session.ts`. Be sure to review the options available to you in this file. By default, Sosise is configured to use the file session driver, which will work well for many applications. 
+Your application's session configuration file is stored at `src/config/session.ts`. Be sure to review the options available to you in this file. By default, Sosise is configured to use the file session driver, which will work well for many applications. 
 
 ## Retrieving All Session Data
 If you would like to retrieve all the data in the session:

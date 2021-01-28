@@ -7,9 +7,9 @@ Instead of defining all of your request handling logic as closures in your route
 ```sh
 ./artisan make:controller
 ```
-> Please do not forget to create route to your controllers in `routes/api.ts`
+> Please do not forget to create route to your controllers in `src/routes/api.ts`
 
-### Basic Controllers
+## Basic Controllers
 Let's take a look at an example of a basic controller.
 
 ```typescript
@@ -38,7 +38,7 @@ export default class ExampleController {
 }
 ```
 
-You can define a route to this controller in `routes/api.ts` method like so:
+You can define a route to this controller in `src/routes/api.ts` method like so:
 
 ```typescript
 router.get('/example', (request: Request, response: Response, next: NextFunction) => {

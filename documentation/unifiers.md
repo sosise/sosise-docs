@@ -10,6 +10,7 @@ To create a new unifier, use the `make:unifier` Artisan command:
 ```
 
 Let's take a look at example below:
+
 ```typescript
 import Validator from 'validatorjs';
 import ValidationException from 'sosise-core/build/Exceptions/Validation/ValidationException';

@@ -1,9 +1,7 @@
 # Getting Started
-
-> THIS PAGE IS OUTDATED! I will fix it soon!
-
 ## Introduction
 Almost every modern web application interacts with a database. Sosise makes interacting with databases extremely simple across a variety of supported databases using raw SQL, a fluent query builder. Express Framework Builder uses [knex](http://knexjs.org) as a library to work with databases. Knex.js (pronounced /kəˈnɛks/) is a "batteries included" SQL query builder for:
+
 - `Postgres`
 - `MSSQL`
 - `MySQL`
@@ -15,13 +13,13 @@ Almost every modern web application interacts with a database. Sosise makes inte
 > Please visit [knex website](http://knexjs.org) for full documentation.
 
 ## Configuration
-The configuration for Sosise database services is located in your application's config/database.ts configuration file. In this file, you may define all of your database connections, as well as specify which connection should be used by default. Most of the configuration options within this file are driven by the values of your application's environment variables. Examples for most of Sosise supported database systems are provided in this file.
+The configuration for Sosise database services is located in your application's `src/config/database.ts` configuration file. In this file, you may define all of your database connections, as well as specify which connection should be used by default. Most of the configuration options within this file are driven by the values of your application's environment variables. Examples for most of Sosise supported database systems are provided in this file.
 
-## Queries
+## Usage
 As an example we will take a look at a simple repository that is responsible for database interaction:
 
 ```typescript
-import Database from '../../Libraries/Database/Database';
+import Database from 'sosise-core/build/Database/Database';
 
 export default class MyLocalDatabaseRepository {
 
@@ -40,9 +38,9 @@ export default class MyLocalDatabaseRepository {
     public async selectHundredLastRows(): Promise<any> {
         // Get 100 rows
         const rows = await this.dbConnection.client
-        .table('sometable')
-        .orderBy('id', 'desc')
-        .limit(100);
+            .table('sometable')
+            .orderBy('id', 'desc')
+            .limit(100);
 
         return rows;
     }
@@ -113,8 +111,8 @@ const rows = await this.dbConnection.client
 const rows = await this.dbConnection.client
     .table('sometable')
     .whereBetween('created_at', [
-    '2020-01-01',
-    '2020-01-10'
+        '2020-01-01',
+        '2020-01-10'
     ]);
 ```
 
@@ -123,8 +121,8 @@ const rows = await this.dbConnection.client
 const rows = await this.dbConnection.client
     .table('sometable')
     .where(function () {
-    this.orWhere('customer_id', '=', 1);
-    this.orWhere('customer_id', '=', 2);
+        this.orWhere('customer_id', '=', 1);
+        this.orWhere('customer_id', '=', 2);
     });
 ```
 
@@ -164,4 +162,57 @@ const rows = await this.dbConnection.client
         this.orWhere('customer_id', '=', 2);
     })
     .toSQL();
+```
+
+## Update
+### Update row in table
+```typescript
+await this.dbConnection.client
+    .table('sometable')
+    .where('id', 2)
+    .update({ customer_id: 'field value comes here' });
+```
+
+### Update all rows in table
+```typescript
+await this.dbConnection.client
+    .table('sometable')
+    .update({ customer_id: 'field value comes here' });
+```
+
+## Insert
+### Insert single row
+```typescript
+await this.dbConnection.client
+    .table('sometable')
+    .insert([
+        { customer_id: 1 }
+    ]);
+```
+
+### Insert multiple rows
+```typescript
+await this.dbConnection.client
+    .table('sometable')
+    .insert([
+        { customer_id: 1 },
+        { customer_id: 2 },
+        { customer_id: 3 },
+    ]);
+```
+
+## Delete
+### Delete specific rows in table
+```typescript
+await this.dbConnection.client
+    .table('sometable')
+    .whereIn('customer_id', [1, 2, 3])
+    .delete();
+```
+
+### Delete all rows in table
+```typescript
+await this.dbConnection.client
+    .table('sometable')
+    .delete();
 ```

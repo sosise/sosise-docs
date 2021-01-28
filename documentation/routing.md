@@ -55,64 +55,64 @@ If you need to use the dollar character ($) in a path string, enclose it escaped
 
 If it seems to be complicated for you, please see some examples below.
 
-### Example routes
-#### /
+## Example routes
+### /
 ```typescript
 router.get('/', (request: Request, response: Response, next: NextFunction) => {
     new IndexController().index(request, response, next);
 });
 ```
 
-#### /about
+### /about
 ```typescript
 router.get('/about', (request: Request, response: Response, next: NextFunction) => {
     new IndexController().index(request, response, next);
 });
 ```
 
-#### /random.text
+### /random.text
 ```typescript
 router.get('/random.text', (request: Request, response: Response, next: NextFunction) => {
     new IndexController().index(request, response, next);
 });
 ```
 
-#### This route path will match `acd` and `abcd`.
+### This route path will match `acd` and `abcd`.
 ```typescript
 router.get('/ab?cd', (request: Request, response: Response, next: NextFunction) => {
     new IndexController().index(request, response, next);
 });
 ```
 
-#### This route path will match `abcd`, `abbcd`, `abbbcd`, and so on.
+### This route path will match `abcd`, `abbcd`, `abbbcd`, and so on.
 ```typescript
 router.get('/ab+cd', (request: Request, response: Response, next: NextFunction) => {
     new IndexController().index(request, response, next);
 });
 ```
 
-#### This route path will match `abcd`, `abxcd`, `abRANDOMcd`, `ab123cd`, and so on.
+### This route path will match `abcd`, `abxcd`, `abRANDOMcd`, `ab123cd`, and so on.
 ```typescript
 router.get('/ab*cd', (request: Request, response: Response, next: NextFunction) => {
     new IndexController().index(request, response, next);
 });
 ```
 
-#### This route path will match `abe` and `abcde`.
+### This route path will match `abe` and `abcde`.
 ```typescript
 router.get('/ab(cd)?e', (request: Request, response: Response, next: NextFunction) => {
     new IndexController().index(request, response, next);
 });
 ```
 
-#### This route path will match anything with an `"a"` in it.
+### This route path will match anything with an `"a"` in it.
 ```typescript
 router.get(/a/, (request: Request, response: Response, next: NextFunction) => {
     new IndexController().index(request, response, next);
 });
 ```
 
-#### This route path will match `butterfly` and `dragonfly`, but not `butterflyman`, `dragonflyman`, and so on.
+### This route path will match `butterfly` and `dragonfly`, but not `butterflyman`, `dragonflyman`, and so on.
 ```typescript
 router.get(/.*fly$/, (request: Request, response: Response, next: NextFunction) => {
     new IndexController().index(request, response, next);

@@ -72,7 +72,7 @@ export default class AfterMiddleware {
 }
 ```
 
-### How to get response body in the middleware
+## How to get response body in the middleware
 Sometimes you may need to get `response body` in the middleware. Take a look at example below:
 
 ```typescript
