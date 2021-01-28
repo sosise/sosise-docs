@@ -12,7 +12,7 @@
     - [Mail](documentation/mail)
     - [Queues](documentation/queues)
     - [Session](documentation/session)
-    - [HTTP Client](documenation/http-client)
+    - [HTTP Client](documentation/http-client)
     - [Error Handling](documentation/error-handling)
     - [Logging](documentation/logging)
     - [Sentry](documentation/sentry)
