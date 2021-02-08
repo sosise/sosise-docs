@@ -29,7 +29,7 @@ export default class MyLocalDatabaseRepository {
      * Constructor
      */
     constructor() {
-        this.dbConnection = Database.getConnection('project');
+        this.dbConnection = Database.getConnection(process.env.DB_PROJECT_CONNECTION);
     }
 
     /**
