@@ -27,5 +27,6 @@
 - Database
     - [Getting Started](database/getting-started)
     - [Migrations](database/migrations)
+    - [Seeding](database/seeding)
 - Testing
     - [Getting Started](testing/getting-started)
