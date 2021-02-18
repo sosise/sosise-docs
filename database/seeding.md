@@ -24,6 +24,14 @@ import * as faker from 'faker';
  */
 export default class FillCustomersTable extends BaseSchema {
 
+    /**
+     * Restrict running the seed only in a local environment (APP_ENV=local)
+     */
+    protected onlyInLocalEnvironment = false;
+
+    /**
+     * Table name where data should be inserted in
+     */
     protected tableName = 'customers';
 
     /**
