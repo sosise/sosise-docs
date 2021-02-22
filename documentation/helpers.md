@@ -29,6 +29,14 @@ import Helper from 'sosise-core/build/Helper/Helper';
 Helper.dump({ Hello: 'world' });
 ```
 
+### Helper.sleep
+The `Helper.sleep` method returns a promise which resolves after given amount of milliseconds.
+
+``` typescript
+import Helper from 'sosise-core/build/Helper/Helper';
+await Helper.sleep(1000);
+```
+
 ## Working with dates
 ### Helper.parseDate
 The `Helper.parseDate` method tries to parse a date, returns in format `"YYYY-MM-DD"`, if no date could be parsed null is returned;
