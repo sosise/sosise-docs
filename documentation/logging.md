@@ -18,3 +18,11 @@ const logger = IOC.make(LoggerService) as LoggerService;
 logger.info('Hello world!');
 logger.critical('Foo', { bar: 'You also may pass optional arrays or objects as second parameter' });
 ```
+
+## Log output depends on your `APP_ENV`
+Sosise watches your current `APP_ENV`, depending on that environment variable log formats are different:
+```
+APP_ENV = local -> Logs are pretty printed
+APP_ENV = staging -> Logs are printed in JSON format
+APP_ENV = production -> Logs are printed in JSON format
+```
