@@ -43,8 +43,9 @@ All Sosise routes are defined in your route file, which is located in the `src/r
 Sometimes you may need to register a route that responds to multiple HTTP verbs. You may do so using the match method. Or, you may even register a route that responds to all HTTP verbs using the any method:
 
 ```typescript
+const indexController = new IndexController();
 router.all('/', (request: Request, response: Response, next: NextFunction) => {
-    new IndexController().index(request, response, next);
+    indexController.index(request, response, next);
 });
 ```
 
@@ -58,64 +59,73 @@ If it seems to be complicated for you, please see some examples below.
 ## Example routes
 ### /
 ```typescript
+const indexController = new IndexController();
 router.get('/', (request: Request, response: Response, next: NextFunction) => {
-    new IndexController().index(request, response, next);
+    indexController.index(request, response, next);
 });
 ```
 
 ### /about
 ```typescript
+const indexController = new IndexController();
 router.get('/about', (request: Request, response: Response, next: NextFunction) => {
-    new IndexController().index(request, response, next);
+    indexController.index(request, response, next);
 });
 ```
 
 ### /random.text
 ```typescript
+const indexController = new IndexController();
 router.get('/random.text', (request: Request, response: Response, next: NextFunction) => {
-    new IndexController().index(request, response, next);
+    indexController.index(request, response, next);
 });
 ```
 
 ### This route path will match `acd` and `abcd`.
 ```typescript
+const indexController = new IndexController();
 router.get('/ab?cd', (request: Request, response: Response, next: NextFunction) => {
-    new IndexController().index(request, response, next);
+    indexController.index(request, response, next);
 });
 ```
 
 ### This route path will match `abcd`, `abbcd`, `abbbcd`, and so on.
 ```typescript
+const indexController = new IndexController();
 router.get('/ab+cd', (request: Request, response: Response, next: NextFunction) => {
-    new IndexController().index(request, response, next);
+    indexController.index(request, response, next);
 });
 ```
 
 ### This route path will match `abcd`, `abxcd`, `abRANDOMcd`, `ab123cd`, and so on.
 ```typescript
+const indexController = new IndexController();
 router.get('/ab*cd', (request: Request, response: Response, next: NextFunction) => {
-    new IndexController().index(request, response, next);
+    indexController.index(request, response, next);
 });
 ```
 
 ### This route path will match `abe` and `abcde`.
 ```typescript
+const indexController = new IndexController();
 router.get('/ab(cd)?e', (request: Request, response: Response, next: NextFunction) => {
-    new IndexController().index(request, response, next);
+    indexController.index(request, response, next);
 });
 ```
 
 ### This route path will match anything with an `"a"` in it.
 ```typescript
+const indexController = new IndexController();
 router.get(/a/, (request: Request, response: Response, next: NextFunction) => {
-    new IndexController().index(request, response, next);
+    indexController.index(request, response, next);
 });
 ```
 
 ### This route path will match `butterfly` and `dragonfly`, but not `butterflyman`, `dragonflyman`, and so on.
 ```typescript
+const indexController = new IndexController();
 router.get(/.*fly$/, (request: Request, response: Response, next: NextFunction) => {
-    new IndexController().index(request, response, next);
+    indexController.index(request, response, next);
 });
 ```
 
@@ -135,8 +145,9 @@ req.params: { "userId": "34", "bookId": "8989" }
 To define routes with route parameters, simply specify the route parameters in the path of the route as shown below.
 
 ```typescript
+const indexController = new IndexController();
 router.get('/users/:userId/books/:bookId', (request: Request, response: Response, next: NextFunction) => {
-    new IndexController().index(request, response, next);
+    indexController.index(request, response, next);
 });
 ```
 
@@ -188,8 +199,9 @@ const router = express.Router();
 const exampleMiddleware = new ExampleMiddleware();
 
 // IndexController
+const indexController = new IndexController();
 router.get('/', exampleMiddleware.handle, (request: Request, response: Response, next: NextFunction) => {
-    new IndexController().index(request, response, next);
+    indexController.index(request, response, next);
 });
 
 export default router;
