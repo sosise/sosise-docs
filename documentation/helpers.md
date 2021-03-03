@@ -7,6 +7,9 @@ Sosise includes a variety of "helper" functions. You are free to use them in you
 - [Helper.dd](#Helper.dd)
 - [Helper.dump](#Helper.dump)
 
+### For the convenience
+- [Helper.sleep](#Helper.sleep)
+
 ### Working with dates
 - [Helper.parseDate](#Helper.parseDate)
 - [Helper.parseDateTime](#Helper.parseDateTime)
@@ -29,9 +32,17 @@ import Helper from 'sosise-core/build/Helper/Helper';
 Helper.dump({ Hello: 'world' });
 ```
 
+## For the convenience
 ### Helper.sleep
 The `Helper.sleep` method returns a promise which resolves after given amount of milliseconds.
+It's more convenient than writing over and over again:
 
+Without helper:
+```typescript
+await new Promise((resolve) => setTimeout(resolve, 1000));
+```
+
+With helper:
 ``` typescript
 import Helper from 'sosise-core/build/Helper/Helper';
 await Helper.sleep(1000);
