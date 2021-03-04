@@ -5,6 +5,7 @@ While building your web application, you may have some tasks, such as parsing an
 Sosise's queue configuration options are stored in your `src/config/queue.ts` configuration file. In this file, you will find connection configurations for redis.
 
 > Please refer to docker-compose.yml if you need redis with persistent or non persistent storage.
+> Sosise uses [BullMQ](https://docs.bullmq.io) library. Please refer to it for full documentation.
 
 ## How it works
 Queues consist of two components `Jobs` and `QueueWorkers`. A `job` can be pushed to some `queue` and a `queue` is then handeled by a worker.
