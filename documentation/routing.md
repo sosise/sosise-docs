@@ -170,6 +170,44 @@ export default class IndexController {
 }
 ```
 
+### How to get "GET query params"
+```typescript
+import { Request, Response, NextFunction } from 'express';
+import HttpResponse from 'sosise-core/build/Types/HttpResponse';
+
+export default class IndexController {
+    /**
+     * Example method
+     */
+    public async index(request: Request, response: Response, next: NextFunction) {
+        try {
+            console.log(request.query);
+        } catch (error) {
+            next(error);
+        }
+    }
+}
+```
+
+### How to get request body: post, put, etc...
+```typescript
+import { Request, Response, NextFunction } from 'express';
+import HttpResponse from 'sosise-core/build/Types/HttpResponse';
+
+export default class IndexController {
+    /**
+     * Example method
+     */
+    public async index(request: Request, response: Response, next: NextFunction) {
+        try {
+            console.log(request.body);
+        } catch (error) {
+            next(error);
+        }
+    }
+}
+```
+
 ## Response methods
 The methods on the response object (response) in the following table can send a response to the client, and terminate the request-response cycle. If none of these methods are called from a route handler, the client request will be left hanging.
 
