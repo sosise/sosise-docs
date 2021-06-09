@@ -170,7 +170,7 @@ export default class IndexController {
 }
 ```
 
-### How to get "GET query params"
+## Query params
 ```typescript
 import { Request, Response, NextFunction } from 'express';
 import HttpResponse from 'sosise-core/build/Types/HttpResponse';
@@ -189,7 +189,7 @@ export default class IndexController {
 }
 ```
 
-### How to get request body: post, put, etc...
+## POST, PUT, etc params
 ```typescript
 import { Request, Response, NextFunction } from 'express';
 import HttpResponse from 'sosise-core/build/Types/HttpResponse';
