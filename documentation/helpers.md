@@ -15,6 +15,10 @@ Sosise includes a variety of "helper" functions. You are free to use them in you
 - [Helper.parseDateTime](#Helper.parseDateTime)
 - [Helper.getCurrentDateTime](#Helper.getCurrentDateTime)
 
+### Paths
+- [Helper.projectPath](#Helper.projectPath)
+- [Helper.storagePath](#Helper.storagePath)
+
 ## Debugging
 ### Helper.dd
 The `Helper.dd` method dumps a given argument and dies, please note that this method show full depth of the variable if it is a object.
@@ -71,4 +75,19 @@ The `Helper.getCurrentDateTime` returns current date and time in format `"YYYY-M
 ``` typescript
 import Helper from 'sosise-core/build/Helper/Helper';
 const currentDateTime = Helper.getCurrentDateTime();
+```
+
+## Paths
+### Helper.projectPath
+The `Helper.projectPath` returns current project path with ending slash
+``` typescript
+import Helper from 'sosise-core/build/Helper/Helper';
+const projectPath = Helper.projectPath();
+```
+
+### Helper.storagePath
+The `Helper.storagePath` returns current storage path with ending slash
+``` typescript
+import Helper from 'sosise-core/build/Helper/Helper';
+const storagePath = Helper.storagePath();
 ```
