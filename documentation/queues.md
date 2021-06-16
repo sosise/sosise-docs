@@ -92,17 +92,17 @@ export default class SendEmailWorker {
 ./artisan queue:listen email-processing-queue
 ```
 
-## List all jobs in a queue
+## List all jobs in a specific queue
 ```sh
 ./artisan queue:list email-processing-queue
 ```
 
-## Retry all failed jobs
+## Retry all failed jobs from specific queue
 ```sh
 ./artisan queue:retry email-processing-queue
 ```
 
-## Flush (remove) all failed jobs
+## Flush (remove) all failed jobs from specific queue
 ```sh
 ./artisan queue:flush email-processing-queue
 ```
