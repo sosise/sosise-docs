@@ -9,7 +9,7 @@
     - [Controllers](documentation/controllers)
     - [Unifiers](documentation/unifiers)
     - [Validation](documentation/validation)
-    - [Mail](documentation/mail)
+    - [Mailer](documentation/mailer)
     - [Queues](documentation/queues)
     - [Session](documentation/session)
     - [HTTP Client](documentation/http-client)
