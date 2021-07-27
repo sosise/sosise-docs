@@ -19,7 +19,7 @@ await Mailer.sendMail({
 });
 ```
 
-> Please refer to [Mail.Options](https://nodemailer.com/message/) to see full list all possible message options
+> Please refer to [Mail.Options](https://nodemailer.com/message/) to see a full list of all possible message options
 
 ## Sending mail with attachment
 Example
@@ -39,7 +39,7 @@ await Mailer.sendMail({
 });
 ```
 
-> Please refer to [Attachments](https://nodemailer.com/message/attachments/) to see documentation how to use attachments
+> Please refer to [Attachments](https://nodemailer.com/message/attachments/) documentation to see all possible options how to attach files
 
 ## Send fake emails
 Since `Sosise` uses `Nodemailer` there is a possibility to send fake emails, which can be used for development. Just set `dryrun` option in `src/config/mailer.ts` to `true`.
