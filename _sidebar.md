@@ -21,7 +21,6 @@
     - [IOC](digging-deeper/ioc)
     - [HTTP Request](digging-deeper/http-request)
     - [HTTP Response](digging-deeper/http-response)
-    - [Collections](digging-deeper/collections)
 - Security
     - [Hashing](security/hashing)
 - Database
