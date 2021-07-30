@@ -2,6 +2,7 @@
     - [Installation](getting-started/installation.md)
     - [Directory Structure](getting-started/directory-structure.md)
     - [Docker](getting-started/docker)
+    - [Project documentation](getting-started/docsify)
 - Documentation
     - [Artisan](documentation/artisan)
     - [Routing](documentation/routing)
