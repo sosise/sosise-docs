@@ -1,4 +1,5 @@
 - Getting Started
+    - [Changelog](getting-started/changelog.md)
     - [Installation](getting-started/installation.md)
     - [Directory Structure](getting-started/directory-structure.md)
     - [Docker](getting-started/docker)
