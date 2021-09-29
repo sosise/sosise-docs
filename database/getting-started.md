@@ -20,16 +20,17 @@ As an example we will take a look at a simple repository that is responsible for
 
 ```typescript
 import Database from 'sosise-core/build/Database/Database';
+import { Knex } from 'knex';
 
 export default class MyLocalDatabaseRepository {
 
-    private dbConnection: Database;
+    private dbClient: Knex;
 
     /**
      * Constructor
      */
     constructor() {
-        this.dbConnection = Database.getConnection(process.env.DB_PROJECT_CONNECTION);
+        this.dbClient = Database.getConnection(process.env.DB_PROJECT_CONNECTION as string).client;
     }
 
     /**
@@ -37,7 +38,7 @@ export default class MyLocalDatabaseRepository {
      */
     public async selectHundredLastRows(): Promise<any> {
         // Get 100 rows
-        const rows = await this.dbConnection.client
+        const rows = await this.dbClient
             .table('sometable')
             .orderBy('id', 'desc')
             .limit(100);
@@ -52,32 +53,32 @@ export default class MyLocalDatabaseRepository {
 ## Select
 ### First row
 ```typescript
-const row = await this.dbConnection.client
+const row = await this.dbClient
     .table('sometable')
     .first();
 ```
 
 ### Multiple rows
 ```typescript
-const rows = await this.dbConnection.client
+const rows = await this.dbClient
     .table('sometable')
     .limit(100);
 ```
 
 ### Specific fields
 ```typescript
-const rows = await this.dbConnection.client
+const rows = await this.dbClient
     .table('sometable')
     .select([
         'id',
         'name as author',
-        this.dbConnection.client.raw('SUM(total) as sum')
+        this.dbClient.raw('SUM(total) as sum')
     ]);
 ```
 
 ### OrderBy
 ```typescript
-const rows = await this.dbConnection.client
+const rows = await this.dbClient
     .table('sometable')
     .orderBy('id', 'desc');
 ```
@@ -85,14 +86,14 @@ const rows = await this.dbConnection.client
 ### GroupBy
 #### Single field
 ```typescript
-const rows = await this.dbConnection.client
+const rows = await this.dbClient
     .table('sometable')
     .groupBy('customer_id');
 ```
 
 #### Multiple fields
 ```typescript
-const rows = await this.dbConnection.client
+const rows = await this.dbClient
     .table('sometable')
     .groupBy('name')
     .groupBy('customer_id');
@@ -101,14 +102,14 @@ const rows = await this.dbConnection.client
 ### Where cases (only some are showed, please see knex website to see full documentation)
 #### Equals
 ```typescript
-const rows = await this.dbConnection.client
+const rows = await this.dbClient
     .table('sometable')
     .where('customer_id', '=', 13);
 ```
 
 #### Between
 ```typescript
-const rows = await this.dbConnection.client
+const rows = await this.dbClient
     .table('sometable')
     .whereBetween('created_at', [
         '2020-01-01',
@@ -118,7 +119,7 @@ const rows = await this.dbConnection.client
 
 #### Braces
 ```typescript
-const rows = await this.dbConnection.client
+const rows = await this.dbClient
     .table('sometable')
     .where(function () {
         this.orWhere('customer_id', '=', 1);
@@ -129,14 +130,14 @@ const rows = await this.dbConnection.client
 ### Joins (only some are showed, please see knex website to see full documentation)
 #### Inner join
 ```typescript
-const rows = await this.dbConnection.client
+const rows = await this.dbClient
     .table('sometable')
     .innerJoin('customer', 'customer.id', '=', 'sometable.customer_id');
 ```
 
 #### Left join
 ```typescript
-const rows = await this.dbConnection.client
+const rows = await this.dbClient
     .table('sometable')
     .leftJoin('customer', 'customer.id', '=', 'sometable.customer_id');
 ```
@@ -144,7 +145,7 @@ const rows = await this.dbConnection.client
 ### Debug
 #### Get resulting query
 ```typescript
-const rows = await this.dbConnection.client
+const rows = await this.dbClient
     .table('sometable')
     .where(function () {
         this.orWhere('customer_id', '=', 1);
@@ -155,7 +156,7 @@ const rows = await this.dbConnection.client
 
 #### Get resulting SQL (without params)
 ```typescript
-const rows = await this.dbConnection.client
+const rows = await this.dbClient
     .table('sometable')
     .where(function () {
         this.orWhere('customer_id', '=', 1);
@@ -167,7 +168,7 @@ const rows = await this.dbConnection.client
 ## Update
 ### Update row in table
 ```typescript
-await this.dbConnection.client
+await this.dbClient
     .table('sometable')
     .where('id', 2)
     .update({ customer_id: 'field value comes here' });
@@ -175,7 +176,7 @@ await this.dbConnection.client
 
 ### Update all rows in table
 ```typescript
-await this.dbConnection.client
+await this.dbClient
     .table('sometable')
     .update({ customer_id: 'field value comes here' });
 ```
@@ -183,7 +184,7 @@ await this.dbConnection.client
 ## Insert
 ### Insert single row
 ```typescript
-await this.dbConnection.client
+await this.dbClient
     .table('sometable')
     .insert([
         { customer_id: 1 }
@@ -192,7 +193,7 @@ await this.dbConnection.client
 
 ### Insert multiple rows
 ```typescript
-await this.dbConnection.client
+await this.dbClient
     .table('sometable')
     .insert([
         { customer_id: 1 },
@@ -204,7 +205,7 @@ await this.dbConnection.client
 ## Delete
 ### Delete specific rows in table
 ```typescript
-await this.dbConnection.client
+await this.dbClient
     .table('sometable')
     .whereIn('customer_id', [1, 2, 3])
     .delete();
@@ -212,7 +213,7 @@ await this.dbConnection.client
 
 ### Delete all rows in table
 ```typescript
-await this.dbConnection.client
+await this.dbClient
     .table('sometable')
     .delete();
 ```

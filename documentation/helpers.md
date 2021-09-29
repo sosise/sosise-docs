@@ -28,6 +28,8 @@ import Helper from 'sosise-core/build/Helper/Helper';
 Helper.dd({ Hello: 'world' });
 ```
 
+> Can accept multiple arguments
+
 ### Helper.dump
 The `Helper.dump` method dumps a given argument, please note that this method show full depth of the variable if it is a object.
 
@@ -35,6 +37,8 @@ The `Helper.dump` method dumps a given argument, please note that this method sh
 import Helper from 'sosise-core/build/Helper/Helper';
 Helper.dump({ Hello: 'world' });
 ```
+
+> Can accept multiple arguments
 
 ## For the convenience
 ### Helper.sleep
