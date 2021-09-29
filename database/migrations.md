@@ -63,6 +63,8 @@ To roll back the latest migration operation, you may use the rollback Artisan co
 
 > Some migration operations are destructive, which means they may cause you to lose data. In order to protect you from running these commands against your production database, you will be prompted for confirmation before the commands are executed. To force the commands to run without a prompt, use the `-f` or `--force` flag
 
+> Additionally `./artisan migrate:rollback` shows you which migrations would be rolled back, and only when you accept this, the operation would be executed.
+
 ## Drop All Tables & Migrate
 The `migrate:fresh` command will drop all tables from the database and then execute the migrate command:
 
