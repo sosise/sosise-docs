@@ -1,3 +1,7 @@
+## 0.3 - 19 November, 2021
+### Changelog
+- Helper methods `dd` and `dump` bug fixes
+
 ## 0.2 - 29 September, 2021
 ### Changelog
 - Imports sorted in `sosise-core` (changes just for code beauty)
