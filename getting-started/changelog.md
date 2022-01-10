@@ -1,3 +1,13 @@
+## 0.3.1 - 10 January, 2022
+### Changelog
+- `sosise-core` packages updated
+- `sosise` packages updated
+
+### How to upgrade
+1. `npm install sosise-core@latest`
+2. `npm update`
+3. `npm audit fix`
+
 ## 0.3 - 19 November, 2021
 ### Changelog
 - Helper methods `dd` and `dump` bug fixes
