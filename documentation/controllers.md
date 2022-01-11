@@ -5,7 +5,7 @@ Instead of defining all of your request handling logic as closures in your route
 ## Writing Controllers
 ### Create using artisan
 ```sh
-./artisan make:controller
+./artisan make:controller ExampleController
 ```
 > Please do not forget to create route to your controllers in `src/routes/api.ts`
 
