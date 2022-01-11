@@ -19,7 +19,10 @@ export default class CustomerDoesNotExistsException extends Exception {
     // This variables are optional, you may remove them
     public exampleVariable: string;
     protected httpCode = 500;
-    protected code = 3001;
+    protected code = 3000;
+
+    // If set to false no exception will be sent to sentry
+    protected sendToSentry = true;
 
     /**
     * Constructor
