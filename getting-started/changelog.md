@@ -1,21 +1,23 @@
 ## 0.4 - 11 January, 2022
 ### Changelog
-- `./artisan make:exception` is now automatically increments code property, so you do not have to do it manually
-- Exceptions now have additional property `protected sendToSentry = xxx`, if you set it to false, exceptions of this type would not be sent to sentry.
-  If the property is true or does not exists exception will be sent to sentry
-- Exceptions now have additional property `protected loggingChannel = 'default';`, if you set it you can log the exception to some non default channels
-- `src/Exceptions/Handler.ts` changed a lot, please take the new version from skeleton: https://github.com/sosise/sosise/blob/master/src/app/Exceptions/Handler.ts and integrate with your changes if there are any.
-- Property `useColorizedOutputInLogFiles` is deprecated, remove it from `src/config/logging.ts` this did not make any sense
-- Rename property `enableLoggingToFile` to `enableLoggingToFiles` in `src/config/logging.ts`
+- Artisan exceptions creation now automatically increments code property, so you do not have to do it manually
+- Exceptions now have the property wether they should be sent to sentry or not
+- Exceptions now have the property `loggingChannel`
 
 ### How to upgrade to that version
 - Run `npm install sosise-core@latest` or `npm run update-sosise`
-- Manual code insertion is needed, see messages above
+- Run `npm update`
+- Copy Handler.ts from https://raw.githubusercontent.com/sosise/sosise/0.4.0/src/app/Exceptions/Handler.ts
+- Copy logging.ts from https://raw.githubusercontent.com/sosise/sosise/0.4.0/src/config/logging.ts
+- Edit all your application exceptions and add:
+  - `protected sendToSentry = true;`
+  - `protected loggingChannel = 'default';`
+- Additionally you can change your Dockerfile from alpine:3.13 to alpine:3.14 (optional)
 
 ## 0.3.2 - 11 January, 2022
 ### Changelog
 - Error handling documentation added
-- Changed default framework exception codes (2000) now
+- Changed default framework exception codes (2XXX)
 
 ### How to upgrade to that version
 - Just run `npm install sosise-core@latest` or `npm run update-sosise`

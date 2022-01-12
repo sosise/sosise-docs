@@ -14,19 +14,26 @@ Let's take a look at an example of an exception class.
 import Exception from 'sosise-core/build/Exceptions/Exception';
 import ExceptionResponse from 'sosise-core/build/Types/ExceptionResponse';
 
-export default class CustomerDoesNotExistsException extends Exception {
+export default class CustomerNotFoundException extends Exception {
 
-    // This variables are optional, you may remove them
+    // This variable is optional, you may remove it
     public exampleVariable: string;
+
+    // HTTP Code of the response with this exception
     protected httpCode = 500;
+
+    // Error code which is rendered in the response
     protected code = 3000;
 
     // If set to false no exception will be sent to sentry
     protected sendToSentry = true;
 
+    // In which logging channel should this exception be logged, see src/config/logging.ts
+    protected loggingChannel = 'default';
+
     /**
-    * Constructor
-    */
+     * Constructor
+     */
     constructor(message: string, exampleVariable: string) {
         super(message);
 
@@ -35,15 +42,15 @@ export default class CustomerDoesNotExistsException extends Exception {
     }
 
     /**
-    * Handle exception
-    */
+     * Handle exception
+     */
     public handle(exception: this): ExceptionResponse {
         const response: ExceptionResponse = {
-            code: this.code, // optional
-            httpCode: this.httpCode, // optional
-            message: this.message,
+            code: exception.code,
+            httpCode: exception.httpCode,
+            message: exception.message,
             data: {
-                yourCustomData: this.exampleVariable
+                yourCustomData: exception.exampleVariable
             }
         };
         return response;

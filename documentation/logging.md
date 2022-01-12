@@ -26,3 +26,16 @@ APP_ENV = local -> Logs are pretty printed
 APP_ENV = staging -> Logs are printed in JSON format
 APP_ENV = production -> Logs are printed in JSON format
 ```
+
+## Logging to different channels
+Sosise allows to log information to different files (channels), please see `src/config/logging.ts` configuration file for more information.
+
+### How to use channels
+```typescript
+import IOC from 'sosise-core/build/ServiceProviders/IOC';
+
+const logger = IOC.make(LoggerService) as LoggerService;
+logger.info('Hello world!', null, 'specialchannel');
+```
+
+> Your exceptions also have the option `loggingChannel` which can be used to log different kind of exceptions to different channels
