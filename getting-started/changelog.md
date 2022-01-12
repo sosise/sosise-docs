@@ -3,6 +3,7 @@
 - Artisan exceptions creation now automatically increments code property, so you do not have to do it manually
 - Exceptions now have the property wether they should be sent to sentry or not
 - Exceptions now have the property `loggingChannel`
+- Logging can now be done to different channels
 
 ### How to upgrade to that version
 - Run `npm install sosise-core@latest` or `npm run update-sosise`
