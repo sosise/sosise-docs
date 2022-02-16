@@ -1,3 +1,11 @@
+## 0.4.1 - 16 February, 2022
+### Changelog
+- `sosise-core` bullmq package updated
+- bullmq package updated
+
+### How to upgrade to that version
+- Run `npm install sosise-core@latest` or `npm run update-sosise`
+
 ## 0.4 - 11 January, 2022
 ### Changelog
 - Artisan exceptions creation now automatically increments code property, so you do not have to do it manually
