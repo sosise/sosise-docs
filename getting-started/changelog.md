@@ -1,3 +1,15 @@
+## 0.5.0 - 19 April, 2022 (Breaking change)
+### Changelog
+- Sentry config changed, this is done primarily to disable `tracing`, to prevent high load on sentry instance
+- ./artisan ascii update
+- ./artisan now renders the documentation link
+- Removed unneeded sentry packages
+
+### How to upgrade to that version
+- Run `npm install sosise-core@latest` or `npm run update-sosise`
+- Replace your `src/config/sentry.ts` with the one from `https://raw.githubusercontent.com/sosise/sosise/0.5.0/src/config/sentry.ts`
+
+
 ## 0.4.1 - 16 February, 2022
 ### Changelog
 - `sosise-core` bullmq package updated
