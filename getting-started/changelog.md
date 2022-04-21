@@ -5,6 +5,7 @@
 ### How to upgrade to that version
 - Run `npm install sosise-core@latest` or `npm run update-sosise`
 - Replace your `src/config/logging.ts` with the one from `https://raw.githubusercontent.com/sosise/sosise/0.6.0/src/config/logging.ts`
+- Add to your `.env` and `.env.example` and `.env.testing` new ENVs, you can take a look at `https://raw.githubusercontent.com/sosise/sosise/0.6.0/.env.example`
 
 ## 0.5.0 - 19 April, 2022 (Breaking change)
 ### Changelog
