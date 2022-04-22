@@ -1,3 +1,12 @@
+## 0.6.1 - 21 April, 2022
+### Changelog
+- Logging config changed, log levels are now supported
+
+### How to upgrade to that version
+- Run `npm install sosise-core@latest` or `npm run update-sosise`
+- Replace your `src/config/logging.ts` with the one from `https://raw.githubusercontent.com/sosise/sosise/0.6.1/src/config/logging.ts`
+- Add to your `.env` and `.env.example` and `.env.testing` new ENVs, you can take a look at `https://raw.githubusercontent.com/sosise/sosise/0.6.1/.env.example`
+
 ## 0.6.0 - 21 April, 2022 (Breaking change)
 ### Changelog
 - Logging config changed, this is done to give the possibility to disable console and/or file logging
