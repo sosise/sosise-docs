@@ -1,4 +1,4 @@
-## 0.6.1 - 21 April, 2022
+## 0.6.1 - 22 April, 2022
 ### Changelog
 - Logging config changed, log levels are now supported
 
