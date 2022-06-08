@@ -1,3 +1,10 @@
+## 0.6.2 - 08 June, 2022
+### Changelog
+- `sosise-core` fixed bug with single execution
+
+### How to upgrade to that version
+- Run `npm install sosise-core@latest` or `npm run update-sosise`
+
 ## 0.6.1 - 22 April, 2022
 ### Changelog
 - Logging config changed, log levels are now supported
