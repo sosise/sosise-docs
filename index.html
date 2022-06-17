@@ -8,6 +8,20 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta charset="UTF-8">
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/themes/vue.css" />
+    <link rel="stylesheet" href="https://unpkg.com/docsify-plugin-toc@1.3.1/dist/light.css">
+
+    <style>
+        .markdown-section pre::after,
+        .markdown-section output::after {
+            color: rgb(255, 0, 255);
+        }
+
+        .app-name-link>img {
+            max-width: 64px;
+            max-height: 64px;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 
 <body>
@@ -28,13 +42,24 @@
                 noData: 'No Results!',
                 depth: 6,
                 hideOtherSidebarContent: true, // whether or not to hide other sidebar content
-            }
+            },
+            toc: {
+                tocMaxLevel: 5,
+                target: 'h1, h2, h3, h4, h5, h6'
+            },
+            copyCode: {
+                buttonText: 'Copy to clipboard',
+                errorText: 'Error',
+                successText: 'Copied'
+            },
         }
     </script>
     <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
     <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
     <script src="//unpkg.com/prismjs/components/prism-bash.js"></script>
     <script src="//unpkg.com/prismjs/components/prism-typescript.js"></script>
+    <script src="https://unpkg.com/docsify-plugin-toc@1.3.1/dist/docsify-plugin-toc.min.js"></script>
+    <script src="https://unpkg.com/docsify-copy-code@2"></script>
 </body>
 
 </html>

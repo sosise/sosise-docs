@@ -1,4 +1,7 @@
 ## 0.6.2 - 08 June, 2022
+### Sosise-Core version
+`0.8.9`
+
 ### Changelog
 - `sosise-core` fixed bug with single execution
 
@@ -6,6 +9,9 @@
 - Run `npm install sosise-core@latest` or `npm run update-sosise`
 
 ## 0.6.1 - 22 April, 2022
+### Sosise-Core version
+`0.8.7`
+
 ### Changelog
 - Logging config changed, log levels are now supported
 
@@ -15,6 +21,9 @@
 - Add to your `.env` and `.env.example` and `.env.testing` new ENVs, you can take a look at `https://raw.githubusercontent.com/sosise/sosise/0.6.1/.env.example`
 
 ## 0.6.0 - 21 April, 2022 (Breaking change)
+### Sosise-Core version
+`0.8.6`
+
 ### Changelog
 - Logging config changed, this is done to give the possibility to disable console and/or file logging
 
@@ -24,6 +33,9 @@
 - Add to your `.env` and `.env.example` and `.env.testing` new ENVs, you can take a look at `https://raw.githubusercontent.com/sosise/sosise/0.6.0/.env.example`
 
 ## 0.5.0 - 19 April, 2022 (Breaking change)
+### Sosise-Core version
+`0.8.5`
+
 ### Changelog
 - Sentry config changed, this is done primarily to disable `tracing`, to prevent high load on sentry instance
 - ./artisan ascii update
@@ -36,6 +48,9 @@
 
 
 ## 0.4.1 - 16 February, 2022
+### Sosise-Core version
+`0.8.3`
+
 ### Changelog
 - `sosise-core` bullmq package updated
 - bullmq package updated
@@ -43,7 +58,10 @@
 ### How to upgrade to that version
 - Run `npm install sosise-core@latest` or `npm run update-sosise`
 
-## 0.4 - 11 January, 2022
+## 0.4.0 - 11 January, 2022
+### Sosise-Core version
+`0.8.2`
+
 ### Changelog
 - Artisan exceptions creation now automatically increments code property, so you do not have to do it manually
 - Exceptions now have the property wether they should be sent to sentry or not
@@ -61,6 +79,9 @@
 - Additionally you can change your Dockerfile from alpine:3.13 to alpine:3.14 (optional)
 
 ## 0.3.2 - 11 January, 2022
+### Sosise-Core version
+`0.7.0`
+
 ### Changelog
 - Error handling documentation added
 - Changed default framework exception codes (2XXX)
@@ -77,6 +98,9 @@
 
 
 ## 0.3.1 - 10 January, 2022
+### Sosise-Core version
+`0.6.8`
+
 ### Changelog
 - `sosise-core` packages updated
 - `sosise` packages updated
@@ -87,10 +111,16 @@
 3. `npm audit fix`
 
 ## 0.3 - 19 November, 2021
+### Sosise-Core version
+`0.6.6`
+
 ### Changelog
 - Helper methods `dd` and `dump` bug fixes
 
 ## 0.2 - 29 September, 2021
+### Sosise-Core version
+`0.6.5`
+
 ### Changelog
 - Imports sorted in `sosise-core` (changes just for code beauty)
 - `./artisan make:repository` by default creates a repository with an database client. Additionally you could use `-h or --http` flag to create repository prepared for HTTP Requests
@@ -103,6 +133,9 @@
 Just run `npm install sosise-core@latest` or `npm run update-sosise`
 
 ## 0.1 - 14 September, 2021
+### Sosise-Core version
+`0.6.4`
+
 ### Changelog
 - Added environment param to enable or disable documentation `basic auth`
 - `docker-compose.yml` file updated to mount logs
