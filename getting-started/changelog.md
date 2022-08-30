@@ -1,3 +1,13 @@
+## 0.6.3 - 30 August, 2022
+### Sosise-Core version
+`0.8.9`
+
+### Changelog
+- Documentation in skeleton updated, it now supports syntax hightlighting, copy to clipboard, etc...
+
+### How to upgrade to that version
+- Create new project
+
 ## 0.6.2 - 08 June, 2022
 ### Sosise-Core version
 `0.8.9`
