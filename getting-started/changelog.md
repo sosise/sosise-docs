@@ -1,9 +1,20 @@
+## 0.6.4 - 30 August, 2022
+### Sosise-Core version
+`0.8.10`
+
+### Changelog
+- Any command execution now creates a file in `storage/framework/%COMMANDNAME%` directory, it can be used for monitoring purposes. It helps you to be sure that a command has not frozen or does not takes too long to execute.
+
+### How to upgrade to that version
+- Run `npm install sosise-core@latest` or `npm run update-sosise`
+- After that run any `command`, it will create a directory `storage/framework` with `.gitignore` file in it. Just push it to your repository
+
 ## 0.6.3 - 30 August, 2022
 ### Sosise-Core version
 `0.8.9`
 
 ### Changelog
-- Documentation in skeleton updated, it now supports syntax hightlighting, copy to clipboard, etc...
+- Documentation in skeleton updated, it now supports syntax highlighting, copy to clipboard, etc...
 
 ### How to upgrade to that version
 - Create new project
