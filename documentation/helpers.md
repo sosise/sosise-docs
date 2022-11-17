@@ -3,23 +3,6 @@
 Sosise includes a variety of "helper" functions. You are free to use them in your own applications if you find them convenient.
 
 ## Available Methods
-### Debugging
-- [Helper.dd](#Helper.dd)
-- [Helper.dump](#Helper.dump)
-
-### For the convenience
-- [Helper.sleep](#Helper.sleep)
-
-### Working with dates
-- [Helper.parseDate](#Helper.parseDate)
-- [Helper.parseDateTime](#Helper.parseDateTime)
-- [Helper.getCurrentDateTime](#Helper.getCurrentDateTime)
-
-### Paths
-- [Helper.projectPath](#Helper.projectPath)
-- [Helper.storagePath](#Helper.storagePath)
-
-## Debugging
 ### Helper.dd
 The `Helper.dd` method dumps a given argument and dies, please note that this method show full depth of the variable if it is a object.
 
@@ -40,7 +23,6 @@ Helper.dump({ Hello: 'world' });
 
 > Can accept multiple arguments
 
-## For the convenience
 ### Helper.sleep
 The `Helper.sleep` method returns a promise which resolves after given amount of milliseconds.
 It's more convenient than writing over and over again:
@@ -56,7 +38,6 @@ import Helper from 'sosise-core/build/Helper/Helper';
 await Helper.sleep(1000);
 ```
 
-## Working with dates
 ### Helper.parseDate
 The `Helper.parseDate` method tries to parse a date, returns in format `"YYYY-MM-DD"`, if no date could be parsed null is returned;
 
@@ -81,7 +62,6 @@ import Helper from 'sosise-core/build/Helper/Helper';
 const currentDateTime = Helper.getCurrentDateTime();
 ```
 
-## Paths
 ### Helper.projectPath
 The `Helper.projectPath` returns current project path with ending slash
 ``` typescript
@@ -94,4 +74,68 @@ The `Helper.storagePath` returns current storage path with ending slash
 ``` typescript
 import Helper from 'sosise-core/build/Helper/Helper';
 const storagePath = Helper.storagePath();
+```
+
+### Helper.pluckMany
+The `Helper.storagePath` returns object or array with needed fields
+```typescript
+import Helper from 'sosise-core/build/Helper/Helper';
+const arrayOfObjectsWithNeededFields = Helper.pluckMany([{name: 'alex', age: 10}, {name: 'sharon', age: 11}], ['age']);
+const objectWithNeededFields = Helper.pluckMany({name: 'igor', age: 33, birthday: 'foobar'}, ['age', 'birthday']);
+```
+
+### Helper.startProfiling
+The `Helper.startProfiling` method remembers the time when it was called
+```typescript
+import Helper from 'sosise-core/build/Helper/Helper';
+
+Helper.startProfiling();
+await Helper.sleep(1000);
+Helper.stopProfiling();
+
+Helper.startProfiling();
+await Helper.sleep(2000);
+Helper.stopProfiling();
+```
+
+### Helper.stopProfiling
+The `Helper.stopProfiling` method displays past time after last `Helper.starProfiling()` method was called
+```typescript
+import Helper from 'sosise-core/build/Helper/Helper';
+
+Helper.startProfiling();
+await Helper.sleep(1000);
+Helper.stopProfiling();
+
+Helper.startProfiling();
+await Helper.sleep(2000);
+Helper.stopProfiling();
+```
+
+### Helper.paginateArray
+The `Helper.paginateArray` returns part of array on specific page and size
+```typescript
+import Helper from 'sosise-core/build/Helper/Helper';
+const data = [
+    { age: 1 },
+    { age: 2 },
+    { age: 3 },
+    { age: 4 },
+    { age: 5 },
+];
+const dataOnPage = Helper.paginateArray(data, 3, 2);
+```
+
+### Helper.assemblePagination
+The `Helper.assemblePagination` returns pagination object
+```typescript
+import Helper from 'sosise-core/build/Helper/Helper';
+const data = [
+    { age: 1 },
+    { age: 2 },
+    { age: 3 },
+    { age: 4 },
+    { age: 5 },
+];
+const pagination = Helper.assemblePagination(data, 1, 2);
 ```

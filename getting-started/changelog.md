@@ -1,3 +1,18 @@
+## 0.6.5 - 17 November, 2022
+### Sosise-Core version
+`0.8.11`
+
+### Changelog
+- Any `sosise-core` method now displays comment. Example: `Helper.storagePath()` - Displays: `Path to the storage with ending slash @return e.g. /tmp/myproject/storage/`
+- Method `Helper.pluckMany()` added, read more here: (documentation)[../documentation/helper.md]
+- Method `Helper.startProfiling()` added, read more here: (documentation)[../documentation/helper.md]
+- Method `Helper.stopProfiling()` added, read more here: (documentation)[../documentation/helper.md]
+- Method `Helper.paginateArray()` added, read more here: (documentation)[../documentation/helper.md]
+- Method `Helper.assemblePagination()` added, read more here: (documentation)[../documentation/helper.md]
+
+### How to upgrade to that version
+- Run `npm install sosise-core@latest` or `npm run update-sosise`
+
 ## 0.6.4 - 17 October, 2022
 ### Sosise-Core version
 `0.8.10`
