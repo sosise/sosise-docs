@@ -1,3 +1,14 @@
+## 0.6.6 - 23 February, 2022
+### Sosise-Core version
+`0.8.12`
+
+### Changelog
+- When you create a database migration now, it slightly changed. Timestamps like `created_at` and `updated_at` now tells to DB to set the date automatically.
+- Sosise/Sosise project: removed unused dependencies ; Spell errors fixed
+
+### How to upgrade to that version
+- Run `npm install sosise-core@latest` or `npm run update-sosise`
+
 ## 0.6.5 - 17 November, 2022
 ### Sosise-Core version
 `0.8.11`
