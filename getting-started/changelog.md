@@ -16,11 +16,11 @@
 
 ### Changelog
 - Any `sosise-core` method now displays comment. Example: `Helper.storagePath()` - Displays: `Path to the storage with ending slash @return e.g. /tmp/myproject/storage/`
-- Method `Helper.pluckMany()` added, read more here: [documentation](documentation/helper.md?id=helperpluckmany)
-- Method `Helper.startProfiling()` added, read more here: [documentation](documentation/helper.md?id=helperstartprofiling)
-- Method `Helper.stopProfiling()` added, read more here: [documentation](documentation/helper.md?id=helperstopprofiling)
-- Method `Helper.paginateArray()` added, read more here: [documentation](documentation/helper.md?id=helperpaginatearray)
-- Method `Helper.assemblePagination()` added, read more here: [documentation](documentation/helper.md?id=helperassemblepagination)
+- Method `Helper.pluckMany()` added, read more here: [documentation](documentation/helpers.md?id=helperpluckmany)
+- Method `Helper.startProfiling()` added, read more here: [documentation](documentation/helpers.md?id=helperstartprofiling)
+- Method `Helper.stopProfiling()` added, read more here: [documentation](documentation/helpers.md?id=helperstopprofiling)
+- Method `Helper.paginateArray()` added, read more here: [documentation](documentation/helpers.md?id=helperpaginatearray)
+- Method `Helper.assemblePagination()` added, read more here: [documentation](documentation/helpers.md?id=helperassemblepagination)
 
 ### How to upgrade to that version
 - Run `npm install sosise-core@latest` or `npm run update-sosise`
