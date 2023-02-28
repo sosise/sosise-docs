@@ -1,4 +1,4 @@
-## 0.6.6 - 23 February, 2022
+## 0.6.6 - 23 February, 2023
 ### Sosise-Core version
 `0.8.12`
 
