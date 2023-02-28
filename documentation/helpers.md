@@ -69,11 +69,21 @@ import Helper from 'sosise-core/build/Helper/Helper';
 const projectPath = Helper.projectPath();
 ```
 
+Returns:
+```
+/path/to/your/project/your-project-name/
+```
+
 ### Helper.storagePath
 The `Helper.storagePath` returns current storage path with ending slash
 ``` typescript
 import Helper from 'sosise-core/build/Helper/Helper';
 const storagePath = Helper.storagePath();
+```
+
+Returns:
+```
+/path/to/your/project/your-project-name/storage/
 ```
 
 ### Helper.pluckMany
@@ -82,6 +92,13 @@ The `Helper.storagePath` returns object or array with needed fields
 import Helper from 'sosise-core/build/Helper/Helper';
 const arrayOfObjectsWithNeededFields = Helper.pluckMany([{name: 'alex', age: 10}, {name: 'sharon', age: 11}], ['age']);
 const objectWithNeededFields = Helper.pluckMany({name: 'igor', age: 33, birthday: 'foobar'}, ['age', 'birthday']);
+```
+
+Returns:
+```
+[ { age: 10 }, { age: 11 } ]
+
+{ age: 33, birthday: 'foobar' }
 ```
 
 ### Helper.startProfiling
@@ -123,7 +140,12 @@ const data = [
     { age: 4 },
     { age: 5 },
 ];
-const dataOnPage = Helper.paginateArray(data, 3, 2);
+const dataOnPage = Helper.paginateArray(data, 1, 2);
+```
+
+Returns:
+```
+[ { age: 1 }, { age: 2 } ]
 ```
 
 ### Helper.assemblePagination
@@ -138,4 +160,9 @@ const data = [
     { age: 5 },
 ];
 const pagination = Helper.assemblePagination(data, 1, 2);
+```
+
+Returns:
+```
+{ page: 1, pageSize: 2, totalPages: 3, totalElements: 5 }
 ```
