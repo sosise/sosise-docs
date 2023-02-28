@@ -16,7 +16,7 @@
 
 ### Changelog
 - Any `sosise-core` method now displays comment. Example: `Helper.storagePath()` - Displays: `Path to the storage with ending slash @return e.g. /tmp/myproject/storage/`
-- Method `Helper.pluckMany()` added, read more here: (documentation)[../documentation/helper.md]
+- Method `Helper.pluckMany()` added, read more here: (documentation)[documentation/helper.md]
 - Method `Helper.startProfiling()` added, read more here: (documentation)[../documentation/helper.md]
 - Method `Helper.stopProfiling()` added, read more here: (documentation)[../documentation/helper.md]
 - Method `Helper.paginateArray()` added, read more here: (documentation)[../documentation/helper.md]
