@@ -8,6 +8,7 @@
 
 ### How to upgrade to that version
 - Run `npm install sosise-core@latest` or `npm run update-sosise`
+- After that run `npm remove colors mysql @types/mysql` (unneeded dependencies)
 
 ## 0.6.5 - 17 November, 2022
 ### Sosise-Core version
