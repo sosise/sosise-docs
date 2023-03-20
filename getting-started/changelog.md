@@ -1,3 +1,13 @@
+## 0.6.7 - 20 March, 2023
+### Sosise-Core version
+`0.8.13`
+
+### Changelog
+- Command registration bug fixed in sosise-core
+
+### How to upgrade to that version
+- Run `npm install sosise-core@latest` or `npm run update-sosise`
+
 ## 0.6.6 - 23 February, 2023
 ### Sosise-Core version
 `0.8.12`
