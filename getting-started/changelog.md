@@ -1,3 +1,16 @@
+## 0.6.8 - 13 April, 2023
+### Sosise-Core version
+`0.8.15`
+
+### Changelog
+- When a command starts a start file will now generated `COMMANDNAME-start`
+- When a command ends (without exceptions) a end file will now generated `COMMANDNAME-end`
+
+> You can use this functionality to monitor command execution, e.g. monitor the file age of `COMMANDNAME-end`
+
+### How to upgrade to that version
+- Run `npm install sosise-core@latest` or `npm run update-sosise`
+
 ## 0.6.7 - 20 March, 2023
 ### Sosise-Core version
 `0.8.13`
