@@ -3,7 +3,7 @@
 `0.8.16`
 
 ### Updates
-- Introduced cache support with three different drivers: `fs`, `memory`, and `redis`. Detailed information can be found in our [Cache Documentation](../documentation/cache).
+- Introduced cache support with three different drivers: `fs`, `memory`, and `redis`. Detailed information can be found in our [Cache Documentation](/documentation/cache).
 - Modified the Artisan ascii art. You can visualize the change by running `./artisan`.
 
 ### Upgrade Steps
