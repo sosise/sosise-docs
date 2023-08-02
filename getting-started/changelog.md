@@ -9,6 +9,8 @@
 ### Upgrade Steps
 - Copy `src/config/config.ts` from `https://raw.githubusercontent.com/sosise/sosise/0.7.0/src/config/cache.ts`
 - Add to your `.env` and `.env.example` and `.env.testing` new ENVs, you can take a look at `https://raw.githubusercontent.com/sosise/sosise/0.7.0/.env.example`
+- Create following directory `storage/cache`
+- Create `.gitignore` file in it with content from `https://raw.githubusercontent.com/sosise/sosise/0.7.0/storage/cache/.gitignore`
 - Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
 
 ## 0.6.8 - 13 April, 2023
