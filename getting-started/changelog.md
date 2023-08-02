@@ -1,6 +1,6 @@
 ## 0.7.0 - 2 August, 2023
 ### Accompanying Sosise-Core version
-`0.8.16`
+`0.8.17`
 
 ### Updates
 - Introduced cache support with three different drivers: `fs`, `memory`, and `redis`. Detailed information can be found in our [Cache Documentation](/documentation/cache).
