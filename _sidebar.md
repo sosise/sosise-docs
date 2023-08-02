@@ -12,7 +12,7 @@
     - [HTTP Client](documentation/http-client)
     - [HTTP Request](digging-deeper/http-request)
     - [HTTP Response](digging-deeper/http-response)
-    - [Helpers] (documentation/helpers)
+    - [Helpers](documentation/helpers)
     - [IOC](digging-deeper/ioc)
     - [Logging](documentation/logging)
     - [Mailer](documentation/mailer)
