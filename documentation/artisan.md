@@ -1,33 +1,38 @@
 # Artisan
+
 ## Introduction
 
-Artisan is the command-line interface. Artisan exists at the root of your application as the artisan script and provides several helpful commands that can assist you while you build your application. To view a list of all available Artisan commands, you may use the list command:
+Artisan is the command-line interface for Sosise applications. It provides a set of helpful commands that can assist you while building and managing your application. To view a list of all available Artisan commands.
 
 ```sh
 ./artisan
 ```
 
-Every command also includes a "help" screen which displays and describes the command's available arguments and options. To view a help screen, add --help option to the command:
+Each command also includes a "help" screen that displays and describes the command's available arguments and options. To view the help screen, add the `--help` option to the command:
 
 ```sh
 ./artisan make:controller --help
 ```
 
-## Writing Commands
-In addition to the commands provided with Artisan, you may build your custom commands. Commands are stored in the app/Console/Commands directory.
+## Writing Custom Commands
 
-## Generating Commands
-To create a new command, you may use the make:command Artisan command. This command will create a new command class in the app/Console/Commands directory.
+In addition to the built-in commands provided by Artisan, you can create your custom commands to perform specific tasks or automate actions. Custom commands are stored in the `app/Console/Commands` directory.
 
-> Please note that you `must` specify `Command` postfix when you are creating commands, otherwise the command will `not` be registered.
+## Generating Custom Commands
+
+To create a new custom command, you can use the `make:command` Artisan command. This command will generate a new command class in the `app/Console/Commands` directory.
+
+> Important: Make sure to specify the `Command` postfix when creating custom commands; otherwise, the command will not be registered properly.
+
 ```sh
 ./artisan make:command DoSomeExampleExportCommand
 ```
 
 ### Command Structure
-After generating your command, you should define appropriate values for the signature and description properties of the class. These properties will be used when displaying your command on the list screen. The handle method will be called when your command is executed. You may place your command logic in this method.
 
-Let's take a look at an example command.
+After generating your command, you should define the appropriate values for the `signature` and `description` properties of the class. These properties will be used when displaying your command on the list screen. The `handle` method will be called when your command is executed, and you can place your command logic in this method.
+
+Let's take a look at an example command:
 
 ```typescript
 import commander from 'commander';
@@ -45,7 +50,7 @@ export default class DoSomeExampleExportCommand extends BaseCommand {
     protected description: string = 'This is an example command';
 
     /**
-     * When command is executed prevent from double execution
+     * When the command is executed, prevent it from double execution
      */
     protected singleExecution: boolean = false;
 
@@ -64,7 +69,7 @@ export default class DoSomeExampleExportCommand extends BaseCommand {
      * Execute the console command
      */
     public async handle(cli: commander.Command): Promise<void> {
-        // When debug option is true
+        // Check if the debug option is provided
         if (cli.debug) {
             console.log('Debug option provided');
         }
@@ -74,11 +79,13 @@ export default class DoSomeExampleExportCommand extends BaseCommand {
 }
 ```
 
-> For greater code reuse, it is good practice to keep your console commands light and let them defer to application services to accomplish their tasks.
+> For better code reuse, it is a good practice to keep your console commands light and let them defer to application services to accomplish their tasks.
 
 ## Defining Input Expectations
+
 ### Options
-Options, like arguments, are another form of user input. Options are prefixed by two hyphens (--) when they are provided via the command line. There are two types of options: those that receive a value and those that don't. Options that don't receive a value serve as a boolean "switch". Let's take a look at an example of this type of option:
+
+Options, like arguments, are another form of user input. Options are prefixed by two hyphens (`--`) when provided via the command line. There are two types of options: those that receive a value and those that don't. Options that don't receive a value serve as a boolean "switch". Let's take a look at an example of this type of option:
 
 ```typescript
 /**
@@ -97,14 +104,15 @@ public async handle(cli: commander.Command): Promise<void> {
 }
 ```
 
-In this example, the --debug or -d switch may be specified when calling the Artisan command. If the --debug switch is passed, the value of the option will be `true`. Otherwise, the value will be `undefined`:
+In this example, the `--debug` or `-d` switch may be specified when calling the Artisan command. If the `--debug` switch is passed, the value of the option will be `true`. Otherwise, the value will be `undefined`:
 
 ```sh
 ./artisan example:command --debug
 ```
 
-### Options With Values
-Next, let's take a look at an option that expects a value. Example below:
+### Options with Values
+
+Next, let's take a look at an option that expects a value:
 
 ```typescript
 /**
@@ -123,14 +131,15 @@ public async handle(cli: commander.Command): Promise<void> {
 }
 ```
 
-In this example, the user may pass a value for the option like so. If the option is not specified when invoking the command, its value will be `undefined`.
+In this example, the user may pass a value for the option like this. If the option is not specified when invoking the command, its value will be `undefined`.
 
 ```sh
 ./artisan example:command --since 01.01.2021
 ```
 
-### Options with default values
-Next, let's take a look at an options that have default value. Example below:
+### Options with Default Values
+
+Next, let's take a look at options that have default values:
 
 ```typescript
 /**
@@ -155,10 +164,11 @@ public async handle(cli: commander.Command): Promise<void> {
 }
 ```
 
-In this example, if you don't pass options to the command default values will be taken `false`, `29.12.2020`, `%today-date%`
+In this example, if you don't pass options to the command, default values will be taken: `false`, `'29.12.2020'`, and today's date.
 
-### Required options
-Next, let's take a look at an `required` option. Example below:
+### Required Options
+
+Next, let's take a look at a required option:
 
 ```typescript
 /**
@@ -177,14 +187,17 @@ public async handle(cli: commander.Command): Promise<void> {
 }
 ```
 
-> Please note that an option is only then required when it's `required` property isset to true and it does not has default value
+> Please note that an option is only required when its `required` property is set to `true`, and it does not have a default value.
 
-## Preventing double execution of your commands
+## Preventing Double Execution of Your Commands
+
+To prevent a command from being executed more than once simultaneously, you can use the `singleExecution` property:
+
 ```typescript
 /**
- * When command is executed prevent from double execution
+ * When the command is executed, prevent it from double execution
  */
 protected singleExecution: boolean = true;
 ```
 
-In this example, you would not be able to run the command while the last command is running, just like that!
+In this example, you would not be able to run the command while the last command is still running.

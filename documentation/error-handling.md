@@ -1,14 +1,22 @@
 # Error Handling
+
 ## Introduction
-When you start a new Sosise project, error and exception handling is already configured for you. The `src/app/Exceptions/Handler.ts` class is where all exceptions thrown by your application are logged or/and rendered to the user. We'll dive deeper into this class throughout this documentation.
+
+In a Sosise project, error and exception handling is pre-configured for you. The `src/app/Exceptions/Handler.ts` class is responsible for logging and rendering all exceptions thrown by your application. This documentation will provide insights into this class and its functionalities.
 
 ## Writing Exceptions
-### Create using artisan
+
+### Creating an Exception using Artisan
+
+To create a new exception, you can use the following Artisan command:
+
 ```sh
-./artisan make:exception CustomerDoesNotExistsException
+./artisan make:exception CustomerDoesNotExistException
 ```
 
-Let's take a look at an example of an exception class.
+The generated exception class will extend the `Exception` class from `sosise-core/build/Exceptions/Exception`.
+
+Let's explore an example of an exception class:
 
 ```typescript
 import Exception from 'sosise-core/build/Exceptions/Exception';
@@ -16,7 +24,7 @@ import ExceptionResponse from 'sosise-core/build/Types/ExceptionResponse';
 
 export default class CustomerNotFoundException extends Exception {
 
-    // This variable is optional, you may remove it
+    // This variable is optional; you may remove it if not needed
     public exampleVariable: string;
 
     // HTTP Code of the response with this exception
@@ -25,10 +33,10 @@ export default class CustomerNotFoundException extends Exception {
     // Error code which is rendered in the response
     protected code = 3000;
 
-    // If set to false no exception will be sent to sentry
+    // If set to false, no exception will be sent to Sentry
     protected sendToSentry = true;
 
-    // In which logging channel should this exception be logged, see src/config/logging.ts
+    // In which logging channel should this exception be logged; see src/config/logging.ts
     protected loggingChannel = 'default';
 
     /**
@@ -58,22 +66,28 @@ export default class CustomerNotFoundException extends Exception {
 }
 ```
 
-## Exception codes
-Since HTTP code is not a unique "error" code you cannot tell applications that are using your REST-API what exactly happened and your human-readable error messages must not be used as a unique identifier, since they can change.
+## Exception Codes
 
-That's why you should use the `code` property of an exception and write down a table that describes what this code means. That allows your customers to be sure what exactly happened and decide what to show to the end customers.
+Since HTTP codes are not unique "error" codes, they cannot provide detailed information about the exact nature of the error. Using human-readable error messages as unique identifiers is also not recommended since they can change over time.
 
-> We are talking about `protected code = 3001;`
+To address this, you should use the `code` property of an exception and create a table that describes what each code means. This allows your customers to precisely identify the error and decide how to handle it in their applications.
 
-### Response code ranges
+For instance, you have used `protected code = 3001;` as an example in this documentation.
+
+## Response Code Ranges
+
+To maintain consistency in your application's error handling, consider using the following response code ranges:
+
 | Code Range | Description |
-| ----------- | ----------- |
-| 1000-1999 | You can use these codes for "good" responses |
-| 2000-2999 | Are reserved by a framework, and are used for Exceptions which framework can throw |
-| 3000-... | Feel free to use this range to display any error in your application |
+| ---------- | ----------- |
+| 1000-1999  | Use these codes for "good" responses |
+| 2000-2999  | Reserved by the framework for Exceptions that the framework can throw |
+| 3000-...   | Use this range for displaying application-specific errors |
 
-#### Examples
-Comes from controller
+## Examples
+
+Example of a response coming from the controller:
+
 ```json
 {
     "code": 1000,
@@ -82,7 +96,8 @@ Comes from controller
 }
 ```
 
-Comes from exception
+Example of a response coming from the exception:
+
 ```json
 {
     "code": 3001,
@@ -91,3 +106,5 @@ Comes from exception
     "data": null
 }
 ```
+
+Using meaningful error codes allows you to communicate precise information to your customers, making it easier for them to handle and respond to errors effectively.

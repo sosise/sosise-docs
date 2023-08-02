@@ -1,25 +1,22 @@
-# HTTP Session
-## Introduction
-Since HTTP driven applications are stateless, sessions provide a way to store information about the user across multiple requests. That user information is typically placed in a persistent store / backend that can be accessed from subsequent requests.
+# HTTP Session Management
 
-Sosise ships with a variety of session backends that are accessed through an expressive, unified API. Support for popular backends such as File, Memory, if you need more, please let me know.
+## Introduction
+In HTTP-driven applications, where requests and responses are stateless, sessions provide a way to store information about the user across multiple requests. Sessions are essential for maintaining user-specific data and allowing users to be recognized across interactions with the application.
+
+Sosise comes with a flexible and unified session API that supports various session backends. The session data is typically stored in a persistent store or backend that can be accessed and modified from subsequent requests.
 
 ## Configuration
-Your application's session configuration file is stored at `src/config/session.ts`. Be sure to review the options available to you in this file. By default, Sosise is configured to use the file session driver, which will work well for many applications.
+The session configuration file for your application is located at `src/config/session.ts`. This file allows you to define the session driver and configure its options. By default, Sosise is set up to use the file session driver, which works well for many applications. However, you can switch to other supported backends, such as Memory, or request additional backends if needed.
 
-> Please note that sessions are disabled by default, enable it in `src/config/session.ts`
+> Note: Sessions are disabled by default. Make sure to enable them in the `src/config/session.ts` file before using them in your application.
 
 ## Retrieving All Session Data
-If you would like to retrieve all the data in the session:
+To retrieve all the data stored in the session, access the `request.session` object. It contains the entire session data:
 
 ```typescript
 import { Request, Response, NextFunction } from 'express';
-import HttpResponse from 'sosise-core/build/Types/HttpResponse';
 
 export default class IndexController {
-    /**
-     * Example method
-     */
     public async index(request: Request, response: Response, next: NextFunction) {
         try {
             console.log(request.session);
@@ -30,8 +27,8 @@ export default class IndexController {
 }
 ```
 
-## Determining If An Item Exists In The Session
-To determine if an item is present in the session:
+## Checking If an Item Exists in the Session
+You can check if a specific item exists in the session using standard JavaScript syntax:
 
 ```typescript
 if (request.session['users']) {
@@ -39,8 +36,8 @@ if (request.session['users']) {
 }
 ```
 
-## Storing Data
-To store data in the session:
+## Storing Data in the Session
+To store data in the session, simply assign the data to the appropriate session key:
 
 ```typescript
 request.session['users'] = [
@@ -55,18 +52,23 @@ request.session['users'] = [
 ];
 ```
 
-## Deleting Data
-To remove a piece of data from the session:
+## Deleting Data from the Session
+If you want to remove a piece of data from the session, you can set it to `null`:
 
 ```typescript
 request.session['users'] = null;
 ```
 
-## Regenerating The Session ID
-Regenerating the session ID is often done in order to prevent malicious users from exploiting a session fixation attack on your application.
+## Regenerating the Session ID
+Regenerating the session ID is a useful security measure to prevent session fixation attacks on your application. You can do this by calling the `regenerate` method on the session object:
 
 ```typescript
 request.session.regenerate(() => {
     return response.send('Session was regenerated');
 });
 ```
+
+By regenerating the session ID, you invalidate the current session and create a new one. This helps prevent attackers from exploiting session vulnerabilities.
+
+## Conclusion
+Session management is crucial for maintaining stateful behavior in HTTP applications. With Sosise's session API and the various session backends, you can easily manage user-specific data and enhance the security and functionality of your web application. Make sure to choose the appropriate session driver and configure it according to your application's needs in the `src/config/session.ts` file.

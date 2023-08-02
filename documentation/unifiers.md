@@ -1,15 +1,16 @@
 # Unifiers
-## Introduction
-Unfiers provide a way to validate incoming request and map it to the class parameters (DTO). For example, a order creating middleware can be used to validate that customer id and shop was given. All unifiers are located in the `app/Unifiers` directory.
 
-## Defining Unifier
-To create a new unifier, use the `make:unifier` Artisan command:
+## Introduction
+Unifiers provide a convenient way to validate incoming requests and map them to class parameters or DTOs (Data Transfer Objects). For example, an order creation middleware can be used to validate that the required customer ID and shop information are provided in the request. Unifiers are located in the `app/Unifiers` directory.
+
+## Defining a Unifier
+To create a new unifier, you can use the `make:unifier` Artisan command:
 
 ```sh
 ./artisan make:unifier OrderCreatingUnifier
 ```
 
-Let's take a look at example below:
+Let's take a look at an example below:
 
 ```typescript
 import Validator from 'validatorjs';
@@ -48,7 +49,7 @@ export default class OrderCreatingUnifier {
             shop: ['required', 'string'],
         });
 
-        // If it fails throw exception
+        // If validation fails, throw an exception
         if (validator.fails()) {
             throw new ValidationException('Validation exception', (validator.errors.all() as any));
         }
@@ -64,10 +65,10 @@ export default class OrderCreatingUnifier {
 }
 ```
 
-> Please visit [validator website](https://github.com/mikeerickson/validatorjs) for full documentation.
+> For full documentation on available validation rules, visit [the validator.js website](https://github.com/mikeerickson/validatorjs).
 
 ## Usage
-Now let's see in an example how to use unifiers in `controller`:
+Now, let's see an example of how to use unifiers in a controller:
 
 ```typescript
 import { Request, Response, NextFunction } from 'express';
@@ -81,14 +82,14 @@ export default class IndexController {
     public async index(request: Request, response: Response, next: NextFunction) {
         try {
             // Instantiate unifier
-            // At this step request body is validated and mapped
+            // At this step, the request body is validated and mapped
             const unifier = new OrderCreatingUnifier(request.body);
 
             // Now we can use unifier params
             console.log(unifier.customerId);
             console.log(unifier.shop);
 
-            // Prepare http response
+            // Prepare HTTP response
             const httpResponse: HttpResponse = {
                 code: 1000,
                 message: 'Some example message',
@@ -103,3 +104,5 @@ export default class IndexController {
     }
 }
 ```
+
+Using unifiers in your controllers helps ensure that the incoming request data is properly validated and mapped to the relevant parameters before processing the request. This improves the security and reliability of your application by ensuring that only valid and expected data is used in the subsequent steps of request handling.

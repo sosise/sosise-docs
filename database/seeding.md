@@ -1,44 +1,43 @@
 # Database: Seeding
-## Introduction
-Sosise includes the ability to seed your database with test data using seed classes.
+## Overview
+Sosise provides a feature to populate your database with test data using seed classes. This can be immensely helpful in generating dummy data for testing or demonstration purposes.
 
-## Generating Seeds
-You may use the `make:seed` Artisan command to generate a database seed. The new seed will be placed in your `src/database/seeds` directory. Each seed filename contains a timestamp that allows Sosise to determine the order of seeding database:
+## Generating Seeders
+The `make:seed` Artisan command allows you to generate a new database seeder. This newly created seeder will be stored in the `src/database/seeds` directory. The seeder filename includes a timestamp, facilitating the sequencing of database seeding:
 
 ```sh
 ./artisan make:seed fill_customers_table
 ```
 
-> Since a seed is a typescript file, you will need to build your project `npm run build` after manipulating your seeds.
+> Note: A seeder is a TypeScript file. Therefore, it's necessary to build your project using `npm run build` after altering your seeders.
 
-## Seed Structure
-A seed class contains one method: `run`. This method is used to add new rows to the table. You can specify anything in this method to fill up your table or tables. When you have generated a seed there is already a example code to help you.
-
+## Seeder Structure
+Each seeder class contains a `run` method. This method is responsible for adding new rows to your tables. You have the flexibility to define any operation in this method to populate your tables. Each generated seeder provides example code to guide you.
 
 ```typescript
 import BaseSchema from 'sosise-core/build/Database/BaseSchema';
 import * as faker from 'faker';
 
 /**
- * If you need more information, see: http://knexjs.org/#Schema ; https://www.npmjs.com/package/faker
+ * For additional information, refer to: http://knexjs.org/#Schema ; https://www.npmjs.com/package/faker
  */
 export default class FillCustomersTable extends BaseSchema {
 
     /**
-     * Restrict running the seed only in a local environment (APP_ENV=local)
+     * Allows running the seeder only in a local environment (APP_ENV=local)
      */
     protected onlyInLocalEnvironment = false;
 
     /**
-     * Table name where data should be inserted in
+     * Specifies the table where the data should be inserted
      */
     protected tableName = 'customers';
 
     /**
-     * Run seed
+     * Executes the seeder
      */
     public async run(): Promise<void> {
-        // Prepare data to seed
+        // Prepare data for seeding
         const data: any = [];
 
         // Generate 100 rows
@@ -48,15 +47,16 @@ export default class FillCustomersTable extends BaseSchema {
             });
         }
 
-        // Insert to table
+        // Insert data into the table
         await this.dbConnection.table(this.tableName).insert(data);
     }
 }
 ```
 
-## Running Seeds
-To run all of your seeds, execute the migrate Artisan command:
+## Executing Seeders
+To execute all the available seeders, use the following command:
 
 ```sh
 ./artisan seed
 ```
+This command will initiate the process of data seeding according to the methods defined in your seeder classes.

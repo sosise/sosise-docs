@@ -1,6 +1,6 @@
 # Getting Started
 ## Introduction
-Almost every modern web application interacts with a database. Sosise makes interacting with databases extremely simple across a variety of supported databases using raw SQL, a fluent query builder. Express Framework Builder uses [knex](http://knexjs.org) as a library to work with databases. Knex.js (pronounced /kəˈnɛks/) is a "batteries included" SQL query builder for:
+Nearly all contemporary web applications engage with a database. Sosise streamlines this interaction across various supported databases using raw SQL and a fluent query builder. The Express Framework Builder employs the [Knex.js](http://knexjs.org) library for database operations. Knex.js, pronounced /kəˈnɛks/, is a comprehensive SQL query builder supporting the following databases:
 
 - `Postgres`
 - `MSSQL`
@@ -10,13 +10,13 @@ Almost every modern web application interacts with a database. Sosise makes inte
 - `Oracle`
 - `Amazon Redshift`
 
-> Please visit [knex website](http://knexjs.org) for full documentation.
+For complete documentation, kindly visit the [Knex.js website](http://knexjs.org).
 
 ## Configuration
-The configuration for Sosise database services is located in your application's `src/config/database.ts` configuration file. In this file, you may define all of your database connections, as well as specify which connection should be used by default. Most of the configuration options within this file are driven by the values of your application's environment variables. Examples for most of Sosise supported database systems are provided in this file.
+You can find the configuration for Sosise database services in your application's `src/config/database.ts` configuration file. This file allows you to define all your database connections and specify the default connection. The configuration options primarily depend on your application's environment variables. Examples for most of the Sosise-supported database systems are included in this file.
 
 ## Usage
-As an example we will take a look at a simple repository that is responsible for database interaction:
+We will illustrate database interaction using a simple repository example:
 
 ```typescript
 import Database from 'sosise-core/build/Database/Database';
@@ -48,24 +48,24 @@ export default class MyLocalDatabaseRepository {
 }
 ```
 
-> We will use this repository to explain more database queries, please consider this repository as an example, not more.
+Please view this repository as an example, serving as a foundation for further database query explanations.
 
 ## Select
-### First row
+### Single Row
 ```typescript
 const row = await this.dbClient
     .table('sometable')
     .first();
 ```
 
-### Multiple rows
+### Multiple Rows
 ```typescript
 const rows = await this.dbClient
     .table('sometable')
     .limit(100);
 ```
 
-### Specific fields
+### Specific Fields
 ```typescript
 const rows = await this.dbClient
     .table('sometable')
@@ -76,22 +76,22 @@ const rows = await this.dbClient
     ]);
 ```
 
-### OrderBy
+### Ordering
 ```typescript
 const rows = await this.dbClient
     .table('sometable')
     .orderBy('id', 'desc');
 ```
 
-### GroupBy
-#### Single field
+### Grouping
+#### By a Single Field
 ```typescript
 const rows = await this.dbClient
     .table('sometable')
     .groupBy('customer_id');
 ```
 
-#### Multiple fields
+#### By Multiple Fields
 ```typescript
 const rows = await this.dbClient
     .table('sometable')
@@ -99,7 +99,7 @@ const rows = await this.dbClient
     .groupBy('customer_id');
 ```
 
-### Where cases (only some are showed, please see knex website to see full documentation)
+### Where Clauses (See full documentation on the Knex.js website for more options)
 #### Equals
 ```typescript
 const rows = await this.dbClient
@@ -117,7 +117,7 @@ const rows = await this.dbClient
     ]);
 ```
 
-#### Braces
+#### Conditions
 ```typescript
 const rows = await this.dbClient
     .table('sometable')
@@ -127,15 +127,15 @@ const rows = await this.dbClient
     });
 ```
 
-### Joins (only some are showed, please see knex website to see full documentation)
-#### Inner join
+### Joins (See full documentation on the Knex.js website for more options)
+#### Inner Join
 ```typescript
 const rows = await this.dbClient
     .table('sometable')
     .innerJoin('customer', 'customer.id', '=', 'sometable.customer_id');
 ```
 
-#### Left join
+#### Left Join
 ```typescript
 const rows = await this.dbClient
     .table('sometable')
@@ -143,7 +143,7 @@ const rows = await this.dbClient
 ```
 
 ### Debug
-#### Get resulting query
+#### Retrieve Resulting Query
 ```typescript
 const rows = await this.dbClient
     .table('sometable')
@@ -154,7 +154,7 @@ const rows = await this.dbClient
     .toQuery();
 ```
 
-#### Get resulting SQL (without params)
+#### Retrieve Resulting SQL (without params)
 ```typescript
 const rows = await this.dbClient
     .table('sometable')
@@ -166,7 +166,7 @@ const rows = await this.dbClient
 ```
 
 ## Update
-### Update row in table
+### Update Specific Row
 ```typescript
 await this.dbClient
     .table('sometable')
@@ -174,7 +174,7 @@ await this.dbClient
     .update({ customer_id: 'field value comes here' });
 ```
 
-### Update all rows in table
+### Update All Rows
 ```typescript
 await this.dbClient
     .table('sometable')
@@ -182,7 +182,7 @@ await this.dbClient
 ```
 
 ## Insert
-### Insert single row
+### Insert a Single Row
 ```typescript
 await this.dbClient
     .table('sometable')
@@ -191,7 +191,7 @@ await this.dbClient
     ]);
 ```
 
-### Insert multiple rows
+### Insert Multiple Rows
 ```typescript
 await this.dbClient
     .table('sometable')
@@ -203,7 +203,7 @@ await this.dbClient
 ```
 
 ## Delete
-### Delete specific rows in table
+### Delete Specific Rows
 ```typescript
 await this.dbClient
     .table('sometable')
@@ -211,7 +211,7 @@ await this.dbClient
     .delete();
 ```
 
-### Delete all rows in table
+### Delete All Rows
 ```typescript
 await this.dbClient
     .table('sometable')

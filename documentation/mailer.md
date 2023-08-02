@@ -1,14 +1,22 @@
 # Mailer
+
 ## Introduction
-Sending email doesn't have to be complicated. Sosise provides a clean, simple email sending library.
 
-Sosise's mailer configuration options are stored in your `src/config/mailer.ts` configuration file. In this file, you will find SMTP connection configuration.
+Sending emails can be made easy with Sosise's clean and simple email sending library.
 
-> Sosise uses [Nodemailer](https://nodemailer.com/about/) library. Please refer to it for full documentation.
+## Configuration
 
-## Sending mail
+The mailer configuration options for Sosise are located in the `src/config/mailer.ts` configuration file. In this file, you will find the SMTP connection configuration.
+
+> Sosise uses [Nodemailer](https://nodemailer.com/about/) library. For a full documentation reference, please visit the Nodemailer documentation.
+
+## Sending Mail
+
+You can send emails using the `Mailer` class provided by Sosise. The `sendMail` method allows you to send plain text and HTML emails.
+
 ```typescript
 import Mailer from 'sosise-core/build/Mailer/Mailer';
+
 await Mailer.sendMail({
     from: "example@server.com",
     to: "billy@micr.com",
@@ -18,11 +26,15 @@ await Mailer.sendMail({
 });
 ```
 
-> Please refer to [Mail.Options](https://nodemailer.com/message/) to see a full list of all possible message options
+> For a full list of all possible message options, please refer to [Mail.Options](https://nodemailer.com/message/).
 
-## Sending mail with attachment
+## Sending Mail with Attachment
+
+You can also send emails with attachments by including the `attachments` property in the options.
+
 ```typescript
 import Mailer from 'sosise-core/build/Mailer/Mailer';
+
 await Mailer.sendMail({
     from: "example@server.com",
     to: "billy@micr.com",
@@ -37,12 +49,15 @@ await Mailer.sendMail({
 });
 ```
 
-> Please refer to [Attachments](https://nodemailer.com/message/attachments/) documentation to see all possible options how to attach files
+> For more information about attaching files, please refer to the [Attachments](https://nodemailer.com/message/attachments/) documentation.
 
-## Send fake emails
-Since `Sosise` uses `Nodemailer` there is a possibility to send fake emails, which can be used for development. Just set `dryrun` option in `src/config/mailer.ts` to `true`.
+## Send Fake Emails
 
-When you have activated this option, all additional information will be logged to terminal.
+Sosise, using Nodemailer, provides an option to send fake emails, which is useful during development and testing. To enable this feature, set the `dryrun` option in `src/config/mailer.ts` to `true`.
+
+When this option is active, emails won't actually be sent, but instead, additional information will be logged to the terminal.
+
+Example log output for a fake email:
 
 ```bash
 2021-07-27 13:25:39 INFO  Mailer dryrun mode is active... No emails would be sent 
@@ -58,3 +73,5 @@ When you have activated this option, all additional information will be logged t
 2021-07-27 13:25:40 INFO  Fake email was sent successfully { messageId: '<db335cd0-2f27-609b-da7c-5c576c34374e@server.com>' }
 2021-07-27 13:25:40 INFO  Fake email link generated, https://ethereal.email/message/YP-08y0yk1T9bJDdYP-09efY8noJPhrkAAAAAW7nbvG1shb3n.ZXZvoR8tw 
 ```
+
+Enabling this option allows you to test and verify your email functionality without actually sending emails to real recipients.

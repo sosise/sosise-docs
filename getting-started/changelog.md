@@ -1,63 +1,70 @@
+## 0.7.0 - 2 August, 2023
+### Accompanying Sosise-Core version
+`0.8.16`
+
+### Updates
+- Introduced cache support with three different drivers: `fs`, `memory`, and `redis`. Detailed information can be found in our [Cache Documentation](../documentation/cache).
+- Modified the Artisan ascii art. You can visualize the change by running `./artisan`.
+
+### Upgrade Steps
+- Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
+
 ## 0.6.8 - 13 April, 2023
-### Sosise-Core version
+### Accompanying Sosise-Core version
 `0.8.15`
 
-### Changelog
-- When a command starts a start file will now generated `COMMANDNAME-start`
-- When a command ends (without exceptions) a end file will now generated `COMMANDNAME-end`
+### Updates
+- Implemented new functionality that generates a start file, named `COMMANDNAME-start`, whenever a command begins.
+- Upon the successful termination of a command (without exceptions), an end file, named `COMMANDNAME-end`, is generated.
 
-> You can use this functionality to monitor command execution, e.g. monitor the file age of `COMMANDNAME-end`
+> This functionality can be used to monitor command execution, for example, by tracking the age of the `COMMANDNAME-end` file.
 
-### How to upgrade to that version
-- Run `npm install sosise-core@latest` or `npm run update-sosise`
+### Upgrade Steps
+- Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
 
 ## 0.6.7 - 20 March, 2023
-### Sosise-Core version
+### Accompanying Sosise-Core version
 `0.8.13`
 
-### Changelog
-- Command registration bug fixed in sosise-core
+### Updates
+- Fixed a bug in sosise-core related to command registration.
 
-### How to upgrade to that version
-- Run `npm install sosise-core@latest` or `npm run update-sosise`
+### Upgrade Steps
+- Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
 
 ## 0.6.6 - 23 February, 2023
-### Sosise-Core version
+### Accompanying Sosise-Core version
 `0.8.12`
 
-### Changelog
-- When you create a database migration now, it slightly changed. Timestamps like `created_at` and `updated_at` now tells to DB to set the date automatically.
-- Sosise/Sosise project: removed unused dependencies ; Spell errors fixed
+### Updates
+- Minor changes to the creation process of database migrations. Now, timestamps like `created_at` and `updated_at` will automatically be set by the database.
+- Removed unused dependencies and fixed spelling errors in the Sosise/Sosise project.
 
-### How to upgrade to that version
-- Run `npm install sosise-core@latest` or `npm run update-sosise`
-- After that run `npm remove colors mysql @types/mysql` (unneeded dependencies)
+### Upgrade Steps
+- Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
+- Run `npm remove colors mysql @types/mysql` to remove unneeded dependencies.
 
 ## 0.6.5 - 17 November, 2022
-### Sosise-Core version
+### Accompanying Sosise-Core version
 `0.8.11`
 
-### Changelog
-- Any `sosise-core` method now displays comment. Example: `Helper.storagePath()` - Displays: `Path to the storage with ending slash @return e.g. /tmp/myproject/storage/`
-- Method `Helper.pluckMany()` added, read more here: [documentation](documentation/helpers.md?id=helperpluckmany)
-- Method `Helper.startProfiling()` added, read more here: [documentation](documentation/helpers.md?id=helperstartprofiling)
-- Method `Helper.stopProfiling()` added, read more here: [documentation](documentation/helpers.md?id=helperstopprofiling)
-- Method `Helper.paginateArray()` added, read more here: [documentation](documentation/helpers.md?id=helperpaginatearray)
-- Method `Helper.assemblePagination()` added, read more here: [documentation](documentation/helpers.md?id=helperassemblepagination)
+### Updates
+- Added comments for all `sosise-core` methods, providing better contextual understanding. For example, `Helper.storagePath()` now displays: `Path to the storage with ending slash @return e.g. /tmp/myproject/storage/`.
+- Introduced several new methods to the `Helper` class. You can find more details in the [documentation](documentation/helpers.md?id=helperpluckmany).
 
-### How to upgrade to that version
-- Run `npm install sosise-core@latest` or `npm run update-sosise`
+### Upgrade Steps
+- Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
 
 ## 0.6.4 - 17 October, 2022
-### Sosise-Core version
+### Accompanying Sosise-Core version
 `0.8.10`
 
-### Changelog
-- Any command execution now creates a file in `storage/framework/%COMMANDNAME%` directory, it can be used for monitoring purposes. It helps you to be sure that a command has not frozen or does not takes too long to execute.
+### Updates
+- The execution of any command now creates a file in the `storage/framework/%COMMANDNAME%` directory. This functionality can be used for monitoring purposes, ensuring that a command has not frozen or is taking too long to execute.
 
-### How to upgrade to that version
-- Run `npm install sosise-core@latest` or `npm run update-sosise`
-- After that run any `command`, it will create a directory `storage/framework` with `.gitignore` file in it. Just push it to your repository
+### Upgrade Steps
+- Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
+- Run any `command`, which will create a `.gitignore` file within the `storage/framework` directory. You can then push this to your repository.
 
 ## 0.6.3 - 30 August, 2022
 ### Sosise-Core version
