@@ -1,3 +1,13 @@
+## 0.7.1 - 11 August, 2023
+### Accompanying Sosise-Core version
+`0.8.19`
+
+### Updates
+- HttpClient requestWithRetry timeout bug fixed 
+
+### Upgrade Steps
+- Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
+
 ## 0.7.1 - 4 August, 2023
 ### Accompanying Sosise-Core version
 `0.8.18`
