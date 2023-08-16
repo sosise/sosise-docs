@@ -1,6 +1,3 @@
-# ATTENTION!
-Please note that this framework is under hard development, please do not use it in your production environment, or if something breaks just open an issue in github, I will fix it then.
-
 # Sosise documentation
 ## Meet Sosise
 Sosise is a web application boilerplate/framework with an expressive, elegant syntax. A Sosise provides a structure and starting point for creating your application, allowing you to focus on creating something amazing while we sweat the details.
