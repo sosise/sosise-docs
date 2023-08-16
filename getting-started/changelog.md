@@ -1,3 +1,16 @@
+## 0.8.0 - 16 August, 2023 (Breaking change)
+### Accompanying Sosise-Core version
+`0.9.0`
+
+### Updates
+- When starting project, it now prints configuration information on console, e.g. which database connections are being used and do we have connection to them, etc...
+- Refactoring 
+
+### Upgrade Steps
+- If you are using sqlite3 database connection, please take a look at: `https://raw.githubusercontent.com/sosise/sosise/0.8.0/src/config/database.ts`. Default database file `./mydb.sqlite` changed to `process.cwd() + '/mydb.sqlite'`
+- `server.ts` file was changed, replace the content of your `server.ts` with `https://raw.githubusercontent.com/sosise/sosise/0.8.0/src/server.ts`
+- Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
+
 ## 0.7.1 - 11 August, 2023
 ### Accompanying Sosise-Core version
 `0.8.19`
@@ -16,6 +29,8 @@
 - HttpClient has been implemented [HttpClient Documentation](/documentation/http-client).
 
 ### Upgrade Steps
+- Copy `src/config/config.ts` from `https://raw.githubusercontent.com/sosise/sosise/0.7.1/src/config/cache.ts`
+- Add to your `.env` and `.env.example` and `.env.testing` new ENVs, you can take a look at `https://raw.githubusercontent.com/sosise/sosise/0.7.1/.env.example`
 - Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
 
 ## 0.7.0 - 2 August, 2023
