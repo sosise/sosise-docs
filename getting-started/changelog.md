@@ -3,8 +3,8 @@
 `0.9.0`
 
 ### Updates
-- When starting project, it now prints configuration information on console, e.g. which database connections are being used and do we have connection to them, etc...
-- Refactoring 
+- Upon project startup, configuration information is now displayed on the console. This includes details such as the database connections in use and their respective statuses.
+- Refactoring has been performed for improved code structure and organization.
 
 ### Upgrade Steps
 - If you are using sqlite3 database connection, please take a look at: `https://raw.githubusercontent.com/sosise/sosise/0.8.0/src/config/database.ts`. Default database file `./mydb.sqlite` changed to `process.cwd() + '/mydb.sqlite'`
