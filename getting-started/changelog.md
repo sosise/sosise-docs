@@ -1,6 +1,6 @@
 ## 0.8.1 - 17 August, 2023
 ### Accompanying Sosise-Core version
-`0.9.1`
+`0.9.2`
 
 ### Updates
 - HttpClient timeout bug fix
