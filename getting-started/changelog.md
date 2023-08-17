@@ -1,3 +1,13 @@
+## 0.8.1 - 17 August, 2023
+### Accompanying Sosise-Core version
+`0.9.1`
+
+### Updates
+- HttpClient timeout bug fix
+
+### Upgrade Steps
+- Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
+
 ## 0.8.0 - 16 August, 2023 (Breaking change)
 ### Accompanying Sosise-Core version
 `0.9.0`
