@@ -1,3 +1,13 @@
+## 0.8.2 - 6 September, 2023
+### Accompanying Sosise-Core version
+`0.9.3`
+
+### Updates
+- `Server.ts` has been modified to remove the `*/*` type acceptance in body-parser because it was causing issues with using Multer to upload files.
+
+### Upgrade Steps
+- Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
+
 ## 0.8.1 - 17 August, 2023
 ### Accompanying Sosise-Core version
 `0.9.2`
