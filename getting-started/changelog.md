@@ -1,3 +1,13 @@
+## 0.8.3 - 11 September, 2023
+### Accompanying Sosise-Core version
+`0.9.4`
+
+### Updates
+- The ./artisan queue:accelerate command has been added. It is necessary to expedite the retry of delayed jobs.
+
+### Upgrade Steps
+- Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
+
 ## 0.8.2 - 6 September, 2023
 ### Accompanying Sosise-Core version
 `0.9.3`
