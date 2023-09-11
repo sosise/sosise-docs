@@ -59,7 +59,7 @@
 - HttpClient has been implemented [HttpClient Documentation](/documentation/http-client).
 
 ### Upgrade Steps
-- Copy `src/config/config.ts` from `https://raw.githubusercontent.com/sosise/sosise/0.7.1/src/config/cache.ts`
+- Copy `src/config/cache.ts` from `https://raw.githubusercontent.com/sosise/sosise/0.7.1/src/config/cache.ts`
 - Add to your `.env` and `.env.example` and `.env.testing` new ENVs, you can take a look at `https://raw.githubusercontent.com/sosise/sosise/0.7.1/.env.example`
 - Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
 
@@ -72,7 +72,7 @@
 - Modified the Artisan ascii art. You can visualize the change by running `./artisan`.
 
 ### Upgrade Steps
-- Copy `src/config/config.ts` from `https://raw.githubusercontent.com/sosise/sosise/0.7.0/src/config/cache.ts`
+- Copy `src/config/cache.ts` from `https://raw.githubusercontent.com/sosise/sosise/0.7.0/src/config/cache.ts`
 - Add to your `.env` and `.env.example` and `.env.testing` new ENVs, you can take a look at `https://raw.githubusercontent.com/sosise/sosise/0.7.0/.env.example`
 - Create following directory `storage/cache`
 - Create `.gitignore` file in it with content from `https://raw.githubusercontent.com/sosise/sosise/0.7.0/storage/cache/.gitignore`
