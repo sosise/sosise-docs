@@ -1,3 +1,13 @@
+## 0.8.4 - 11 September, 2023
+### Accompanying Sosise-Core version
+`0.9.6`
+
+### Updates
+- The ./artisan queue:accelerate command has been fixed
+
+### Upgrade Steps
+- Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
+
 ## 0.8.3 - 11 September, 2023
 ### Accompanying Sosise-Core version
 `0.9.4`
