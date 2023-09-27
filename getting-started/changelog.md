@@ -1,3 +1,13 @@
+## 0.8.5 - 27 September, 2023
+### Accompanying Sosise-Core version
+`0.9.7`
+
+### Updates
+- Helper.assemblePagination() method has been fixed, it now returns numbers instead of strings
+
+### Upgrade Steps
+- Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
+
 ## 0.8.4 - 11 September, 2023
 ### Accompanying Sosise-Core version
 `0.9.6`
