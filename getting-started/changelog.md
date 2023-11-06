@@ -5,7 +5,7 @@
 ### Updates
 - HttpClient added configurable behavior on specific HTTP Response Status Codes
 - HttpClient added configurable default exception, to avoid try / catch every time in the repositories
-- See more at https://sosise.github.io/sosise-docs/#/documentation/http-client?id=HttpClientRequestConfig
+- See more at https://sosise.github.io/sosise-docs/#/documentation/http-client?id=httpclientrequestconfig
 
 ### Upgrade Steps
 - Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
