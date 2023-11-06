@@ -31,7 +31,7 @@ The HttpClient provides the `request` method to send HTTP requests.
 
 ## Syntax
 ```typescript
-request(config: AxiosRequestConfig): Promise<AxiosResponse>
+request(config: HttpClientRequestConfig): Promise<AxiosResponse>
 ```
 ## Example
 ```typescript
@@ -50,14 +50,14 @@ try {
     console.error(error);
 }
 ```
-The `request` method accepts an `AxiosRequestConfig` object and returns a Promise that resolves to the response.
+The `request` method accepts an `HttpClientRequestConfig` object and returns a Promise that resolves to the response.
 
 # Request with Retry
 For scenarios where a network request might fail due to temporary issues (like network flakiness), the HttpClient provides the `requestWithRetry` method that automatically retries the request if it fails.
 
 ## Syntax
 ```typescript
-requestWithRetry(config: AxiosRequestConfig, retryConfig: HttpClientRetryConfig): Promise<AxiosResponse>
+requestWithRetry(config: HttpClientRequestConfig, retryConfig: HttpClientRetryConfig): Promise<AxiosResponse>
 ```
 ## Example
 ```typescript
@@ -79,6 +79,88 @@ try {
 }
 ```
 In the above code, if the request fails, it will be retried linearly every 2 seconds, up to a maximum of 3 times. If all retries fail, the promise is rejected with the encountered error.
+
+# HttpClientRequestConfig
+This interface is used to configure the request in the `request` and `requestWithRetry` methods.
+```typescript
+interface HttpClientRequestConfig extends AxiosRequestConfig {
+    returnInCaseOfStatusCodes?: {
+        [key: number]: any;
+    };
+    defaultException?: new (message: string, httpCode: number, data: any) => Exception;
+}
+```
+
+The `returnInCaseOfStatusCodes` specifies the behavior what should be returned in case of any HTTP Codes
+
+The `defaultException` specifies which exception should be thrown in case of exception.
+
+## Example
+```typescript
+const response = await httpClient.request({
+    url: '/users',
+    method: 'get',
+    params: {
+        id: 13,
+        name: 'Max',
+    },
+    // In case of 404 error, null will be returned as response.data
+    returnInCaseOfStatusCodes: {
+        404: null
+    },
+    // In case of any other exception CartApiException will be thrown
+    defaultException: CartApiException,
+});
+```
+
+> Please note that `defaultException` should have following `constructor`:
+> ```typescript
+> (message: string, httpCode: number, data: any)
+> ```
+> Like
+> ```typescript
+> import Exception from 'sosise-core/build/Exceptions/Exception';
+> import ExceptionResponse from 'sosise-core/build/Types/ExceptionResponse';
+> 
+> export default class CartApiException extends Exception {
+>     // Data
+>     protected data: any;
+> 
+>     // HTTP Code of the response with this exception
+>     protected httpCode: number;
+> 
+>     // Error code which is rendered in the response
+>     protected code = 8888;
+> 
+>     // If set to false no exception will be sent to sentry
+>     protected sendToSentry = true;
+> 
+>     // In which logging channel should this exception be logged, see src/config/logging.ts
+>     protected loggingChannel = 'default';
+> 
+>     /**
+>      * Constructor
+>      */
+>     constructor(message: string, httpCode: number, data: any) {
+>         super(message);
+>         this.httpCode = httpCode;
+>         this.data = data;
+>     }
+> 
+>     /**
+>      * Handle exception
+>      */
+>     public handle(exception: this): ExceptionResponse {
+>         const response: ExceptionResponse = {
+>             code: exception.code,
+>             httpCode: exception.httpCode,
+>             message: exception.message,
+>             data: exception.data
+>         };
+>         return response;
+>     }
+> }
+> ```
 
 # HttpClientRetryConfig
 This interface is used to configure retry behavior in the `requestWithRetry` method.

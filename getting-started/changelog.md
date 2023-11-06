@@ -1,3 +1,15 @@
+## 0.8.6 - 6 November, 2023
+### Accompanying Sosise-Core version
+`0.9.8`
+
+### Updates
+- HttpClient added configurable behavior on specific HTTP Response Status Codes
+- HttpClient added configurable default exception, to avoid try / catch every time in the repositories
+- See more at https://sosise.github.io/sosise-docs/#/documentation/http-client?id=HttpClientRequestConfig
+
+### Upgrade Steps
+- Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
+
 ## 0.8.5 - 27 September, 2023
 ### Accompanying Sosise-Core version
 `0.9.7`
