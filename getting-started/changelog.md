@@ -1,3 +1,14 @@
+## 0.8.7 - 5 March, 2024
+### Accompanying Sosise-Core version
+`0.9.9`
+
+### Updates
+- HttpClient added `keepAlive` and `keepAliveMsecs` config options when instantiating Http client
+  This is necessary if you are making multiple HTTP requests and intend to reuse the connections.
+
+### Upgrade Steps
+- Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
+
 ## 0.8.6 - 6 November, 2023
 ### Accompanying Sosise-Core version
 `0.9.8`
