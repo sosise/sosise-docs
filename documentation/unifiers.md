@@ -252,29 +252,49 @@ Allows for custom validation logic defined by the user. The user-provided functi
 ### Nested Object Validation
 
 ```typescript
-validator.field('user').validateObject(userValidator => {
-    userValidator.field('firstName').required().shouldBeString();
-    userValidator.field('lastName').required().shouldBeString();
-});
+validator
+    .field('user')
+    .validateObject(userValidator => {
+        userValidator
+            .field('firstName')
+            .required()
+            .shouldBeString();
+        
+        userValidator
+            .field('lastName')
+            .required()
+            .shouldBeString();
+    });
 ```
 
 ### Array of Objects Validation
 
 ```typescript
-validator.field('tags').validateArrayOfObjects(tagValidator => {
-    tagValidator.field('id').shouldBeNumber();
-    tagValidator.field('name').shouldBeString();
-});
+validator
+    .field('tags')
+        .validateArrayOfObjects(tagValidator => {
+            tagValidator
+                .field('id')
+                .shouldBeNumber();
+            
+            tagValidator
+                .field('name')
+                .shouldBeString();
+        });
 ```
 
 ### Custom Validation
 ```typescript
-validator.field('user').required().shouldBeObject().customValidation((value: any) => {
-    if (value.mobile === null) {
-        return false;
-    }
-    return true;
-}, 'Custom error message!!!');
+validator
+    .field('user')
+    .required()
+    .shouldBeObject()
+    .customValidation((value: any) => {
+        if (value.mobile === null) {
+            return false;
+        }
+        return true;
+    }, 'Custom error message!!!');
 ```
 
 ### Custom Error Messages
