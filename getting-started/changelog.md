@@ -1,3 +1,17 @@
+## 0.8.8 - 20 March, 2024 (Breaking change)
+### Accompanying Sosise-Core version
+`0.10.0`
+
+### Updates
+- Validatorjs removed
+- Implemented self written `validator` in sosise-core.
+- See more at https://sosise.github.io/sosise-docs/#/documentation/unifiers
+
+### Upgrade Steps
+- Execute `npm remove validatorjs`.
+- Execute `npm remove @types/validatorjs`.
+- Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
+
 ## 0.8.7 - 5 March, 2024
 ### Accompanying Sosise-Core version
 `0.9.9`
