@@ -1,5 +1,7 @@
 # Getting Started
+
 ## Introduction
+
 Nearly all contemporary web applications engage with a database. Sosise streamlines this interaction across various supported databases using raw SQL and a fluent query builder. The Express Framework Builder employs the [Knex.js](http://knexjs.org) library for database operations. Knex.js, pronounced /kəˈnɛks/, is a comprehensive SQL query builder supporting the following databases:
 
 - `Postgres`
@@ -13,9 +15,11 @@ Nearly all contemporary web applications engage with a database. Sosise streamli
 For complete documentation, kindly visit the [Knex.js website](http://knexjs.org).
 
 ## Configuration
+
 You can find the configuration for Sosise database services in your application's `src/config/database.ts` configuration file. This file allows you to define all your database connections and specify the default connection. The configuration options primarily depend on your application's environment variables. Examples for most of the Sosise-supported database systems are included in this file.
 
 ## Usage
+
 We will illustrate database interaction using a simple repository example:
 
 ```typescript
@@ -51,7 +55,9 @@ export default class MyLocalDatabaseRepository {
 Please view this repository as an example, serving as a foundation for further database query explanations.
 
 ## Select
+
 ### Single Row
+
 ```typescript
 const row = await this.dbClient
     .table('sometable')
@@ -59,6 +65,7 @@ const row = await this.dbClient
 ```
 
 ### Multiple Rows
+
 ```typescript
 const rows = await this.dbClient
     .table('sometable')
@@ -66,6 +73,7 @@ const rows = await this.dbClient
 ```
 
 ### Specific Fields
+
 ```typescript
 const rows = await this.dbClient
     .table('sometable')
@@ -77,6 +85,7 @@ const rows = await this.dbClient
 ```
 
 ### Ordering
+
 ```typescript
 const rows = await this.dbClient
     .table('sometable')
@@ -84,7 +93,9 @@ const rows = await this.dbClient
 ```
 
 ### Grouping
+
 #### By a Single Field
+
 ```typescript
 const rows = await this.dbClient
     .table('sometable')
@@ -92,81 +103,92 @@ const rows = await this.dbClient
 ```
 
 #### By Multiple Fields
+
 ```typescript
 const rows = await this.dbClient
     .table('sometable')
-    .groupBy('name')
-    .groupBy('customer_id');
+    .groupBy(['name', 'customer_id']);
 ```
 
-### Where Clauses (See full documentation on the Knex.js website for more options)
+### Where Clauses
+
 #### Equals
+
 ```typescript
 const rows = await this.dbClient
     .table('sometable')
-    .where('customer_id', '=', 13);
+    .where('customer_id', 13);
 ```
 
 #### Between
+
 ```typescript
 const rows = await this.dbClient
     .table('sometable')
-    .whereBetween('created_at', [
-        '2020-01-01',
-        '2020-01-10'
-    ]);
+    .whereBetween('created_at', ['2020-01-01', '2020-01-10']);
 ```
 
 #### Conditions
+
 ```typescript
 const rows = await this.dbClient
     .table('sometable')
     .where(function () {
-        this.orWhere('customer_id', '=', 1);
-        this.orWhere('customer_id', '=', 2);
+        this.orWhere('customer_id', 1);
+        this.orWhere('customer_id', 2);
     });
 ```
 
-### Joins (See full documentation on the Knex.js website for more options)
+### Joins
+
 #### Inner Join
+
 ```typescript
 const rows = await this.dbClient
     .table('sometable')
-    .innerJoin('customer', 'customer.id', '=', 'sometable.customer_id');
+    .innerJoin('customer', 'customer.id', 'sometable.customer_id');
 ```
 
 #### Left Join
+
 ```typescript
 const rows = await this.dbClient
     .table('sometable')
-    .leftJoin('customer', 'customer.id', '=', 'sometable.customer_id');
+    .leftJoin('customer', 'customer.id', 'sometable.customer_id');
 ```
 
 ### Debug
+
 #### Retrieve Resulting Query
+
 ```typescript
-const rows = await this.dbClient
+const query = this.dbClient
     .table('sometable')
     .where(function () {
-        this.orWhere('customer_id', '=', 1);
-        this.orWhere('customer_id', '=', 2);
+        this.orWhere('customer_id', 1);
+        this.orWhere('customer_id', 2);
     })
     .toQuery();
+console.log(query);
 ```
 
 #### Retrieve Resulting SQL (without params)
+
 ```typescript
-const rows = await this.dbClient
+const sql = this.dbClient
     .table('sometable')
     .where(function () {
-        this.orWhere('customer_id', '=', 1);
-        this.orWhere('customer_id', '=', 2);
+        this.orWhere('customer_id', 1);
+        this.orWhere('customer_id', 2);
     })
     .toSQL();
+console.log(sql);
 ```
 
 ## Update
+
 ### Update Specific Row
+
 ```typescript
 await this.dbClient
     .table('sometable')
@@ -175,6 +197,7 @@ await this.dbClient
 ```
 
 ### Update All Rows
+
 ```typescript
 await this.dbClient
     .table('sometable')
@@ -182,16 +205,20 @@ await this.dbClient
 ```
 
 ## Insert
+
 ### Insert a Single Row
+
 ```typescript
-await this.dbClient
+const insertedRow = await this.dbClient
     .table('sometable')
-    .insert([
-        { customer_id: 1 }
-    ]);
+    .insert({ customer_id: 1 })
+    .returning('id');
+
+console.log(insertedRow[0]);
 ```
 
 ### Insert Multiple Rows
+
 ```typescript
 await this.dbClient
     .table('sometable')
@@ -203,7 +230,9 @@ await this.dbClient
 ```
 
 ## Delete
+
 ### Delete Specific Rows
+
 ```typescript
 await this.dbClient
     .table('sometable')
@@ -212,8 +241,16 @@ await this.dbClient
 ```
 
 ### Delete All Rows
+
 ```typescript
 await this.dbClient
     .table('sometable')
     .delete();
+```
+
+### Using Raw Queries
+
+```typescript
+const rawQuery = await this.dbClient.raw('SELECT * FROM sometable WHERE customer_id = ?', [1]);
+console.log(rawQuery.rows);
 ```

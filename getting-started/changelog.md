@@ -1,3 +1,25 @@
+## 0.8.9 - 06 August, 2024
+### Accompanying Sosise-Core version
+`0.10.1`
+
+### Updates
+- Removed unused parameters from `.env.example` and `.env.testing`
+- Updated `Dockerfile` to use the latest Alpine version and removed unused packages
+- Refactored `src/config/database.ts` (uncommented important parameters)
+- Updated `HttpRepository` template to use Sosise's `HttpClient`. Example: `./artisan make:repository FooRepository -h`
+- Refactored `IOC` to allow usage like:
+```typescript
+const service = IOC.make(CustomerService)
+```
+instead of:
+```typescript
+const service = IOC.make(CustomerService) as CustomerService
+```
+- Updated documentation. See more at https://sosise.github.io/sosise-docs/#/database/getting-started
+
+### Upgrade Steps
+- Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
+
 ## 0.8.8 - 20 March, 2024 (Breaking change)
 ### Accompanying Sosise-Core version
 `0.10.0`

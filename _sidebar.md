@@ -22,7 +22,6 @@
     - [Sentry](documentation/sentry)
     - [Session](documentation/session)
     - [Unifiers](documentation/unifiers)
-    - [Validation](documentation/validation)
 - Security
     - [Hashing](security/hashing)
 - Database
