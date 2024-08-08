@@ -21,7 +21,7 @@ You can access the logging service by importing and using the `LoggerService` pr
 ```typescript
 import IOC from 'sosise-core/build/ServiceProviders/IOC';
 
-const logger = IOC.make(LoggerService);
+const logger = IOC.make(LoggerService) as LoggerService;
 logger.info('Hello world!');
 logger.critical('Foo', { bar: 'You can also pass optional arrays or objects as the second parameter' });
 ```
@@ -45,7 +45,7 @@ You can specify the channel when logging a message.
 ```typescript
 import IOC from 'sosise-core/build/ServiceProviders/IOC';
 
-const logger = IOC.make(LoggerService);
+const logger = IOC.make(LoggerService) as LoggerService;
 logger.info('Hello world!', null, 'specialchannel');
 ```
 

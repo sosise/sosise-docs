@@ -36,7 +36,7 @@ const iocConfig = {
      * YourServiceName: () => new YourServiceName()
      *
      * How to use:
-     * const logger = IOC.makeSingleton(LoggerService);
+     * const logger = IOC.makeSingleton(LoggerService) as LoggerService;
      */
     singletons: {
     },
@@ -48,7 +48,7 @@ const iocConfig = {
      * YourServiceName: () => new YourServiceName()
      *
      * How to use:
-     * const logger = IOC.make(LoggerService);
+     * const logger = IOC.make(LoggerService) as LoggerService;
      */
     nonSingletons: {
         CustomerService: () => new CustomerService(

@@ -1,4 +1,22 @@
-## 0.8.9 - 06 August, 2024
+## 0.8.10 - 08 August, 2024 (Breaking change)
+### Accompanying Sosise-Core version
+`0.11.0`
+
+### Breaking changes
+- Knex was updated, please take a look at your requests to database and how you get the `inserted id`. You now have to use `.returning('...')`. Read more at: https://knexjs.org/guide/query-builder.html#returning . This change only touches only PostgreSQL, MSSQL, SQLite, and Oracle databases. 
+
+### Updates
+- Reverted `IOC` to it's previous codes, since it was not finished yet, will refactor it later.
+- Sosise-Core knex, mssql, sqlite3 drivers updated
+- Sosise-Core pg driver installed
+- Sosise now supports PostgreSQL and CockroachDB out of the box
+
+### Upgrade Steps
+- npm install knex@^3.1.0
+- npm install pg@^8.12.0
+- Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
+
+## 0.8.9 - 06 August, 2024 (Broken version)
 ### Accompanying Sosise-Core version
 `0.10.1`
 
