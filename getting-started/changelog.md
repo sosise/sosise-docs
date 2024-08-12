@@ -1,3 +1,13 @@
+## 0.8.11 - 12 August, 2024
+### Accompanying Sosise-Core version
+`0.11.1`
+
+### Updates
+- CockroachDB `./artisan migrate:fresh` fixed
+
+### Upgrade Steps
+- Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
+
 ## 0.8.10 - 08 August, 2024 (Breaking change)
 ### Accompanying Sosise-Core version
 `0.11.0`
@@ -12,8 +22,8 @@
 - Sosise now supports PostgreSQL and CockroachDB out of the box
 
 ### Upgrade Steps
-- npm install knex@^3.1.0
-- npm install pg@^8.12.0
+- Execute `npm install knex@^3.1.0`
+- Execute `npm install pg@^8.12.0`
 - Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
 
 ## 0.8.9 - 06 August, 2024 (Broken version)
