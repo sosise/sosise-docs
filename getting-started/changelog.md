@@ -1,3 +1,15 @@
+## 0.8.12 - 11 September, 2024
+### Accompanying Sosise-Core version
+`0.11.2`
+
+### Updates
+- **Cache Improvements**: Added `getMany` method for Redis, allowing the retrieval of multiple cache items by their keys. This method is only applicable to the Redis cache driver.
+- **Redis Client Updated**: Upgraded Redis client to version `4.7.0`.
+- **Package Cleanup**: Removed unused packages for optimization.
+
+### Upgrade Steps
+- Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
+
 ## 0.8.11 - 12 August, 2024
 ### Accompanying Sosise-Core version
 `0.11.1`
