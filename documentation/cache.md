@@ -179,6 +179,25 @@ const customers = await cacheService.getMany(['customer-1', 'customer-2', 'custo
 console.log(customers);  // Outputs an array of the cached data
 ```
 
+### Saving Multiple Items in Redis Cache (Redis Only)
+The `putMany` method allows you to save multiple key-value pairs into the Redis cache simultaneously. This method is **only applicable** to the Redis cache driver.
+
+```typescript
+putMany(data: { key: string, value: any }[], ttlInSeconds?: number): Promise<void>
+```
+
+#### Example:
+```typescript
+const customers = [
+    { key: 'customer-1', value: { id: 1, name: 'John' } },
+    { key: 'customer-2', value: { id: 2, name: 'Jane' } },
+    { key: 'customer-3', value: { id: 3, name: 'Doe' } }
+];
+
+// Save multiple items to Redis with a TTL of 1 hour (3600 seconds)
+await cacheService.putMany(customers, 3600);
+```
+
 ---
 
 ## Filesystem-Specific Methods
