@@ -1,3 +1,13 @@
+## 0.8.14 - 24 September, 2024
+### Accompanying Sosise-Core version
+`0.11.4`
+
+### Updates
+- **Cache Improvements**: Added `putMany` method for Redis, allowing the storing of multiple cache items by their keys. This method is only applicable to the Redis cache driver.
+
+### Upgrade Steps
+- Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
+
 ## 0.8.13 - 24 September, 2024
 ### Accompanying Sosise-Core version
 `0.11.3`
