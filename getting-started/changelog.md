@@ -1,3 +1,14 @@
+## 0.8.13 - 24 September, 2024
+### Accompanying Sosise-Core version
+`0.11.3`
+
+### Updates
+- **HttpClient**: Added a new `requestDoNotRetryForHttpCodes` option to `HttpClientRetryConfig`. This allows the configuration of HTTP status codes that should not trigger retries, providing more granular control over the retry logic in requests.
+- **HttpClient**: The exception message now includes the HTTP method and URL where the exception occurred.
+
+### Upgrade Steps
+- Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
+
 ## 0.8.12 - 11 September, 2024
 ### Accompanying Sosise-Core version
 `0.11.2`
