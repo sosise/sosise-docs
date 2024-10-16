@@ -1,3 +1,17 @@
+## 0.8.15 - 24 September, 2024
+### Accompanying Sosise-Core version
+`0.11.5`
+
+### Updates
+- **HttpClient Fixes**: The `requestWithRetry` method now works correctly when a timeout occurs.
+- **HttpClient Config Enhancements**: Added the following configurations to `HttpClientConfig`:
+    - `debug` option allows you to enable or disable debug information.
+    - `loggingChannel` can be set to specify the channel for debug information.
+- **Docker Compose Update**: Updated `docker-compose.yml` for improved compatibility and configuration.
+
+### Upgrade Steps
+- Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
+
 ## 0.8.14 - 24 September, 2024
 ### Accompanying Sosise-Core version
 `0.11.4`
