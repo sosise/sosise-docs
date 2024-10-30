@@ -1,3 +1,14 @@
+## 0.8.16 - 30 October, 2024
+### Accompanying Sosise-Core version
+`0.11.7`
+
+### Updates
+- **Redis Client Reconnection Support:** Enhanced Redis client with reconnection support, ensuring stability during unexpected disconnections.
+- **Docker Build Support for Apple Silicon:** Updated build-docker-image.sh script to support building Docker images on Apple Silicon processors (M1/2/3/...).
+
+### Upgrade Steps
+- Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
+
 ## 0.8.15 - 24 September, 2024
 ### Accompanying Sosise-Core version
 `0.11.5`
