@@ -1,4 +1,5 @@
 ## 0.8.16 - 30 October, 2024
+
 ### Accompanying Sosise-Core version
 `0.11.7`
 
