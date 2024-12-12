@@ -22,59 +22,66 @@
 1. **Add Configuration Files**:
    - Create `eslint.config.mjs`:
      ```javascript
-     import globals from "globals";
-     import pluginJs from "@eslint/js";
-     import tseslint from "typescript-eslint";
-     import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
+    import globals from "globals";
+    import pluginJs from "@eslint/js";
+    import tseslint from "typescript-eslint";
+    import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
+    import unusedImports from "eslint-plugin-unused-imports";
 
-     export default [
-         { files: ["**/*.{js,mjs,cjs,ts}"] },
-         { languageOptions: { globals: globals.node } },
-         pluginJs.configs.recommended,
-         ...tseslint.configs.recommended,
-         eslintPluginPrettierRecommended,
-         {
-             rules: {
-                 "@typescript-eslint/no-explicit-any": "off"
-             },
-         },
-         {
-             ignores: [
-                 "build/**",
-                 "node_modules/**",
-                 "doc/**",
-                 ".history/**",
-                 ".vscode/**",
-                 "eslint.config.mjs",
-                 "package-lock.json",
-                 "tsconfig.json",
-                 "package.json"
-             ],
-         }
-     ];
+    export default [
+        { files: ["**/*.{js,mjs,cjs,ts}"] },
+        { languageOptions: { globals: globals.node } },
+        pluginJs.configs.recommended,
+        ...tseslint.configs.recommended,
+        eslintPluginPrettierRecommended,
+        {
+            "plugins": {
+                'unused-imports': unusedImports
+            },
+            "rules": {
+                "@typescript-eslint/no-explicit-any": "off",
+                "@typescript-eslint/no-unused-vars": "off",
+                "unused-imports/no-unused-imports": "warn",
+                "unused-imports/no-unused-vars": "off",
+            }
+        },
+        {
+            ignores: [
+                "build/**",
+                "node_modules/**",
+                "doc/**",
+                ".history/**",
+                ".vscode/**",
+                "eslint.config.mjs",
+                "package-lock.json",
+                "tsconfig.json",
+                "package.json"
+            ],
+        }
+    ];
      ```
 
    - Create `.prettierrc`:
      ```json
-     {
-         "printWidth": 120,
-         "useTabs": false,
-         "tabWidth": 4,
-         "endOfLine": "lf",
-         "semi": true,
-         "singleQuote": false,
-         "bracketSpacing": true,
-         "insertPragma": false,
-         "requirePragma": false,
-         "json": {
-             "insertFinalNewline": false
-         }
-     }
+    {
+        "printWidth": 120,
+        "useTabs": false,
+        "tabWidth": 4,
+        "endOfLine": "lf",
+        "semi": true,
+        "singleQuote": true,
+        "bracketSpacing": true,
+        "insertPragma": false,
+        "requirePragma": false,
+        "json": {
+            "insertFinalNewline": false
+        }
+    }
      ```
 
 2. **Install Dependencies**:
    ```bash
-   npm install --save-dev typescript-eslint@^8.18.0 eslint-plugin-prettier@^5.2.1 eslint-config-prettier@^9.1.0 eslint@^9.16.0
+   npm install --save-dev typescript-eslint@^8.18.0 eslint-plugin-prettier@^5.2.1 eslint-config-prettier@^9.1.0 eslint@^9.16.0 eslint-plugin-unused-imports@^4.1.4
    ```
 
 3. **Remove Obsolete Files**:
