@@ -1,3 +1,110 @@
+### Changelog for Project Configuration
+
+## 0.8.17 - 12 December 2024
+
+### Accompanying Sosise-Core Version
+`0.11.8`
+
+### Updates
+- Added `eslint.config.mjs` for ESLint configuration.
+- Added `.prettierrc` for Prettier configuration.
+- Removed `tslint.json` and `.editorconfig` files.
+- Installed ESLint and Prettier dependencies.
+- Removed `editorconfig` and `editorconfig-checker` dependencies.
+- Updated `package.json`:
+  - Removed `cscheck` and `eccheck` scripts.
+  - Added `lint` and `lint:fix` scripts.
+- Recommended installing the VSCode ESLint plugin.
+
+### Upgrade Steps
+
+1. **Add Configuration Files**:
+   - Create `eslint.config.mjs`:
+     ```javascript
+     import globals from "globals";
+     import pluginJs from "@eslint/js";
+     import tseslint from "typescript-eslint";
+     import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
+
+     export default [
+         { files: ["**/*.{js,mjs,cjs,ts}"] },
+         { languageOptions: { globals: globals.node } },
+         pluginJs.configs.recommended,
+         ...tseslint.configs.recommended,
+         eslintPluginPrettierRecommended,
+         {
+             rules: {
+                 "@typescript-eslint/no-explicit-any": "off"
+             },
+         },
+         {
+             ignores: [
+                 "build/**",
+                 "node_modules/**",
+                 "doc/**",
+                 ".history/**",
+                 ".vscode/**",
+                 "eslint.config.mjs",
+                 "package-lock.json",
+                 "tsconfig.json",
+                 "package.json"
+             ],
+         }
+     ];
+     ```
+
+   - Create `.prettierrc`:
+     ```json
+     {
+         "printWidth": 120,
+         "useTabs": false,
+         "tabWidth": 4,
+         "endOfLine": "lf",
+         "semi": true,
+         "singleQuote": false,
+         "bracketSpacing": true,
+         "insertPragma": false,
+         "requirePragma": false,
+         "json": {
+             "insertFinalNewline": false
+         }
+     }
+     ```
+
+2. **Install Dependencies**:
+   ```bash
+   npm install --save-dev typescript-eslint@^8.18.0 eslint-plugin-prettier@^5.2.1 eslint-config-prettier@^9.1.0 eslint@^9.16.0
+   ```
+
+3. **Remove Obsolete Files**:
+   ```bash
+   rm tslint.json .editorconfig
+   ```
+
+4. **Remove Unused Dependencies**:
+   ```bash
+   npm remove editorconfig editorconfig-checker
+   ```
+
+5. **Update `package.json` Scripts**:
+   - Remove:
+     ```json
+     "cscheck": "./node_modules/.bin/tslint --project tsconfig.json",
+     "eccheck": "./node_modules/.bin/editorconfig-checker -exclude \"(node_modules|build|docs)\"",
+     ```
+   - Add:
+     ```json
+     "lint": "eslint .",
+     "lint:fix": "eslint . --fix"
+     ```
+
+6. **Install VSCode Plugin**:
+   - Install **ESLint** by **Microsoft**. 
+
+
+7. **Upgrade sosise-core**
+   - Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
+
 ## 0.8.16 - 30 October, 2024
 
 ### Accompanying Sosise-Core version
