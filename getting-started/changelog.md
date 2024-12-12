@@ -6,6 +6,7 @@
 `0.11.8`
 
 ### Updates
+#### Standardized linting and formatting by replacing TSLint with ESLint and Prettier, updating dependencies, and cleaning up obsolete files and scripts
 - Added `eslint.config.mjs` for ESLint configuration.
 - Added `.prettierrc` for Prettier configuration.
 - Removed `tslint.json` and `.editorconfig` files.
