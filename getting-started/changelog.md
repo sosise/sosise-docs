@@ -106,6 +106,9 @@
 7. **Upgrade sosise-core**
    - Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
 
+8. **Execute linter**
+   - Execute `npm run lint:fix`
+
 ## 0.8.16 - 30 October, 2024
 
 ### Accompanying Sosise-Core version
