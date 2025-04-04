@@ -188,13 +188,25 @@ Ensures the field is not null.
 
 Checks if the field value is of type string.
 
+### `shouldBeStringOrNull(customErrorMessage?: string)`
+
+Checks if the field value is of type string or null.
+
 ### `shouldBeNumber(customErrorMessage?: string)`
 
 Checks if the field value is of type number.
 
+### `shouldBeNumberOrNull(customErrorMessage?: string)`
+
+Checks if the field value is of type number or null.
+
 ### `shouldBeBoolean(customErrorMessage?: string)`
 
 Checks if the field value is of type boolean.
+
+### `shouldBeBooleanOrNull(customErrorMessage?: string)`
+
+Checks if the field value is of type boolean or null.
 
 ### `shouldBeArray(customErrorMessage?: string)`
 
@@ -223,6 +235,10 @@ Ensures each value in an array is a number.
 ### `email(customErrorMessage?: string)`
 
 Validates the field value as a valid email address.
+
+### `emailOrNull(customErrorMessage?: string)`
+
+Validates the field value as a valid email address or null.
 
 ### `inList(values: any[], customErrorMessage?: string)`
 

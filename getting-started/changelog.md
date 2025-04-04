@@ -1,5 +1,20 @@
 ### Changelog for Project Configuration
 
+## 0.8.18 - 04 April 2025
+
+### Accompanying Sosise-Core Version
+`0.11.9`
+
+### Updates
+- The Unifier now includes support for the `shouldBeStringOrNull` method.
+- The Unifier now includes support for the `shouldBeNumberOrNull` method.
+- The Unifier now includes support for the `shouldBeBooleanOrNull` method.
+- The Unifier now includes support for the `emailOrNull` method.
+- Adjusted ESLint configuration: `.prettierrc`, `eslint.config.mjs`.
+
+### Upgrade Steps
+- Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
+
 ## 0.8.17 - 12 December 2024
 
 ### Accompanying Sosise-Core Version
