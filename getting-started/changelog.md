@@ -1,5 +1,16 @@
 ### Changelog for Project Configuration
 
+## 0.8.19 - 02 June 2025
+
+### Accompanying Sosise-Core Version
+`0.11.10`
+
+### Updates
+- The Unifier now includes support for the `enumOrNull` method.
+
+### Upgrade Steps
+- Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
+
 ## 0.8.18 - 04 April 2025
 
 ### Accompanying Sosise-Core Version

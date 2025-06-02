@@ -256,6 +256,10 @@ Validates that the value of the current field is different from another field's 
 
 Ensures the field value matches one of the predefined options in an enumeration.
 
+### `enumOrNull(enumObject: object, customErrorMessage?: string)`
+
+Ensures the field value matches one of the predefined options in an enumeration or is null.
+
 ### `customValidation(validationFunction: (value: any) => boolean, customErrorMessage?: string)`
 
 Allows for custom validation logic defined by the user. The user-provided function should return `true` if the validation passes or `false` otherwise. This method offers maximum flexibility, enabling the enforcement of complex or specific validation rules that are not covered by the predefined methods.
