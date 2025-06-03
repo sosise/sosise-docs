@@ -1,5 +1,70 @@
 ### Changelog for Project Configuration
 
+## 0.8.20 - 03 June 2025
+### Accompanying Sosise-Core Version
+`1.0.0`
+
+### Updates
+- Middlewares were refactored.  
+- Throttling is now supported. See for more information:  
+  https://sosise.github.io/sosise-docs/#/documentation/throttling
+
+### Upgrade Steps
+1. Execute `npm install sosise-core@latest` or `npm run update-sosise` to upgrade.
+2. Delete the old middleware file:
+   `src/app/Http/Middlewares/DocumentationBasicAuthMiddleware.ts`
+3. In `src/routes/api.ts`, update the import:
+   ```diff
+   - import DocumentationBasicAuthMiddleware
+   -   from '../app/Http/Middlewares/DocumentationBasicAuthMiddleware';
+   + import DocumentationBasicAuthMiddleware
+   +   from 'sosise-core/build/Middlewares/DocumentationBasicAuthMiddleware';
+   ```
+4. In `src/app/Http/Middlewares/Kernel.ts`, prepend  
+   `'ThrottlingMiddleware'`  
+   to the beginning of the middleware array.
+5. Create a new config file at `src/config/throttling.ts` with the following example (tune values as needed):
+   ```typescript
+   /**
+    * Configuration for request throttling
+    */
+   const throttlingConfig = {
+       /**
+        * Enables or disables request throttling
+        */
+       isEnabled: true,
+       /**
+        * The HTTP header used to determine the client's IP address.
+        * Must be set by a trusted proxy or load balancer.
+        */
+       clientIpHeader: 'X-Forwarded-For',
+       /**
+        * CIDR subnets to skip (not throttled)
+        */
+       skipSubnets: ['10.0.0.0/24'],
+       /**
+        * Route-specific throttling rules
+        */
+       routeRules: [
+           {
+               // HTTP method for this rule
+               httpMethod: 'GET',
+               // URL path for this rule
+               path: '/customer/get-all-customers',
+               // Max requests allowed per rolling minute
+               maxRequestsPerMinute: 5,
+           },
+           {
+               httpMethod: 'GET',
+               path: '/customer/:id',
+               maxRequestsPerMinute: 10,
+           },
+       ],
+   };
+
+   export default throttlingConfig;
+   ```
+
 ## 0.8.19 - 02 June 2025
 
 ### Accompanying Sosise-Core Version

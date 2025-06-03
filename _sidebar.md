@@ -22,8 +22,7 @@
     - [Sentry](documentation/sentry)
     - [Session](documentation/session)
     - [Unifiers](documentation/unifiers)
-- Security
-    - [Hashing](security/hashing)
+    - [Throttling](documentation/throttling)
 - Database
     - [Getting Started](database/getting-started)
     - [Migrations](database/migrations)
