@@ -1,6 +1,6 @@
 ### Changelog for Project Configuration
 
-## 0.8.20 - 03 June 2025
+## 1.0.0 - 03 June 2025
 ### Accompanying Sosise-Core Version
 `1.0.0`
 
