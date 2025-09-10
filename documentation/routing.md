@@ -5,16 +5,18 @@
 Routing defines how your application responds to client requests. In Sosise, you define routes in the `src/routes` directory using simple, readable syntax:
 
 ```typescript
-// Basic GET route
+// Basic GET route with IndexController
+const indexController = new IndexController();
 router.get('/', (request: Request, response: Response, next: NextFunction) => {
-    response.send('Hello World!');
+    indexController.index(request, response, next);
 });
 
-// Route with a controller
-const userController = new UserController();
-router.get('/users', (request: Request, response: Response, next: NextFunction) => {
-    userController.getAllUsers(request, response, next);
-});
+// Documentation route with authentication
+const documentationBasicAuthMiddleware = new DocumentationBasicAuthMiddleware();
+router.use('/docs', [
+    documentationBasicAuthMiddleware.handle,
+    express.static(process.cwd() + '/docs', { index: 'index.html' })
+]);
 ```
 
 ## Introduction

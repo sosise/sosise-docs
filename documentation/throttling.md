@@ -2,18 +2,18 @@
 
 ## Quick Start
 
-Protect your API from abuse and ensure fair resource usage with Sosise's built-in throttling!
+Protect your API from abuse with Sosise's built-in throttling system! 
 
 ```typescript
 // Enable in src/config/throttling.ts
 export default {
     isEnabled: true,
     clientIpHeader: 'X-Forwarded-For',
-    skipSubnets: ['127.0.0.1/32', '10.0.0.0/8'], // Allow internal traffic
+    skipSubnets: ['10.0.0.0/24'], // Skip internal networks
     routeRules: [
         {
             httpMethod: 'POST',
-            path: '/api/auth/login',
+            path: '/api/login',
             maxRequestsPerMinute: 5 // Prevent brute force
         },
         {
@@ -25,673 +25,288 @@ export default {
 };
 ```
 
-Automatically returns `429 Too Many Requests` when limits are exceeded. Perfect for preventing abuse and ensuring API stability!
+Automatically returns `429 Too Many Requests` when limits are exceeded!
 
 ## Introduction
 
-Throttling (also known as rate limiting) is essential for protecting your API from abuse, ensuring fair resource distribution, and maintaining service quality. Without proper throttling, malicious users could overwhelm your servers, legitimate users might experience poor performance, and your infrastructure costs could skyrocket.
+Rate limiting (throttling) protects your API from abuse by limiting the number of requests from each IP address. Sosise includes a simple but effective throttling system that works at the route level.
 
-Sosise provides flexible throttling capabilities that work at the route level, allowing you to set different limits for different endpoints based on their sensitivity and resource requirements. The system tracks requests per client IP and enforces limits using a sliding window approach.
+The throttling system:
+- Tracks requests per client IP address
+- Uses a sliding 60-second window
+- Supports route-specific rules with pattern matching
+- Can exempt trusted IP subnets
+- Returns HTTP 429 when limits are exceeded
 
-## Basic Configuration
+## Configuration
 
 ### Enable Throttling
 
-Configure throttling in `src/config/throttling.ts`:
+First, ensure ThrottlingMiddleware is registered in your middleware kernel:
 
 ```typescript
-export default {
-    // Enable throttling globally
+// src/app/Http/Middlewares/Kernel.ts
+export const middlewares = [
+    'ExampleMiddleware',
+    'ThrottlingMiddleware', // Add this line
+];
+```
+
+### Basic Configuration
+
+Configure throttling rules in `src/config/throttling.ts`:
+
+```typescript
+const throttlingConfig = {
+    /**
+     * Enable or disable request throttling
+     */
     isEnabled: true,
-    
-    // IP detection (important for apps behind proxies)
-    clientIpHeader: 'X-Forwarded-For', // or 'X-Real-IP'
-    
-    // Exempt trusted networks
-    skipSubnets: [
-        '127.0.0.1/32',    // localhost
-        '10.0.0.0/8',      // internal network
-        '172.16.0.0/12',   // private network
-        '192.168.0.0/16'   // local network
+
+    /**
+     * HTTP header used to determine client's IP address
+     * This header must be set by a trusted proxy or load balancer
+     */
+    clientIpHeader: 'X-Forwarded-For',
+
+    /**
+     * List of CIDR subnets that are skipped (not throttled)
+     */
+    skipSubnets: ['10.0.0.0/24'],
+
+    /**
+     * Array of route-specific throttling rules
+     */
+    routeRules: [
+        {
+            // HTTP method for this rule
+            httpMethod: 'GET',
+            // URL path pattern (supports Express.js route patterns)
+            path: '/api/users/:id',
+            // Maximum requests allowed per rolling minute
+            maxRequestsPerMinute: 10,
+        },
     ],
-    
-    // Default rule for all unmatched routes
-    defaultRule: {
-        maxRequestsPerMinute: 60 // 1 request per second average
+};
+
+export default throttlingConfig;
+```
+
+## Route Rules
+
+### Basic Route Matching
+
+```typescript
+routeRules: [
+    {
+        httpMethod: 'GET',
+        path: '/api/users',
+        maxRequestsPerMinute: 50
     },
-    
-    // Specific rules for different endpoints
+    {
+        httpMethod: 'POST',
+        path: '/api/users',
+        maxRequestsPerMinute: 10
+    }
+]
+```
+
+### Route Parameters
+
+Throttling supports Express.js route patterns:
+
+```typescript
+routeRules: [
+    {
+        httpMethod: 'GET',
+        path: '/api/users/:id',           // Matches /api/users/123
+        maxRequestsPerMinute: 100
+    },
+    {
+        httpMethod: 'GET',
+        path: '/api/products/:id/reviews', // Matches /api/products/456/reviews
+        maxRequestsPerMinute: 20
+    }
+]
+```
+
+### Wildcard Routes
+
+```typescript
+routeRules: [
+    {
+        httpMethod: 'GET',
+        path: '/api/admin/*',            // Matches any admin route
+        maxRequestsPerMinute: 5
+    }
+]
+```
+
+## IP Address Handling
+
+### Behind Proxy/Load Balancer
+
+When running behind nginx, Cloudflare, or other proxies:
+
+```typescript
+// For nginx with X-Forwarded-For
+clientIpHeader: 'X-Forwarded-For'
+
+// For Cloudflare
+clientIpHeader: 'CF-Connecting-IP'
+
+// For AWS ALB
+clientIpHeader: 'X-Forwarded-For'
+```
+
+### Skip Internal Networks
+
+Exempt internal services and health checks:
+
+```typescript
+skipSubnets: [
+    '10.0.0.0/8',        // Internal network
+    '172.16.0.0/12',     // Docker networks
+    '192.168.0.0/16',    // Private networks  
+    '127.0.0.1/32'       // Localhost
+]
+```
+
+## Practical Examples
+
+### API Protection Setup
+
+```typescript
+// src/config/throttling.ts
+export default {
+    isEnabled: true,
+    clientIpHeader: 'X-Forwarded-For',
+    skipSubnets: ['10.0.0.0/8', '127.0.0.1/32'],
     routeRules: [
         // Authentication endpoints - strict limits
         {
             httpMethod: 'POST',
             path: '/api/auth/login',
-            maxRequestsPerMinute: 5 // Prevent brute force
+            maxRequestsPerMinute: 5
         },
         {
             httpMethod: 'POST',
             path: '/api/auth/register',
-            maxRequestsPerMinute: 3 // Prevent spam registrations
+            maxRequestsPerMinute: 3
         },
         
-        // Password reset - very strict
-        {
-            httpMethod: 'POST',
-            path: '/api/auth/forgot-password',
-            maxRequestsPerMinute: 2
-        },
-        
-        // Public endpoints - moderate limits
+        // General API endpoints - moderate limits
         {
             httpMethod: 'GET',
-            path: '/api/products',
+            path: '/api/users/:id',
             maxRequestsPerMinute: 100
         },
         {
-            httpMethod: 'GET',
-            path: '/api/products/:id',
-            maxRequestsPerMinute: 200
-        },
-        
-        // User-specific data - higher limits for authenticated users
-        {
-            httpMethod: 'GET',
-            path: '/api/users/:id/orders',
-            maxRequestsPerMinute: 30
-        },
-        
-        // Search endpoints - moderate to prevent abuse
-        {
-            httpMethod: 'GET',
-            path: '/api/search',
+            httpMethod: 'POST',
+            path: '/api/users',
             maxRequestsPerMinute: 20
         },
         
-        // File upload - very strict
+        // Admin endpoints - very strict limits
         {
             httpMethod: 'POST',
-            path: '/api/files/upload',
+            path: '/api/admin/*',
+            maxRequestsPerMinute: 10
+        },
+        
+        // File uploads - limited
+        {
+            httpMethod: 'POST',
+            path: '/api/upload',
             maxRequestsPerMinute: 5
         }
     ]
 };
 ```
 
-## Advanced Configuration
+## Error Response
 
-### Environment-Specific Settings
+When throttling limit is exceeded, clients receive:
+
+```json
+{
+    "error": "Too Many Requests",
+    "message": "Rate limit exceeded. Try again in 60 seconds.",
+    "statusCode": 429
+}
+```
+
+HTTP headers included:
+- `X-RateLimit-Limit`: Maximum requests allowed
+- `X-RateLimit-Remaining`: Requests remaining in current window
+- `X-RateLimit-Reset`: Time when limit resets
+
+## Monitoring and Debugging
+
+### Check Throttling Status
+
+```typescript
+// In your controller or middleware
+console.log('Client IP:', request.ip);
+console.log('Headers:', request.headers);
+```
+
+### Disable Throttling for Testing
 
 ```typescript
 // src/config/throttling.ts
-const baseConfig = {
-    isEnabled: true,
-    clientIpHeader: 'X-Forwarded-For',
-    skipSubnets: ['127.0.0.1/32']
+export default {
+    isEnabled: false, // Disable during development/testing
+    // ... rest of config
 };
-
-const environmentConfig = {
-    development: {
-        ...baseConfig,
-        isEnabled: false, // Disable in development
-        routeRules: []
-    },
-    
-    staging: {
-        ...baseConfig,
-        routeRules: [
-            {
-                httpMethod: 'POST',
-                path: '/api/auth/login',
-                maxRequestsPerMinute: 10 // More lenient for testing
-            }
-        ]
-    },
-    
-    production: {
-        ...baseConfig,
-        routeRules: [
-            {
-                httpMethod: 'POST', 
-                path: '/api/auth/login',
-                maxRequestsPerMinute: 5 // Strict in production
-            },
-            {
-                httpMethod: 'GET',
-                path: '/api/users/:id',
-                maxRequestsPerMinute: 100
-            }
-        ]
-    }
-};
-
-export default environmentConfig[process.env.NODE_ENV || 'development'];
 ```
 
-### Dynamic Configuration
+## Production Considerations
 
-```typescript
-// src/config/throttling.ts
-export default class ThrottlingConfigService {
-    public static getConfig(): ThrottlingConfig {
-        return {
-            isEnabled: process.env.THROTTLING_ENABLED === 'true',
-            
-            // Adjust limits based on server capacity
-            routeRules: [
-                {
-                    httpMethod: 'GET',
-                    path: '/api/heavy-computation',
-                    maxRequestsPerMinute: this.getComputeLimit()
-                },
-                {
-                    httpMethod: 'POST',
-                    path: '/api/auth/login',
-                    maxRequestsPerMinute: this.getAuthLimit()
-                }
-            ]
-        };
-    }
-    
-    private static getComputeLimit(): number {
-        // Adjust based on server resources
-        const cpuCount = require('os').cpus().length;
-        return Math.max(5, Math.floor(cpuCount * 2));
-    }
-    
-    private static getAuthLimit(): number {
-        // Stricter limits during high traffic periods
-        const hour = new Date().getHours();
-        const isPeakTime = hour >= 9 && hour <= 17; // 9 AM to 5 PM
-        
-        return isPeakTime ? 3 : 5;
-    }
-}
-```
+### Performance
 
-## Route Rule Patterns
+- Throttling data is stored in memory
+- Each request checks against all rules
+- Consider Redis for distributed systems
 
-### Order Matters!
+### Security
 
-Route rules are matched in order, so put more specific routes first:
+- Always use trusted proxy headers only
+- Never accept client-provided IP headers directly
+- Monitor for circumvention attempts
 
-```typescript
-// ✅ Correct order - specific to general
-routeRules: [
-    {
-        path: '/api/users/me',        // Most specific
-        maxRequestsPerMinute: 60
-    },
-    {
-        path: '/api/users/search',    // Specific endpoint
-        maxRequestsPerMinute: 20
-    },
-    {
-        path: '/api/users/:id',       // Parameterized route
-        maxRequestsPerMinute: 100
-    },
-    {
-        path: '/api/users',           // General endpoint
-        maxRequestsPerMinute: 50
-    }
-]
+### Tuning Limits
 
-// ❌ Wrong order - general rules might match first
-routeRules: [
-    {
-        path: '/api/users/:id',       // This would match /api/users/me!
-        maxRequestsPerMinute: 100
-    },
-    {
-        path: '/api/users/me',        // Never reached
-        maxRequestsPerMinute: 60
-    }
-]
-```
+Start conservative and adjust based on:
+- Server capacity
+- Legitimate user behavior
+- Attack patterns observed
 
-### HTTP Method Specificity
+## Limitations
 
-```typescript
-routeRules: [
-    // Different limits for different methods
-    {
-        httpMethod: 'GET',
-        path: '/api/products/:id',
-        maxRequestsPerMinute: 200 // Read operations - higher limit
-    },
-    {
-        httpMethod: 'PUT',
-        path: '/api/products/:id', 
-        maxRequestsPerMinute: 10  // Write operations - lower limit
-    },
-    {
-        httpMethod: 'DELETE',
-        path: '/api/products/:id',
-        maxRequestsPerMinute: 5   // Delete operations - very low limit
-    }
-]
-```
+- **In-Memory Storage**: Throttle data doesn't persist across restarts
+- **Single Instance**: Works only within one application instance
+- **No Distributed Support**: Each instance maintains separate counters
 
-## Real-World Use Cases
-
-### E-commerce API Protection
-
-```typescript
-export default class EcommerceThrottlingService {
-    public static getConfig(): ThrottlingConfig {
-        return {
-            isEnabled: true,
-            clientIpHeader: 'X-Forwarded-For',
-            skipSubnets: ['10.0.0.0/8'], // Internal services
-            
-            routeRules: [
-                // Cart operations - prevent spam
-                {
-                    httpMethod: 'POST',
-                    path: '/api/cart/add',
-                    maxRequestsPerMinute: 30
-                },
-                {
-                    httpMethod: 'PUT',
-                    path: '/api/cart/update',
-                    maxRequestsPerMinute: 20
-                },
-                
-                // Checkout flow - critical protection
-                {
-                    httpMethod: 'POST',
-                    path: '/api/checkout/create',
-                    maxRequestsPerMinute: 5 // Prevent payment abuse
-                },
-                {
-                    httpMethod: 'POST',
-                    path: '/api/payment/process',
-                    maxRequestsPerMinute: 3 // Very strict
-                },
-                
-                // Product browsing - generous limits
-                {
-                    httpMethod: 'GET',
-                    path: '/api/products',
-                    maxRequestsPerMinute: 100
-                },
-                {
-                    httpMethod: 'GET',
-                    path: '/api/products/:id',
-                    maxRequestsPerMinute: 200
-                },
-                
-                // Search - prevent scraping
-                {
-                    httpMethod: 'GET',
-                    path: '/api/products/search',
-                    maxRequestsPerMinute: 30
-                },
-                
-                // Reviews - prevent spam
-                {
-                    httpMethod: 'POST',
-                    path: '/api/products/:id/reviews',
-                    maxRequestsPerMinute: 5
-                },
-                
-                // Wishlist - reasonable limits
-                {
-                    httpMethod: 'POST',
-                    path: '/api/wishlist/add',
-                    maxRequestsPerMinute: 20
-                }
-            ]
-        };
-    }
-}
-```
-
-### API Gateway Configuration
-
-```typescript
-export default class APIGatewayThrottling {
-    public static getConfig(): ThrottlingConfig {
-        return {
-            isEnabled: true,
-            clientIpHeader: 'X-Forwarded-For',
-            
-            // Exempt health checks and monitoring
-            skipSubnets: [
-                '10.0.0.0/8',      // Internal network
-                '172.16.0.0/12',   // Docker networks
-                '169.254.0.0/16'   // AWS metadata service
-            ],
-            
-            routeRules: [
-                // Health checks - unlimited
-                {
-                    httpMethod: 'GET',
-                    path: '/health',
-                    maxRequestsPerMinute: 1000
-                },
-                {
-                    httpMethod: 'GET',
-                    path: '/metrics',
-                    maxRequestsPerMinute: 100
-                },
-                
-                // Public API endpoints
-                {
-                    httpMethod: 'GET',
-                    path: '/api/v1/public/*',
-                    maxRequestsPerMinute: 100
-                },
-                
-                // Authenticated API - higher limits
-                {
-                    httpMethod: 'GET',
-                    path: '/api/v1/protected/*',
-                    maxRequestsPerMinute: 300
-                },
-                
-                // Admin endpoints - very restrictive
-                {
-                    httpMethod: 'POST',
-                    path: '/api/v1/admin/*',
-                    maxRequestsPerMinute: 10
-                },
-                
-                // Bulk operations - extremely limited
-                {
-                    httpMethod: 'POST',
-                    path: '/api/v1/bulk/*',
-                    maxRequestsPerMinute: 2
-                }
-            ]
-        };
-    }
-}
-```
-
-### SaaS Application Throttling
-
-```typescript
-export default class SaaSThrottling {
-    public static getConfig(): ThrottlingConfig {
-        return {
-            isEnabled: true,
-            clientIpHeader: 'X-Forwarded-For',
-            skipSubnets: ['127.0.0.1/32'],
-            
-            routeRules: [
-                // User authentication - prevent brute force
-                {
-                    httpMethod: 'POST',
-                    path: '/api/auth/login',
-                    maxRequestsPerMinute: 5
-                },
-                
-                // Trial registration - prevent abuse
-                {
-                    httpMethod: 'POST',
-                    path: '/api/auth/register',
-                    maxRequestsPerMinute: 3
-                },
-                
-                // Dashboard data - frequent access expected
-                {
-                    httpMethod: 'GET',
-                    path: '/api/dashboard/*',
-                    maxRequestsPerMinute: 120
-                },
-                
-                // Data export - resource intensive
-                {
-                    httpMethod: 'POST',
-                    path: '/api/data/export',
-                    maxRequestsPerMinute: 2
-                },
-                
-                // File uploads - bandwidth intensive
-                {
-                    httpMethod: 'POST',
-                    path: '/api/files/upload',
-                    maxRequestsPerMinute: 10
-                },
-                
-                // Reports generation - CPU intensive
-                {
-                    httpMethod: 'POST',
-                    path: '/api/reports/generate',
-                    maxRequestsPerMinute: 5
-                },
-                
-                // API integrations - third party access
-                {
-                    httpMethod: 'GET',
-                    path: '/api/integrations/*',
-                    maxRequestsPerMinute: 200
-                },
-                {
-                    httpMethod: 'POST',
-                    path: '/api/integrations/*',
-                    maxRequestsPerMinute: 50
-                }
-            ]
-        };
-    }
-}
-```
-
-## Custom Error Handling
-
-### Custom Throttling Response
-
-```typescript
-// src/app/Http/Middlewares/CustomThrottlingMiddleware.ts
-export default class CustomThrottlingMiddleware {
-    public async handle(request: Request, response: Response, next: NextFunction): Promise<void> {
-        // Check if rate limit exceeded (this is handled automatically by Sosise)
-        // This middleware runs after throttling to customize the response
-        
-        if (response.statusCode === 429) {
-            const retryAfter = response.getHeader('Retry-After') || 60;
-            
-            response.json({
-                code: 4001,
-                message: 'Rate limit exceeded',
-                details: {
-                    retryAfter: parseInt(retryAfter.toString()),
-                    endpoint: request.path,
-                    method: request.method,
-                    currentTime: new Date().toISOString()
-                },
-                suggestions: [
-                    'Wait before making another request',
-                    'Consider upgrading your plan for higher limits',
-                    'Use pagination for bulk operations'
-                ]
-            });
-        }
-        
-        next();
-    }
-}
-```
-
-### Logging Throttle Events
-
-```typescript
-// src/app/Services/ThrottlingMonitorService.ts
-export default class ThrottlingMonitorService {
-    constructor(private logger: LoggerService) {}
-    
-    public logThrottleEvent(request: Request, limit: number): void {
-        this.logger.warn('Rate limit exceeded', {
-            ip: this.getClientIP(request),
-            userAgent: request.get('User-Agent'),
-            endpoint: request.path,
-            method: request.method,
-            limit,
-            timestamp: new Date().toISOString()
-        });
-        
-        // Track repeat offenders
-        this.trackRepeatOffender(this.getClientIP(request));
-    }
-    
-    private getClientIP(request: Request): string {
-        return request.headers['x-forwarded-for'] as string || request.ip;
-    }
-    
-    private async trackRepeatOffender(ip: string): Promise<void> {
-        // Implement logic to track and potentially block repeat offenders
-        const offenseCount = await this.getOffenseCount(ip);
-        
-        if (offenseCount > 10) {
-            this.logger.error('Potential abuse detected', { ip, offenseCount });
-            // Consider temporary IP blocking here
-        }
-    }
-}
-```
-
-## Performance Considerations
-
-### Memory Usage
-
-```typescript
-// Monitor throttling memory usage
-export default class ThrottlingPerformanceMonitor {
-    public static monitorMemoryUsage(): void {
-        setInterval(() => {
-            const memoryUsage = process.memoryUsage();
-            
-            if (memoryUsage.heapUsed > 100 * 1024 * 1024) { // 100MB
-                console.warn('High memory usage detected, consider clearing throttling cache');
-            }
-        }, 60000); // Check every minute
-    }
-    
-    // Clean up old throttling data periodically
-    public static setupCleanup(): void {
-        setInterval(() => {
-            // This would be implemented in the core throttling service
-            // to remove expired rate limit counters
-        }, 5 * 60 * 1000); // Clean every 5 minutes
-    }
-}
-```
+For high-scale distributed applications, consider external rate limiting solutions like Redis-based systems or API gateways.
 
 ## Best Practices
 
-### 1. Set Appropriate Limits
-
-```typescript
-// ✅ Good: Realistic limits based on endpoint purpose
-{
-    httpMethod: 'GET',
-    path: '/api/products',
-    maxRequestsPerMinute: 100 // Browsing is common
-}
-
-{
-    httpMethod: 'POST',
-    path: '/api/auth/login',
-    maxRequestsPerMinute: 5   // Authentication should be limited
-}
-
-// ❌ Bad: Too restrictive for normal usage
-{
-    httpMethod: 'GET', 
-    path: '/api/products',
-    maxRequestsPerMinute: 2   // Too low for browsing
-}
-```
-
-### 2. Consider User Experience
-
-```typescript
-// ✅ Good: Different limits for different user types
-const getUserTypeLimit = (request: Request): number => {
-    if (request.user?.isPremium) {
-        return 200; // Premium users get higher limits
-    }
-    
-    if (request.user) {
-        return 100; // Authenticated users
-    }
-    
-    return 50; // Anonymous users
-};
-```
-
-### 3. Use Subnet Exemptions Wisely
-
-```typescript
-// ✅ Good: Exempt legitimate internal traffic
-skipSubnets: [
-    '127.0.0.1/32',     // localhost
-    '10.0.0.0/8',       // private network
-    '172.16.0.0/12',    // docker networks
-]
-
-// ❌ Bad: Exempting too broad ranges
-skipSubnets: [
-    '0.0.0.0/0'  // This exempts everyone!
-]
-```
-
-### 4. Monitor and Adjust
-
-```typescript
-// ✅ Good: Log and monitor throttling effectiveness
-export default class ThrottlingAnalytics {
-    public generateReport(): ThrottlingReport {
-        return {
-            totalRequests: this.getTotalRequests(),
-            throttledRequests: this.getThrottledRequests(),
-            topOffenders: this.getTopOffenders(),
-            mostThrottledEndpoints: this.getMostThrottledEndpoints(),
-            recommendations: this.generateRecommendations()
-        };
-    }
-}
-```
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Throttling Too Aggressive**
-   ```bash
-   # Check current limits
-   grep -r "maxRequestsPerMinute" src/config/
-   
-   # Increase limits temporarily
-   # Edit src/config/throttling.ts
-   ```
-
-2. **IP Detection Issues**
-   ```typescript
-   // Debug IP detection
-   console.log('Detected IP:', request.headers['x-forwarded-for'] || request.ip);
-   console.log('All headers:', request.headers);
-   ```
-
-3. **Subnet Exemption Not Working**
-   ```typescript
-   // Verify subnet configuration
-   const ip = require('ip');
-   console.log('Is in range:', ip.cidrSubnet('10.0.0.0/8').contains('10.1.2.3'));
-   ```
+1. **Start Conservative**: Begin with low limits and increase based on monitoring
+2. **Monitor Legitimate Users**: Ensure real users aren't being blocked
+3. **Use Different Limits**: Apply stricter limits to sensitive endpoints
+4. **Log Blocked Requests**: Track throttling events for analysis
+5. **Test Thoroughly**: Verify rules work as expected in development
 
 ## Summary
 
-Sosise throttling provides:
+Sosise's throttling system provides:
 
-- ✅ Flexible per-route rate limiting
-- ✅ IP-based request tracking
-- ✅ Subnet exemptions for trusted sources
-- ✅ Automatic 429 responses
-- ✅ Environment-specific configuration
-- ✅ Pattern matching for dynamic routes
-- ✅ Easy integration with existing middleware
-- ✅ Production-ready performance
+- ✅ **Easy Configuration** - Simple config file setup
+- ✅ **Route-Specific Rules** - Different limits for different endpoints
+- ✅ **Express.js Pattern Support** - Full route pattern matching
+- ✅ **IP Subnet Exemptions** - Skip internal networks
+- ✅ **Standard HTTP Responses** - Proper 429 status codes
+- ✅ **Production Ready** - Lightweight and efficient
 
-Protect your APIs and ensure fair resource usage with Sosise's comprehensive throttling system!
+Perfect for protecting your API from abuse while maintaining performance!

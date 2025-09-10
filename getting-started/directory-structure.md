@@ -10,14 +10,21 @@ my-sosise-project/
 │   ├── app/                # 🏢 Application logic
 │   │   ├── Http/           # 🌐 Controllers & Middlewares
 │   │   ├── Services/       # 🔧 Business logic layer
-│   │   └── Repositories/   # 💾 Data access layer
+│   │   ├── Repositories/   # 💾 Data access layer
+│   │   ├── Unifiers/       # ✨ Request validation & mapping
+│   │   ├── Exceptions/     # 🚫 Custom error classes
+│   │   ├── Types/          # 📝 TypeScript type definitions
+│   │   ├── Enums/          # 🎯 Enumeration constants
+│   │   ├── Libraries/      # 📚 Custom utility libraries
+│   │   └── Console/        # 💻 Artisan commands & queue workers
 │   ├── config/             # ⚙️ Configuration files
 │   ├── database/           # 🗄️ Migrations & seeders
-│   └── routes/             # 🗺️ API route definitions
+│   ├── routes/             # 🗺️ API route definitions
+│   └── tests/              # ✅ Test files
 ├── build/                  # 🏗️ Compiled JavaScript
-├── storage/                # 📋 File storage
-├── tests/                  # ✅ Test files
+├── storage/                # 📋 File storage & logs
 ├── docker/                 # 🐳 Docker configuration
+├── docs/                   # 📖 Project documentation
 └── artisan                 # 🪄 Command-line tool
 ```
 

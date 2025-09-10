@@ -40,25 +40,27 @@ npm --version    # Should be v8.0.0+
 
 ## Installation Methods
 
-### 1. Using Sosise CLI (Recommended)
+### 1. Using Sosise CLI
 
-The fastest way to get started with a fully configured project:
+You can install Sosise CLI to quickly scaffold new projects:
 
 ```bash
 # Install globally
 npm install sosise-cli -g
 
-# Create new project with interactive setup
+# Create new project
 sosise new my-project
+cd my-project
 
-# Or create with specific template
-sosise new my-project --template=api
-sosise new my-project --template=microservice
+# Install dependencies
+npm install
 ```
 
-### 2. Manual Installation
+> **Note**: sosise-cli v0.0.15 is available but may be outdated. For the most current setup, consider manual installation.
 
-For those who prefer manual setup:
+### 2. Manual Installation (Recommended)
+
+For reliable setup, clone the official skeleton:
 
 ```bash
 # Clone the starter template
@@ -74,6 +76,9 @@ npm install
 
 # Copy environment configuration
 cp .env.example .env
+
+# Build the project
+npm run build
 
 # Start development server
 npm run serve
@@ -139,8 +144,8 @@ Test your installation:
 npm run serve
 
 # In another terminal, test the API
-curl http://localhost:10000/api/health
-# Should return: {"status": "ok", "message": "Service is healthy"}
+curl http://localhost:10000/
+# Should return the basic response from IndexController
 
 # Check available artisan commands
 ./artisan

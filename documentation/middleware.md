@@ -75,23 +75,14 @@ export default class CheckApiKeyMiddleware {
 To run middleware on EVERY request, register it in `app/Http/Middlewares/Kernel.ts`:
 
 ```typescript
-import AuthMiddleware from './AuthMiddleware';
-import LoggingMiddleware from './LoggingMiddleware';
-import CorsMiddleware from './CorsMiddleware';
-
-export default class Kernel {
-    /**
-     * Global middleware that runs on every request
-     */
-    public middlewares = [
-        new CorsMiddleware(),      // First: Handle CORS
-        new LoggingMiddleware(),   // Second: Log requests
-        new AuthMiddleware(),      // Third: Check authentication
-    ];
-}
+// src/app/Http/Middlewares/Kernel.ts
+export const middlewares = [
+    'ExampleMiddleware',      // Your custom middleware
+    'ThrottlingMiddleware',   // Built-in rate limiting (if enabled)
+];
 ```
 
-> **Important**: The order matters! Middleware runs in the order you list them.
+> **Important**: Middlewares are registered by name (string) and the framework handles instantiation automatically.
 
 ### Route-Specific Middleware
 
@@ -100,26 +91,19 @@ Apply middleware to specific routes only:
 ```typescript
 // src/routes/api.ts
 import express from 'express';
-import AdminMiddleware from '../app/Http/Middlewares/AdminMiddleware';
-import UserController from '../app/Http/Controllers/UserController';
+import DocumentationBasicAuthMiddleware from 'sosise-core/build/Middlewares/DocumentationBasicAuthMiddleware';
 
 const router = express.Router();
-const adminMiddleware = new AdminMiddleware();
-const userController = new UserController();
+const documentationBasicAuthMiddleware = new DocumentationBasicAuthMiddleware();
 
-// Protected route - middleware runs first
-router.delete('/users/:id', 
-    adminMiddleware.handle,  // Check if admin
-    (request, response, next) => {
-        userController.destroy(request, response, next);
-    }
-);
-
-// Public route - no middleware
-router.get('/users', (request, response, next) => {
-    userController.index(request, response, next);
-});
+// Protected documentation route
+router.use('/docs', [
+    documentationBasicAuthMiddleware.handle,
+    express.static(process.cwd() + '/docs', { index: 'index.html' })
+]);
 ```
+
+**Note**: Most middleware should be registered globally in Kernel.ts. Route-specific middleware is mainly used for special cases like documentation authentication.
 
 ## Common Middleware Patterns
 
@@ -386,13 +370,10 @@ export default class SuperMiddleware {
 Register middleware in the correct order:
 
 ```typescript
-// Kernel.ts
-public middlewares = [
-    new CorsMiddleware(),        // 1. CORS must be first
-    new LoggingMiddleware(),     // 2. Log all requests
-    new RateLimitMiddleware(),   // 3. Check rate limits
-    new AuthMiddleware(),        // 4. Authenticate user
-    new ValidationMiddleware(),  // 5. Validate data
+// src/app/Http/Middlewares/Kernel.ts
+export const middlewares = [
+    'ExampleMiddleware',      // 1. Your general middleware
+    'ThrottlingMiddleware',   // 2. Rate limiting (if enabled)
 ];
 ```
 
@@ -434,29 +415,20 @@ export default class AdminMiddleware {
 }
 ```
 
-### 5. Use IoC for Dependencies
+### 5. Keep Middleware Simple
 
-Inject services through IoC:
+Focus on single responsibility:
 
 ```typescript
-import IOC from 'sosise-core/build/ServiceProviders/IOC';
-import AuthService from '../Services/AuthService';
+// src/app/Http/Middlewares/ExampleMiddleware.ts
+import { Request, Response, NextFunction } from 'express';
 
-export default class TokenMiddleware {
-    private authService: AuthService;
-
-    constructor() {
-        this.authService = IOC.make(AuthService) as AuthService;
-    }
-
-    public async handle(request: Request, response: Response, next: NextFunction) {
-        const token = request.header('Authorization');
-        const isValid = await this.authService.validateToken(token);
+export default class ExampleMiddleware {
+    public async handle(request: Request, response: Response, next: NextFunction): Promise<any> {
+        // Add your middleware logic here
+        console.log(`Request to: ${request.path}`);
         
-        if (!isValid) {
-            return response.status(401).json({ message: 'Invalid token' });
-        }
-        
+        // Always call next() to continue
         next();
     }
 }
