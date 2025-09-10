@@ -1,16 +1,23 @@
 <!-- index.html -->
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/themes/vue.css" />
-    <link rel="stylesheet" href="https://unpkg.com/docsify-plugin-toc@1.3.1/dist/light.css">
-    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sushantrahate/docsify-darkly-theme/css/darkly.min.css"> -->
-
+    <meta name="description" content="Sosise - TypeScript framework for building robust APIs">
+    <meta name="keywords" content="Sosise, TypeScript, Node.js, API, framework, documentation">
+    <title>Sosise Documentation</title>
+    
+    <!-- Docsify Theme -->
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4.13.1/lib/themes/vue.css" />
+    
+    <!-- Table of Contents Plugin -->
+    <link rel="stylesheet" href="https://unpkg.com/docsify-plugin-toc@1.3.2/dist/light.css">
+    
+    <!-- Custom Styles -->
     <style>
         .markdown-section pre::after,
         .markdown-section output::after {
@@ -22,6 +29,17 @@
             max-height: 64px;
             border-radius: 5px;
         }
+        
+        /* Performance optimizations */
+        .content {
+            overflow-anchor: none;
+        }
+        
+        /* Accessibility improvements */
+        .sidebar-nav a:focus {
+            outline: 2px solid #42b983;
+            outline-offset: 2px;
+        }
     </style>
 </head>
 
@@ -29,38 +47,69 @@
     <div id="app"></div>
     <script>
         window.$docsify = {
+            // Basic Configuration
+            name: 'Sosise',
+            repo: 'https://github.com/sosise/sosise',
+            homepage: 'README.md',
+            
+            // Navigation
             loadSidebar: true,
             auto2top: true,
             maxLevel: 4,
             subMaxLevel: 2,
-            name: 'Sosise',
-            repo: 'https://github.com/sosise/sosise',
-            search: 'auto', // default
+            
+            // Search Configuration (fixed duplication)
             search: {
-                maxAge: 86400000, // Expiration time, the default one day
+                maxAge: 86400000, // 1 day cache
                 paths: 'auto',
                 placeholder: 'Type to search',
                 noData: 'No Results!',
                 depth: 6,
-                hideOtherSidebarContent: true, // whether or not to hide other sidebar content
+                hideOtherSidebarContent: true
             },
+            
+            // Table of Contents
             toc: {
                 tocMaxLevel: 5,
                 target: 'h1, h2, h3, h4, h5, h6'
             },
+            
+            // Copy Code Plugin
             copyCode: {
                 buttonText: 'Copy to clipboard',
                 errorText: 'Error',
                 successText: 'Copied'
             },
+            
+            // Performance optimizations
+            mergeNavbar: true,
+            executeScript: true,
+            noEmoji: false,
+            
+            // Error handling
+            notFoundPage: true,
+            
+            // External links
+            externalLinkTarget: '_blank',
+            externalLinkRel: 'noopener'
         }
     </script>
-    <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
-    <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
-    <script src="//unpkg.com/prismjs/components/prism-bash.js"></script>
-    <script src="//unpkg.com/prismjs/components/prism-typescript.js"></script>
-    <script src="https://unpkg.com/docsify-plugin-toc@1.3.1/dist/docsify-plugin-toc.min.js"></script>
-    <script src="https://unpkg.com/docsify-copy-code@2"></script>
+    
+    <!-- Docsify Core (Latest Stable) -->
+    <script src="//cdn.jsdelivr.net/npm/docsify@4.13.1/lib/docsify.min.js"></script>
+    
+    <!-- Search Plugin -->
+    <script src="//cdn.jsdelivr.net/npm/docsify@4.13.1/lib/plugins/search.min.js"></script>
+    
+    <!-- Syntax Highlighting -->
+    <script src="//cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-typescript.min.js"></script>
+    
+    <!-- Table of Contents Plugin (Latest) -->
+    <script src="https://unpkg.com/docsify-plugin-toc@1.3.2/dist/docsify-plugin-toc.min.js"></script>
+    
+    <!-- Copy Code Plugin (Latest) -->
+    <script src="https://unpkg.com/docsify-copy-code@3.0.0/dist/docsify-copy-code.min.js"></script>
 </body>
 
 </html>
