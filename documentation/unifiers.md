@@ -1,112 +1,230 @@
 # Unifiers
 
-## Introduction
-Unifiers provide a convenient way to validate incoming requests and map them to class parameters or DTOs (Data Transfer Objects). For example, an order creation middleware can be used to validate that the required customer ID and shop information are provided in the request. Unifiers are located in the `app/Unifiers` directory.
+## Quick Start
 
-## Defining a Unifier
-To create a new unifier, you can use the `make:unifier` Artisan command:
+Unifiers solve a common problem: validating and organizing incoming request data. Instead of validating data directly in your controllers, unifiers handle this automatically.
 
-```sh
-./artisan make:unifier CreateOrderUnifier
+### Simple Example
+
+Create a unifier to validate user registration:
+
+```typescript
+export default class RegisterUserUnifier {
+    public name: string;
+    public email: string;
+
+    constructor(params: any) {
+        // Validate the data
+        const validator = new Validator(params);
+        validator.field('name').required().shouldBeString().min(2);
+        validator.field('email').required().shouldBeString().isEmail();
+        
+        if (validator.fails()) {
+            throw new ValidationException('Invalid data', validator.errors);
+        }
+
+        // Map validated data to properties
+        this.name = params.name;
+        this.email = params.email;
+    }
+}
 ```
 
-Let's take a look at an example below:
+Use it in your controller:
+
+```typescript
+router.post('/register', (request: Request, response: Response, next: NextFunction) => {
+    try {
+        // Data is automatically validated and mapped
+        const userData = new RegisterUserUnifier(request.body);
+        
+        // Use clean, validated data
+        console.log(userData.name);  // Safe to use
+        console.log(userData.email); // Safe to use
+        
+    } catch (error) {
+        next(error); // Validation errors are handled automatically
+    }
+});
+```
+
+## What Are Unifiers?
+
+Unifiers are classes that **validate** and **organize** incoming request data. They solve two main problems:
+
+1. **Validation**: Ensure data meets your requirements (required fields, correct types, etc.)
+2. **Organization**: Convert messy request data into clean, typed properties
+
+### Why Use Unifiers?
+
+**Without unifiers** (messy and error-prone):
+```typescript
+router.post('/users', (request: Request, response: Response, next: NextFunction) => {
+    // Manual validation - easy to forget or get wrong
+    if (!request.body.name || request.body.name.length < 2) {
+        return response.status(400).send('Name is required');
+    }
+    if (!request.body.email || !isValidEmail(request.body.email)) {
+        return response.status(400).send('Valid email is required');
+    }
+    
+    // Using non-validated data directly
+    createUser(request.body.name, request.body.email);
+});
+```
+
+**With unifiers** (clean and safe):
+```typescript
+router.post('/users', (request: Request, response: Response, next: NextFunction) => {
+    try {
+        const userData = new CreateUserUnifier(request.body);
+        createUser(userData.name, userData.email); // Clean, validated data
+    } catch (error) {
+        next(error); // Consistent error handling
+    }
+});
+```
+
+## Creating Unifiers
+
+### Generate a New Unifier
+
+```sh
+./artisan make:unifier CreateUserUnifier
+```
+
+This creates a template unifier in `app/Unifiers/CreateUserUnifier.ts`.
+
+### Basic Unifier Structure
 
 ```typescript
 import Validator from 'sosise-core/build/Validator/Validator';
 import ValidationException from 'sosise-core/build/Exceptions/Validation/ValidationException';
 
-/**
- * For more information, refer to: https://sosise.github.io/sosise-docs/#/documentation/unifiers
- */
-export default class CreateOrderUnifier {
+export default class CreateUserUnifier {
+    // Define the properties you want to extract
+    public name: string;
+    public email: string;
+    public age?: number; // Optional property
 
-    private params: any;
-    public customerId: number;
-    public shop: string;
-
-    /**
-     * Constructor
-     */
     constructor(params: any) {
-        // Remember incoming params
-        this.params = params;
-
-        // Validate, await is important otherwise we could not catch the exception
-        this.validate();
-
-        // Map data
-        this.map();
+        // Step 1: Validate the incoming data
+        this.validate(params);
+        
+        // Step 2: Map validated data to properties
+        this.map(params);
     }
 
-    /**
-     * Request data validation
-     */
-    private validate() {
-        // Create validator
-        const validator = new Validator(this.params);
-
-        // Validate
-        validator
-            .field('customerId')
-            .required()
-            .shouldBeNumber()
-            .min(0);
-
-        validator
-            .field('shop')
-            .required()
-            .shouldBeString()
-            .min(1);
-
-        // If validation fails, throw an exception
+    private validate(params: any) {
+        const validator = new Validator(params);
+        
+        // Define validation rules
+        validator.field('name').required().shouldBeString().min(2);
+        validator.field('email').required().shouldBeString().isEmail();
+        validator.field('age').optional().shouldBeNumber().min(18);
+        
         if (validator.fails()) {
-            throw new ValidationException('Validation exception', validator.errors);
+            throw new ValidationException('Validation failed', validator.errors);
         }
     }
 
-    /**
-     * Request data mapping
-     */
-    private map() {
-        this.customerId = this.params.customerId;
-        this.shop = this.params.shop;
+    private map(params: any) {
+        // Map validated data to clean properties
+        this.name = params.name;
+        this.email = params.email;
+        this.age = params.age;
     }
 }
-
 ```
 
-## Usage
-Now, let's see an example of how to use unifiers in a controller:
+## Validation Rules
+
+### Common Validation Methods
 
 ```typescript
-import { Request, Response, NextFunction } from 'express';
-import HttpResponse from 'sosise-core/build/Types/HttpResponse';
-import OrderCreatingUnifier from '../../Unifiers/OrderCreatingUnifier';
+validator.field('fieldName')
+    .required()                    // Field must be present
+    .optional()                    // Field is optional
+    .shouldBeString()              // Must be a string
+    .shouldBeNumber()              // Must be a number
+    .shouldBeBoolean()             // Must be true/false
+    .min(5)                        // Minimum length/value
+    .max(100)                      // Maximum length/value
+    .isEmail()                     // Must be valid email
+    .in(['option1', 'option2'])    // Must be one of these values
+```
 
-export default class IndexController {
-    /**
-     * Example method
-     */
-    public async index(request: Request, response: Response, next: NextFunction) {
+### Validation Examples
+
+```typescript
+export default class ProductUnifier {
+    public name: string;
+    public price: number;
+    public category: string;
+    public description?: string;
+
+    constructor(params: any) {
+        const validator = new Validator(params);
+        
+        // Product name: required string, 2-100 characters
+        validator.field('name')
+            .required()
+            .shouldBeString()
+            .min(2)
+            .max(100);
+            
+        // Price: required number, minimum $0.01
+        validator.field('price')
+            .required()
+            .shouldBeNumber()
+            .min(0.01);
+            
+        // Category: must be one of these options
+        validator.field('category')
+            .required()
+            .shouldBeString()
+            .in(['electronics', 'clothing', 'books']);
+            
+        // Description: optional string
+        validator.field('description')
+            .optional()
+            .shouldBeString()
+            .max(500);
+
+        if (validator.fails()) {
+            throw new ValidationException('Invalid product data', validator.errors);
+        }
+
+        // Map the data
+        this.name = params.name;
+        this.price = params.price;
+        this.category = params.category;
+        this.description = params.description;
+    }
+}
+```
+
+## Using Unifiers in Controllers
+
+### Basic Usage
+
+```typescript
+import CreateUserUnifier from '../../Unifiers/CreateUserUnifier';
+
+export default class UserController {
+    public async createUser(request: Request, response: Response, next: NextFunction) {
         try {
-            // Instantiate unifier
-            // At this step, the request body is validated and mapped
-            const unifier = new OrderCreatingUnifier(request.body);
+            // Validate and map request data
+            const userData = new CreateUserUnifier(request.body);
+            
+            // Use the clean data
+            const user = await this.userService.create({
+                name: userData.name,
+                email: userData.email,
+                age: userData.age
+            });
 
-            // Now we can use unifier params
-            console.log(unifier.customerId);
-            console.log(unifier.shop);
-
-            // Prepare HTTP response
-            const httpResponse: HttpResponse = {
-                code: 1000,
-                message: 'Some example message',
-                data: null
-            };
-
-            // Send response
-            return response.send(httpResponse);
+            response.json({ user });
         } catch (error) {
             next(error);
         }
@@ -114,213 +232,118 @@ export default class IndexController {
 }
 ```
 
-Using unifiers in your controllers helps ensure that the incoming request data is properly validated and mapped to the relevant parameters before processing the request. This improves the security and reliability of your application by ensuring that only valid and expected data is used in the subsequent steps of request handling.
-
-# ValidatorRules
-
-The framework provides a robust solution for validating data in your applications. It supports a wide range of validation scenarios, from simple presence checks to complex type validations and custom rule definitions.
-
-## Quick Start
-
-### Creating a Validator Instance
-
-First, create an instance of the `Validator` class by passing the data object you wish to validate:
+### Handling Different Request Data Sources
 
 ```typescript
-import Validator from "./Validator";
+// For URL parameters
+const unifier = new GetUserUnifier(request.params);
 
-const data = {
-    username: "exampleUser",
-    age: 25,
-    email: "user@example.com"
-};
+// For query parameters  
+const unifier = new SearchUsersUnifier(request.query);
 
-const validator = new Validator(data);
+// For POST body data
+const unifier = new CreateUserUnifier(request.body);
+
+// For mixed data sources
+const unifier = new UpdateUserUnifier({
+    ...request.params,  // User ID from URL
+    ...request.body     // Update data from body
+});
 ```
 
-### Applying Validation Rules
+## Error Handling
 
-To apply validation rules, use the `field` method on your `Validator` instance to specify the field you're validating, then chain any of the available validation methods provided by `ValidatorRules`:
-
-```typescript
-validator.field('username').required();
-validator.field('age').shouldBeNumber().min(18);
-validator.field('email').required().email();
-```
-
-### Checking for Errors
-
-After applying your rules, use the `fails` method to check if any validation errors occurred:
+When validation fails, unifiers automatically throw a `ValidationException` with helpful error details:
 
 ```typescript
-if (validator.fails()) {
-    console.error("Validation errors:", validator.errors);
-} else {
-    console.log("Validation passed.");
+// If validation fails, you get structured errors
+try {
+    const userData = new CreateUserUnifier(request.body);
+} catch (error) {
+    // error.errors contains detailed validation failures:
+    // {
+    //   "name": ["Name is required", "Name must be at least 2 characters"],
+    //   "email": ["Email is required", "Email must be valid"]
+    // }
 }
 ```
 
-## Validation Methods
+## Advanced Examples
 
-The `ValidatorRules` class offers a variety of methods to cover common validation needs:
-
-### `required(customErrorMessage?: string)`
-
-Ensures the field is present and not undefined.
-
-### `sometimes()`
-
-It just tells that the field may be undefined.
-
-### `min(num: number, customErrorMessage?: string)`
-
-Validates the minimum value or length of the field. Supports strings, numbers, and arrays.
-
-### `max(num: number, customErrorMessage?: string)`
-
-Validates the maximum value or length of the field. Supports strings, numbers, and arrays.
-
-### `notNullable(customErrorMessage?: string)`
-
-Ensures the field is not null.
-
-### `shouldBeString(customErrorMessage?: string)`
-
-Checks if the field value is of type string.
-
-### `shouldBeStringOrNull(customErrorMessage?: string)`
-
-Checks if the field value is of type string or null.
-
-### `shouldBeNumber(customErrorMessage?: string)`
-
-Checks if the field value is of type number.
-
-### `shouldBeNumberOrNull(customErrorMessage?: string)`
-
-Checks if the field value is of type number or null.
-
-### `shouldBeBoolean(customErrorMessage?: string)`
-
-Checks if the field value is of type boolean.
-
-### `shouldBeBooleanOrNull(customErrorMessage?: string)`
-
-Checks if the field value is of type boolean or null.
-
-### `shouldBeArray(customErrorMessage?: string)`
-
-Checks if the field value is an array.
-
-### `shouldBeObject(customErrorMessage?: string)`
-
-Checks if the field value is an object (and not null or an array).
-
-### `validateObject(validationRules: (validator: Validator) => void)`
-
-Validates a single nested object using provided validation rules.
-
-### `validateArrayOfObjects(validationRules: (validator: Validator) => void)`
-
-Validates each object in an array of objects using provided validation rules.
-
-### `validateArrayOfStrings(customErrorMessage?: string)`
-
-Ensures each value in an array is a string.
-
-### `validateArrayOfNumbers(customErrorMessage?: string)`
-
-Ensures each value in an array is a number.
-
-### `email(customErrorMessage?: string)`
-
-Validates the field value as a valid email address.
-
-### `emailOrNull(customErrorMessage?: string)`
-
-Validates the field value as a valid email address or null.
-
-### `inList(values: any[], customErrorMessage?: string)`
-
-Ensures the field value is within a predefined list of values.
-
-### `regex(pattern: RegExp, customErrorMessage?: string)`
-
-Validates the field value against a custom regular expression pattern.
-
-### `different(otherParamName: string, customErrorMessage?: string)`
-
-Validates that the value of the current field is different from another field's value.
-
-### `enum(enumObject: object, customErrorMessage?: string)`
-
-Ensures the field value matches one of the predefined options in an enumeration.
-
-### `enumOrNull(enumObject: object, customErrorMessage?: string)`
-
-Ensures the field value matches one of the predefined options in an enumeration or is null.
-
-### `customValidation(validationFunction: (value: any) => boolean, customErrorMessage?: string)`
-
-Allows for custom validation logic defined by the user. The user-provided function should return `true` if the validation passes or `false` otherwise. This method offers maximum flexibility, enabling the enforcement of complex or specific validation rules that are not covered by the predefined methods.
-
-- **`validationFunction`**: A function that contains the custom validation logic. It receives the field value as its argument.
-- **`customErrorMessage`**: Optional. A custom error message that overrides the default error message if the validation fails.
-
-## Advanced Usage Examples
-
-### Nested Object Validation
+### Complex Validation Logic
 
 ```typescript
-validator
-    .field('user')
-    .validateObject(userValidator => {
-        userValidator
-            .field('firstName')
-            .required()
-            .shouldBeString();
+export default class OrderUnifier {
+    public customerId: number;
+    public items: Array<{productId: number, quantity: number}>;
+    public shippingAddress: string;
+
+    constructor(params: any) {
+        const validator = new Validator(params);
         
-        userValidator
-            .field('lastName')
-            .required()
-            .shouldBeString();
-    });
-```
-
-### Array of Objects Validation
-
-```typescript
-validator
-    .field('tags')
-        .validateArrayOfObjects(tagValidator => {
-            tagValidator
-                .field('id')
-                .shouldBeNumber();
-            
-            tagValidator
-                .field('name')
-                .shouldBeString();
-        });
-```
-
-### Custom Validation
-```typescript
-validator
-    .field('user')
-    .required()
-    .shouldBeObject()
-    .customValidation((value: any) => {
-        if (value.mobile === null) {
-            return false;
+        validator.field('customerId').required().shouldBeNumber().min(1);
+        validator.field('shippingAddress').required().shouldBeString().min(10);
+        
+        // Validate array of items
+        validator.field('items').required().shouldBeArray();
+        
+        if (validator.fails()) {
+            throw new ValidationException('Invalid order data', validator.errors);
         }
-        return true;
-    }, 'Custom error message!!!');
+
+        // Additional custom validation
+        if (!Array.isArray(params.items) || params.items.length === 0) {
+            throw new ValidationException('Order must contain at least one item', {});
+        }
+
+        this.customerId = params.customerId;
+        this.items = params.items;
+        this.shippingAddress = params.shippingAddress;
+    }
+}
 ```
 
-### Custom Error Messages
-
-You can provide custom error messages for any rule, which can include a `:paramName` placeholder, replaced with the field name:
+### Transforming Data During Mapping
 
 ```typescript
-validator.field('age').min(18, "Sorry, you must be at least 18 years old. :paramName is too young.");
+export default class UserPreferencesUnifier {
+    public theme: 'light' | 'dark';
+    public notifications: boolean;
+    public timezone: string;
+
+    constructor(params: any) {
+        // Validate...
+        const validator = new Validator(params);
+        validator.field('theme').required().in(['light', 'dark']);
+        // ... other validations
+
+        if (validator.fails()) {
+            throw new ValidationException('Invalid preferences', validator.errors);
+        }
+
+        // Transform and clean data during mapping
+        this.theme = params.theme.toLowerCase();
+        this.notifications = Boolean(params.notifications);
+        this.timezone = params.timezone || 'UTC';
+    }
+}
 ```
+
+## Best Practices
+
+1. **One unifier per endpoint**: Create specific unifiers for each API endpoint
+2. **Keep validation simple**: Complex business logic belongs in services, not unifiers
+3. **Use descriptive names**: `CreateUserUnifier`, `UpdateProductUnifier`, etc.
+4. **Handle optional fields**: Use `.optional()` for fields that aren't required
+5. **Transform consistently**: Apply the same data transformations across your app
+6. **Test your unifiers**: Write tests to ensure validation works correctly
+
+## Summary
+
+Unifiers provide a clean, consistent way to validate and organize incoming request data. They help you:
+
+- ✅ Validate data automatically
+- ✅ Get clean, typed properties to work with  
+- ✅ Handle errors consistently
+- ✅ Keep controllers focused on business logic
+- ✅ Make your code more maintainable and testable

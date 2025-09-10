@@ -1,241 +1,175 @@
 # Routing
 
-The routing in Sosise is based on `expressjs`. If you need more information about routing, please read the full documentation at [https://expressjs.com/en/guide/routing.html](https://expressjs.com/en/guide/routing.html).
+## Quick Start
 
-## Basic Routing
-
-The most basic Sosise routes accept a URI and a closure, providing a simple and expressive way of defining routes and behavior without complicated routing configuration files:
+Routing defines how your application responds to client requests. In Sosise, you define routes in the `src/routes` directory using simple, readable syntax:
 
 ```typescript
+// Basic GET route
 router.get('/', (request: Request, response: Response, next: NextFunction) => {
     response.send('Hello World!');
 });
+
+// Route with a controller
+const userController = new UserController();
+router.get('/users', (request: Request, response: Response, next: NextFunction) => {
+    userController.getAllUsers(request, response, next);
+});
 ```
 
-## The Default Route File
+## Introduction
 
-All Sosise routes are defined in your route file, which is located in the `src/routes` directory. This file is automatically loaded by the application.
+Sosise routing is based on Express.js, providing a familiar and powerful way to handle HTTP requests. Routes are defined in files within the `src/routes` directory and are automatically loaded by the application.
 
-## Available Router Methods
+## Common HTTP Methods
 
-The router allows you to register routes that respond to any HTTP verb:
-
-- `checkout`
-- `copy`
-- `delete`
-- `get`
-- `head`
-- `lock`
-- `merge`
-- `mkactivity`
-- `mkcol`
-- `move`
-- `m-search`
-- `notify`
-- `options`
-- `patch`
-- `post`
-- `purge`
-- `put`
-- `report`
-- `search`
-- `subscribe`
-- `trace`
-- `unlock`
-- `unsubscribe`
-
-You can register a route that responds to multiple HTTP verbs using the `match` method. Alternatively, you can register a route that responds to all HTTP verbs using the `any` method:
+Most web applications use these four main HTTP methods:
 
 ```typescript
-const indexController = new IndexController();
-router.all('/', (request: Request, response: Response, next: NextFunction) => {
-    indexController.index(request, response, next);
+const userController = new UserController();
+
+// GET - Retrieve data
+router.get('/users', (request: Request, response: Response, next: NextFunction) => {
+    userController.getUsers(request, response, next);
+});
+
+// POST - Create new data
+router.post('/users', (request: Request, response: Response, next: NextFunction) => {
+    userController.createUser(request, response, next);
+});
+
+// PUT - Update existing data
+router.put('/users/:id', (request: Request, response: Response, next: NextFunction) => {
+    userController.updateUser(request, response, next);
+});
+
+// DELETE - Remove data
+router.delete('/users/:id', (request: Request, response: Response, next: NextFunction) => {
+    userController.deleteUser(request, response, next);
 });
 ```
-
-## Route Paths
-
-Route paths, in combination with a request method, define the endpoints at which requests can be made. Route paths can be strings, string patterns, or regular expressions. The characters `?`, `+`, `*`, and `()` are subsets of their regular expression counterparts. The hyphen (`-`) and the dot (`.`) are interpreted literally by string-based paths.
-
-If you need to use the dollar character (`$`) in a path string, enclose it escaped within `([ and ])`. For example, the path string for requests at `/data/$book` would be `/data/([\$])book`.
-
-### Examples
-
-```typescript
-const indexController = new IndexController();
-
-// Matches the root path
-router.get('/', (request: Request, response: Response, next: NextFunction) => {
-    indexController.index(request, response, next);
-});
-
-// Matches the path '/about'
-router.get('/about', (request: Request, response: Response, next: NextFunction) => {
-    indexController.index(request, response, next);
-});
-
-// Matches the path '/random.text'
-router.get('/random.text', (request: Request, response: Response, next: NextFunction) => {
-    indexController.index(request, response, next);
-});
-
-// Matches 'acd' and 'abcd'
-router.get('/ab?cd', (request: Request, response: Response, next: NextFunction) => {
-    indexController.index(request, response, next);
-});
-
-// Matches 'abcd', 'abbcd', 'abbbcd', and so on
-router.get('/ab+cd', (request: Request, response: Response, next: NextFunction) => {
-    indexController.index(request, response, next);
-});
-
-// Matches 'abcd', 'abxcd', 'abRANDOMcd', 'ab123cd', and so on
-router.get('/ab*cd', (request: Request, response: Response, next: NextFunction) => {
-    indexController.index(request, response, next);
-});
-
-// Matches 'abe' and 'abcde'
-router.get('/ab(cd)?e', (request: Request, response: Response, next: NextFunction) => {
-    indexController.index(request, response, next);
-});
-
-// Matches anything with an "a" in it
-router.get(/a/, (request: Request, response: Response, next: NextFunction) => {
-    indexController.index(request, response, next);
-});
-
-// Matches 'butterfly' and 'dragonfly', but not 'butterflyman', 'dragonflyman', and so on
-router.get(/.*fly$/, (request: Request, response: Response, next: NextFunction) => {
-    indexController.index(request, response, next);
-});
-```
-
-Please note that `expressjs` uses path-to-regexp for matching route paths; refer to the [path-to-regexp documentation](https://www.npmjs.com/package/path-to-regexp) for all the possibilities in defining route paths. The [Express Route Tester](https://express-route-tester.whistl.com/) is a handy tool for testing basic Express routes, although it does not support pattern matching.
-
-Please note that query strings are not part of the route path.
 
 ## Route Parameters
 
-Route parameters are named URL segments used to capture the values specified at their position in the URL. The captured values are populated in the `req.params` object, with the name of the route parameter specified in the path as their respective keys.
-
-```text
-Route path: /users/:userId/books/:bookId
-Request URL: http://localhost:10000/users/34/books/8989
-req.params: { "userId": "34", "bookId": "8989" }
-```
-
-To define routes with route parameters, simply specify the route parameters in the path of the route.
-
-### Example
+Capture dynamic values from the URL using route parameters (marked with `:`):
 
 ```typescript
-const indexController = new IndexController();
+// Single parameter
+router.get('/users/:id', (request: Request, response: Response, next: NextFunction) => {
+    const userId = request.params.id; // "123" from /users/123
+    response.send(`User ID: ${userId}`);
+});
 
-// Matches '/users/:userId/books/:bookId'
-router.get('/users/:userId/books/:bookId', (request: Request, response: Response, next: NextFunction) => {
-    indexController.index(request, response, next);
+// Multiple parameters
+router.get('/users/:userId/posts/:postId', (request: Request, response: Response, next: NextFunction) => {
+    const { userId, postId } = request.params;
+    // From /users/123/posts/456: userId = "123", postId = "456"
 });
 ```
 
-To access the route parameters in the controller, use `request.params`.
+## Accessing Request Data
 
-### Example in Controller
+### Query Parameters (URL parameters after `?`)
 
 ```typescript
-import { Request, Response, NextFunction } from 'express';
-
-export default class IndexController {
-    public async index(request: Request, response:
-
- Response, next: NextFunction) {
-        try {
-            console.log(request.params);
-        } catch (error) {
-            next(error);
-        }
-    }
-}
+// GET /search?q=hello&limit=10
+router.get('/search', (request: Request, response: Response, next: NextFunction) => {
+    const query = request.query.q;        // "hello"
+    const limit = request.query.limit;    // "10"
+});
 ```
 
-## Query Parameters
-
-To access query parameters, use `request.query`.
-
-### Example in Controller
+### Request Body (POST, PUT data)
 
 ```typescript
-import { Request, Response, NextFunction } from 'express';
-
-export default class IndexController {
-    public async index(request: Request, response: Response, next: NextFunction) {
-        try {
-            console.log(request.query);
-        } catch (error) {
-            next(error);
-        }
-    }
-}
-```
-
-## POST, PUT, etc. Parameters
-
-To access parameters from POST, PUT, etc. requests, use `request.body`.
-
-### Example in Controller
-
-```typescript
-import { Request, Response, NextFunction } from 'express';
-
-export default class IndexController {
-    public async index(request: Request, response: Response, next: NextFunction) {
-        try {
-            console.log(request.body);
-        } catch (error) {
-            next(error);
-        }
-    }
-}
+// POST /users with JSON body
+router.post('/users', (request: Request, response: Response, next: NextFunction) => {
+    const { name, email } = request.body;
+    // Handle user creation
+});
 ```
 
 ## Response Methods
 
-The methods on the response object (`response`) can send a response to the client and terminate the request-response cycle. If none of these methods are called from a route handler, the client request will be left hanging.
-
-Available response methods:
-
-- `res.download()`: Prompt a file to be downloaded.
-- `res.end()`: End the response process.
-- `res.json()`: Send a JSON response.
-- `res.jsonp()`: Send a JSON response with JSONP support.
-- `res.redirect()`: Redirect a request.
-- `res.render()`: Render a view template.
-- `res.send()`: Send a response of various types.
-- `res.sendFile()`: Send a file as an octet stream.
-- `res.sendStatus()`: Set the response status code and send its string representation as the response body.
-
-## Using Middlewares in Routes
-
-If you want to use middleware in a specific route, create a new middleware, instantiate it in `src/routes/api.ts`, and use it in a particular route. This approach allows you to use specific middlewares in needed routes, without applying them globally.
-
-### Example
+Send responses back to the client using these common methods:
 
 ```typescript
-import express from 'express';
-import { Request, Response, NextFunction } from 'express';
-import IndexController from '../app/Http/Controllers/IndexController';
-import ExampleMiddleware from '../app/Http/Middlewares/ExampleMiddleware';
-const router = express.Router();
-
-// Instantiate example middleware
-const exampleMiddleware = new ExampleMiddleware();
-
-// IndexController
-const indexController = new IndexController();
-router.get('/', exampleMiddleware.handle, (request: Request, response: Response, next: NextFunction) => {
-    indexController.index(request, response, next);
+router.get('/api/users', (request: Request, response: Response, next: NextFunction) => {
+    // Send JSON data (most common for APIs)
+    response.json({ users: [], total: 0 });
+    
+    // Send plain text or HTML
+    response.send('Hello World');
+    
+    // Redirect to another URL
+    response.redirect('/login');
+    
+    // Send with specific status code
+    response.status(404).send('Not Found');
 });
-
-export default router;
 ```
 
-In this example, we use the `handle` method as the second argument in a route. This approach allows you to use specific middlewares in needed routes. Additionally, using middleware directly in a route allows you to access `request.route` in this particular middleware, which would be inaccessible otherwise.
+## Using Middleware in Routes
+
+Apply middleware to specific routes for authentication, validation, etc.:
+
+```typescript
+import AuthMiddleware from '../app/Http/Middlewares/AuthMiddleware';
+
+const authMiddleware = new AuthMiddleware();
+const userController = new UserController();
+
+// Protected route with middleware
+router.get('/profile', authMiddleware.handle, (request: Request, response: Response, next: NextFunction) => {
+    userController.getProfile(request, response, next);
+});
+```
+
+## Advanced Routing
+
+### Route Patterns
+
+For more complex URL matching:
+
+```typescript
+// Optional segments with ?
+router.get('/posts/:year/:month?', handler); // /posts/2024 or /posts/2024/12
+
+// Wildcards with *
+router.get('/files/*', handler); // Matches /files/docs/readme.txt
+```
+
+### All HTTP Methods
+
+```typescript
+// Handle any HTTP method
+router.all('/api/*', (request: Request, response: Response, next: NextFunction) => {
+    // This runs for GET, POST, PUT, DELETE, etc.
+});
+```
+
+### Available HTTP Methods
+
+While most applications only need GET, POST, PUT, and DELETE, Sosise supports all Express.js methods including: `checkout`, `copy`, `head`, `lock`, `merge`, `mkactivity`, `mkcol`, `move`, `m-search`, `notify`, `options`, `patch`, `purge`, `report`, `search`, `subscribe`, `trace`, `unlock`, `unsubscribe`.
+
+### Complex Pattern Matching
+
+For advanced use cases, you can use regular expressions:
+
+```typescript
+// Matches anything ending with 'fly'
+router.get(/.*fly$/, handler);
+
+// Matches specific patterns
+router.get(/ab(cd)?e/, handler); // Matches 'abe' and 'abcde'
+```
+
+> **Note**: For complex routing patterns, refer to the [Express.js routing documentation](https://expressjs.com/en/guide/routing.html) and [path-to-regexp documentation](https://www.npmjs.com/package/path-to-regexp).
+
+## Best Practices
+
+1. **Use controllers** instead of inline functions for complex logic
+2. **Group related routes** in separate route files
+3. **Apply middleware** consistently for authentication and validation
+4. **Use descriptive route names** that clearly indicate their purpose
+5. **Handle errors** with try-catch blocks in your route handlers

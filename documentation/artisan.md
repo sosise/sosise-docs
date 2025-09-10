@@ -1,203 +1,390 @@
 # Artisan
 
+## Quick Start
+
+Artisan is Sosise's command-line tool that helps you build and manage your application. Think of it like a helpful assistant that can generate files, run tasks, and automate repetitive work.
+
+### Basic Commands
+
+```sh
+# See all available commands
+./artisan
+
+# Get help for a specific command
+./artisan make:controller --help
+
+# Generate a new controller
+./artisan make:controller UserController
+
+# Generate a new unifier
+./artisan make:unifier CreateUserUnifier
+
+# Run a custom command
+./artisan my:custom-task
+```
+
+That's the basics! Artisan makes development faster and more consistent.
+
 ## Introduction
 
-Artisan is the command-line interface for Sosise applications. It provides a set of helpful commands that can assist you while building and managing your application. To view a list of all available Artisan commands.
+Artisan is the command-line interface for Sosise applications. It provides helpful commands for generating files, running tasks, and managing your application. Every Sosise project comes with Artisan built-in.
+
+## Using Built-in Commands
+
+### View All Commands
 
 ```sh
 ./artisan
 ```
 
-Each command also includes a "help" screen that displays and describes the command's available arguments and options. To view the help screen, add the `--help` option to the command:
+This shows all available Artisan commands with brief descriptions.
+
+### Get Command Help
 
 ```sh
 ./artisan make:controller --help
+./artisan make:unifier --help
 ```
 
-## Writing Custom Commands
+Every command includes help information showing available options and usage examples.
 
-In addition to the built-in commands provided by Artisan, you can create your custom commands to perform specific tasks or automate actions. Custom commands are stored in the `app/Console/Commands` directory.
-
-## Generating Custom Commands
-
-To create a new custom command, you can use the `make:command` Artisan command. This command will generate a new command class in the `app/Console/Commands` directory.
-
-> Important: Make sure to specify the `Command` postfix when creating custom commands; otherwise, the command will not be registered properly.
+### Common Built-in Commands
 
 ```sh
-./artisan make:command DoSomeExampleExportCommand
+# Generate files
+./artisan make:controller ProductController
+./artisan make:unifier CreateProductUnifier
+./artisan make:command ProcessOrdersCommand
+
+# These create files with proper templates and naming
 ```
 
-### Command Structure
+## Creating Custom Commands
 
-After generating your command, you should define the appropriate values for the `signature` and `description` properties of the class. These properties will be used when displaying your command on the list screen. The `handle` method will be called when your command is executed, and you can place your command logic in this method.
+Custom commands let you automate tasks specific to your application, like data processing, report generation, or maintenance tasks.
 
-Let's take a look at an example command:
+### Generate a Custom Command
+
+```sh
+./artisan make:command SendEmailReportCommand
+```
+
+> **Important**: Always end custom command names with "Command" or they won't be registered properly.
+
+This creates a new command file in `app/Console/Commands/SendEmailReportCommand.ts`.
+
+### Simple Command Example
+
+Here's what a basic custom command looks like:
 
 ```typescript
 import commander from 'commander';
-import BaseCommand, { OptionType } from 'sosise-core/build/Command/BaseCommand';
+import BaseCommand from 'sosise-core/build/Command/BaseCommand';
 
-export default class DoSomeExampleExportCommand extends BaseCommand {
-    /**
-     * Command name
-     */
-    protected signature: string = 'example:command';
+export default class SendEmailReportCommand extends BaseCommand {
+    // The command name (how you'll call it)
+    protected signature: string = 'email:report';
 
-    /**
-     * Command description
-     */
-    protected description: string = 'This is an example command';
+    // Description shown in command list
+    protected description: string = 'Send daily email report to managers';
 
-    /**
-     * When the command is executed, prevent it from double execution
-     */
-    protected singleExecution: boolean = false;
-
-    /**
-     * Command options
-     */
-    protected options: OptionType[] = [
-        // Options can be boolean
-        { flag: '-d, --debug', description: 'Show debug information', required: false },
-
-        // Options can pass some values
-        { flag: '-s, --since <since>', description: 'Report since', default: '29.12.2020', required: false },
-    ];
-
-    /**
-     * Execute the console command
-     */
+    // The actual work the command does
     public async handle(cli: commander.Command): Promise<void> {
-        // Check if the debug option is provided
-        if (cli.debug) {
-            console.log('Debug option provided');
-        }
+        console.log('Generating daily report...');
+        
+        // Your command logic here
+        const reportData = await this.generateReport();
+        await this.sendEmail(reportData);
+        
+        console.log('Report sent successfully!');
+    }
 
-        console.log('Example export since ' + cli.since);
+    private async generateReport() {
+        // Generate your report data
+        return { users: 100, orders: 50 };
+    }
+
+    private async sendEmail(data: any) {
+        // Send the email
+        console.log('Sending email with data:', data);
     }
 }
 ```
 
-> For better code reuse, it is a good practice to keep your console commands light and let them defer to application services to accomplish their tasks.
-
-## Defining Input Expectations
-
-### Options
-
-Options, like arguments, are another form of user input. Options are prefixed by two hyphens (`--`) when provided via the command line. There are two types of options: those that receive a value and those that don't. Options that don't receive a value serve as a boolean "switch". Let's take a look at an example of this type of option:
-
-```typescript
-/**
- * Command options
- */
-protected options: OptionType[] = [
-    // Options can be boolean
-    { flag: '-d, --debug', description: 'Show debug information' },
-];
-
-/**
- * Execute the console command
- */
-public async handle(cli: commander.Command): Promise<void> {
-    console.log(cli.debug);
-}
-```
-
-In this example, the `--debug` or `-d` switch may be specified when calling the Artisan command. If the `--debug` switch is passed, the value of the option will be `true`. Otherwise, the value will be `undefined`:
+### Using Your Command
 
 ```sh
-./artisan example:command --debug
+./artisan email:report
 ```
 
-### Options with Values
+## Command Options
 
-Next, let's take a look at an option that expects a value:
+Options let users customize how your command runs:
+
+### Command with Simple Options
 
 ```typescript
-/**
- * Command options
- */
-protected options: OptionType[] = [
-    // Options can pass some values
-    { flag: '-s, --since <since>', description: 'Report since' },
-];
+export default class BackupCommand extends BaseCommand {
+    protected signature: string = 'backup:database';
+    protected description: string = 'Backup the database';
 
-/**
- * Execute the console command
- */
-public async handle(cli: commander.Command): Promise<void> {
-    console.log(cli.since);
+    // Define command options
+    protected options: OptionType[] = [
+        // Simple flag option (true/false)
+        { 
+            flag: '-c, --compress', 
+            description: 'Compress the backup file', 
+            required: false 
+        },
+        
+        // Option that accepts a value
+        { 
+            flag: '-p, --path <path>', 
+            description: 'Backup destination path', 
+            default: './backups', 
+            required: false 
+        },
+    ];
+
+    public async handle(cli: commander.Command): Promise<void> {
+        // Check if compress flag was provided
+        if (cli.compress) {
+            console.log('Creating compressed backup...');
+        }
+
+        // Get the path value (uses default if not provided)
+        const backupPath = cli.path;
+        console.log(`Backing up to: ${backupPath}`);
+        
+        // Your backup logic here
+    }
 }
 ```
 
-In this example, the user may pass a value for the option like this. If the option is not specified when invoking the command, its value will be `undefined`.
+### Using Commands with Options
 
 ```sh
-./artisan example:command --since 01.01.2021
+# Basic usage
+./artisan backup:database
+
+# With compression
+./artisan backup:database --compress
+
+# With custom path
+./artisan backup:database --path /custom/backup/location
+
+# With both options
+./artisan backup:database --compress --path /custom/backup/location
 ```
 
-### Options with Default Values
+## Real-World Examples
 
-Next, let's take a look at options that have default values:
+### Data Processing Command
 
 ```typescript
-/**
- * Command options
- */
-protected options: OptionType[] = [
-    // Options can be boolean
-    { flag: '-d, --debug', description: 'Show debug information', default: false },
+export default class ProcessOrdersCommand extends BaseCommand {
+    protected signature: string = 'orders:process';
+    protected description: string = 'Process pending orders';
 
-    // Options can pass some values
-    { flag: '-s, --since <since>', description: 'Report since', default: '29.12.2020' },
+    protected options: OptionType[] = [
+        { 
+            flag: '-l, --limit <limit>', 
+            description: 'Number of orders to process', 
+            default: '100', 
+            required: false 
+        },
+        { 
+            flag: '--dry-run', 
+            description: 'Show what would be processed without actually doing it', 
+            required: false 
+        }
+    ];
 
-    // Options can pass some values
-    { flag: '-t, --to <to>', description: 'Report to', default: dayjs().format('YYYY-MM-DD') },
-];
+    public async handle(cli: commander.Command): Promise<void> {
+        const limit = parseInt(cli.limit);
+        const isDryRun = cli.dryRun;
 
-/**
- * Execute the console command
- */
-public async handle(cli: commander.Command): Promise<void> {
-    console.log(cli.debug, cli.since, cli.to);
+        console.log(`Processing ${limit} orders${isDryRun ? ' (dry run)' : ''}...`);
+
+        // Get pending orders from database
+        const orders = await this.getPendingOrders(limit);
+        
+        for (const order of orders) {
+            if (isDryRun) {
+                console.log(`Would process order ${order.id}`);
+            } else {
+                await this.processOrder(order);
+                console.log(`Processed order ${order.id}`);
+            }
+        }
+
+        console.log('Done!');
+    }
+
+    private async getPendingOrders(limit: number) {
+        // Get orders from your database
+        return []; // Your implementation
+    }
+
+    private async processOrder(order: any) {
+        // Process the order
+        console.log('Processing order...');
+    }
 }
 ```
 
-In this example, if you don't pass options to the command, default values will be taken: `false`, `'29.12.2020'`, and today's date.
-
-### Required Options
-
-Next, let's take a look at a required option:
+### Cleanup Command
 
 ```typescript
-/**
- * Command options
- */
-protected options: OptionType[] = [
-    // Options can pass some values
-    { flag: '-t, --to <to>', description: 'Report to', required: true },
-];
+export default class CleanupFilesCommand extends BaseCommand {
+    protected signature: string = 'cleanup:files';
+    protected description: string = 'Clean up old temporary files';
 
-/**
- * Execute the console command
- */
-public async handle(cli: commander.Command): Promise<void> {
-    console.log(cli.to);
+    protected options: OptionType[] = [
+        { 
+            flag: '-d, --days <days>', 
+            description: 'Delete files older than N days', 
+            default: '30', 
+            required: false 
+        }
+    ];
+
+    public async handle(cli: commander.Command): Promise<void> {
+        const days = parseInt(cli.days);
+        
+        console.log(`Cleaning up files older than ${days} days...`);
+
+        const deletedCount = await this.cleanupFiles(days);
+        
+        console.log(`Deleted ${deletedCount} files`);
+    }
+
+    private async cleanupFiles(days: number): Promise<number> {
+        // Your file cleanup logic
+        return 0; // Return number of files deleted
+    }
 }
 ```
 
-> Please note that an option is only required when its `required` property is set to `true`, and it does not have a default value.
+## Command Safety Features
 
-## Preventing Double Execution of Your Commands
+### Prevent Double Execution
 
-To prevent a command from being executed more than once simultaneously, you can use the `singleExecution` property:
+For commands that shouldn't run multiple times simultaneously:
 
 ```typescript
-/**
- * When the command is executed, prevent it from double execution
- */
-protected singleExecution: boolean = true;
+export default class ImportDataCommand extends BaseCommand {
+    protected signature: string = 'import:data';
+    protected description: string = 'Import data from external source';
+    
+    // Prevent this command from running if it's already running
+    protected singleExecution: boolean = true;
+
+    public async handle(cli: commander.Command): Promise<void> {
+        console.log('Starting data import...');
+        // Long-running import process
+        await this.importData();
+        console.log('Import completed!');
+    }
+
+    private async importData() {
+        // Your import logic that might take a while
+    }
+}
 ```
 
-In this example, you would not be able to run the command while the last command is still running.
+## Best Practices
+
+### 1. Use Clear Command Names
+
+```typescript
+// Good: Clear and specific
+protected signature: string = 'orders:process-pending';
+protected signature: string = 'users:send-welcome-emails';
+protected signature: string = 'reports:generate-monthly';
+
+// Avoid: Vague or confusing
+protected signature: string = 'do-stuff';
+protected signature: string = 'task';
+```
+
+### 2. Provide Good Descriptions
+
+```typescript
+// Good: Explains what the command does and when to use it
+protected description: string = 'Process pending orders and send confirmation emails';
+
+// Avoid: Too brief or unclear
+protected description: string = 'Process orders';
+```
+
+### 3. Use IoC Services
+
+```typescript
+import IOC from 'sosise-core/build/ServiceProviders/IOC';
+import EmailService from '../Services/EmailService';
+import OrderService from '../Services/OrderService';
+
+export default class ProcessOrdersCommand extends BaseCommand {
+    public async handle(cli: commander.Command): Promise<void> {
+        // Use your services through IoC
+        const orderService = IOC.make(OrderService) as OrderService;
+        const emailService = IOC.make(EmailService) as EmailService;
+        
+        const orders = await orderService.getPending();
+        for (const order of orders) {
+            await orderService.process(order);
+            await emailService.sendConfirmation(order.customerEmail);
+        }
+    }
+}
+```
+
+### 4. Handle Errors Gracefully
+
+```typescript
+public async handle(cli: commander.Command): Promise<void> {
+    try {
+        console.log('Starting process...');
+        await this.doSomethingThatMightFail();
+        console.log('Process completed successfully!');
+    } catch (error) {
+        console.error('Process failed:', error.message);
+        process.exit(1); // Exit with error code
+    }
+}
+```
+
+### 5. Provide Progress Feedback
+
+```typescript
+public async handle(cli: commander.Command): Promise<void> {
+    const items = await this.getItemsToProcess();
+    
+    console.log(`Processing ${items.length} items...`);
+    
+    for (let i = 0; i < items.length; i++) {
+        await this.processItem(items[i]);
+        
+        // Show progress
+        if ((i + 1) % 10 === 0) {
+            console.log(`Processed ${i + 1}/${items.length} items`);
+        }
+    }
+    
+    console.log('All items processed!');
+}
+```
+
+## Summary
+
+Artisan commands are a powerful way to automate tasks in your Sosise application:
+
+- ✅ Generate files quickly and consistently
+- ✅ Automate repetitive tasks
+- ✅ Process data in batches
+- ✅ Run maintenance tasks
+- ✅ Create deployment scripts
+- ✅ Integrate with your existing services through IoC
+
+Start with simple commands and gradually add more complex features as needed!
