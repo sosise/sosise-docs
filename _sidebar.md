@@ -1,4 +1,4 @@
-- Getting Started
+- **Getting Started**
     - [Changelog](getting-started/changelog.md)
     - [Installation](getting-started/installation.md)
     - [Directory Structure](getting-started/directory-structure.md)
@@ -23,9 +23,9 @@
     - [Session](documentation/session)
     - [Unifiers](documentation/unifiers)
     - [Throttling](documentation/throttling)
-- Database
+- **Database**
     - [Getting Started](database/getting-started)
     - [Migrations](database/migrations)
     - [Seeding](database/seeding)
-- Testing
+- **Testing**
     - [Getting Started](testing/getting-started)
