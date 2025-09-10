@@ -4,7 +4,7 @@
     - [Directory Structure](getting-started/directory-structure.md)
     - [Docker](getting-started/docker)
     - [Project documentation](getting-started/docsify)
-- Documentation
+- **Documentation**
     - [Artisan](documentation/artisan)
     - [Cache](documentation/cache)
     - [Controllers](documentation/controllers)
