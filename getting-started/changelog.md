@@ -1,5 +1,70 @@
 ### Changelog for Project Configuration
 
+## 1.1.0 - 13 September 2025
+### Accompanying Sosise-Core Version
+`1.1.0`
+
+### Updates
+- **Event Bus System**: New event-driven architecture for building reactive applications
+  - Support for two drivers: `memory` (in-process) and `redis` (distributed)
+  - Pattern-based event subscriptions with wildcard support (e.g., `user.*`, `order.*.completed`)
+  - Durable subscriptions for guaranteed message delivery (Redis driver only)
+  - TTL support for automatic event expiration
+  - Automatic reconnection and error recovery for Redis driver
+  - Service-specific position tracking for distributed systems
+
+### Upgrade Steps
+1. **Update sosise-core**:
+   ```bash
+   npm install sosise-core@latest
+   # or
+   npm run update-sosise
+   ```
+
+2. **Create Event Bus configuration file** at `src/config/eventbus.ts`:
+   ```typescript
+   /**
+    * Event Bus configuration
+    */
+   const eventBusConfig = {
+       /**
+        * Event bus driver
+        * Available drivers: 'memory', 'redis'
+        */
+       driver: process.env.EVENTBUS_DRIVER || 'memory',
+
+       /**
+        * Driver-specific configuration
+        */
+       driverConfiguration: {
+           // Redis configuration (for 'redis' driver)
+           redis: {
+               host: process.env.EVENTBUS_REDIS_HOST || 'localhost',
+               port: Number(process.env.EVENTBUS_REDIS_PORT) || 6379,
+               db: Number(process.env.EVENTBUS_REDIS_DB) || 0,
+               password: process.env.EVENTBUS_REDIS_PASSWORD || undefined,
+               // Service name for distributed position tracking
+               serviceName: process.env.SERVICE_NAME || 'default-service',
+           },
+       },
+   };
+
+   export default eventBusConfig;
+   ```
+
+3. Add to your `.env` and `.env.example` and `.env.testing` new ENVs, you can take a look at `https://raw.githubusercontent.com/sosise/sosise/1.1.0/.env.example`
+
+4. **Optional: Use Event Bus in your application**:
+   - For in-process events, use the `memory` driver (default)
+   - For distributed events across multiple services, use the `redis` driver
+   - Consider using durable subscriptions for critical events that must not be lost
+
+### Migration Notes
+- The Event Bus is a new feature and does not affect existing functionality
+- No breaking changes in this release
+- The `memory` driver is suitable for single-instance applications
+- The `redis` driver is recommended for multi-instance or microservices architectures
+
 ## 1.0.0 - 03 June 2025
 ### Accompanying Sosise-Core Version
 `1.0.0`

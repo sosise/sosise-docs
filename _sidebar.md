@@ -9,6 +9,7 @@
     - [Cache](documentation/cache)
     - [Controllers](documentation/controllers)
     - [Error Handling](documentation/error-handling)
+    - [EventBus](documentation/eventbus)
     - [HTTP Client](documentation/http-client)
     - [HTTP Request](documentation/http-request)
     - [HTTP Response](documentation/http-response)
