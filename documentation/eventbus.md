@@ -127,13 +127,8 @@ Durable subscriptions guarantee message delivery even if the subscriber was offl
 // Subscribe with guaranteed delivery
 eventBus.onDurable('order.created', async (payload) => {
     // Will receive ALL messages, including those sent while offline
+    // When they are not expired
     console.log('Processing order:', payload.data);
-    
-    // Check if event has expired
-    if (payload.event.expiresAt && Date.now() > payload.event.expiresAt) {
-        console.log('Event expired, skipping...');
-        return;
-    }
     
     // Process the order
     await processOrder(payload.data);
@@ -211,7 +206,7 @@ export default {
 
 ### Memory (In-Process)
 
-- **Pros**: Fastest, no setup required, great for development
+- **Pros**: Fastest, no setup required
 - **Cons**: Events lost on restart, single process only
 - **Use for**: Development, single-instance applications
 
@@ -317,17 +312,6 @@ Set expiration for events to prevent processing stale data:
 ```typescript
 // Emit event that expires in 5 minutes
 await eventBus.emit('verification.code', { code: '123456' }, 5);
-
-// Handler checks expiration
-eventBus.onDurable('verification.code', async (payload) => {
-    if (payload.event.expiresAt && Date.now() > payload.event.expiresAt) {
-        console.log('Verification code expired');
-        return;
-    }
-    
-    // Process valid verification code
-    await verifyCode(payload.data.code);
-});
 ```
 
 ### Event Inspection
@@ -537,12 +521,6 @@ export default class ReportProcessorService {
     constructor(private eventBus: EventBusService) {
         // Use durable to process even if service was down
         this.eventBus.onDurable('report.*.generated', async (payload) => {
-            // Skip if report is too old
-            if (payload.event.expiresAt && Date.now() > payload.event.expiresAt) {
-                console.log('Report expired, skipping processing');
-                return;
-            }
-            
             await this.processReport(payload.data);
         });
     }
@@ -637,16 +615,6 @@ await eventBus.emit('report.weekly.ready', { url: '/reports/123' }, 10080); // 1
 await eventBus.emit('user.deleted', { userId: 123 }); // No expiration
 ```
 
-### 6. Use IoC for EventBus Injection
-
-```typescript
-// ✅ Good: Injected through constructor
-constructor(private eventBus: EventBusService) {}
-
-// ❌ Avoid: Direct instantiation
-const eventBus = IOC.makeSingleton(EventBusService);
-```
-
 ## Debugging EventBus
 
 ### Monitor Event Flow
@@ -673,27 +641,6 @@ console.log('Active events:', events);
 // Check specific event
 const count = eventBus.listenerCount('user.created');
 console.log(`Listeners for user.created: ${count}`);
-```
-
-### Test Event Emission
-
-Create a console command for testing:
-
-```typescript
-// src/app/Console/Commands/EventTestCommand.ts
-export default class EventTestCommand extends BaseCommand {
-    protected signature = 'event:test {event} {--data=}';
-    protected description = 'Test event emission';
-
-    public async handle(): Promise<void> {
-        const eventBus = IOC.makeSingleton(EventBusService) as EventBusService;
-        const event = this.argument('event');
-        const data = this.option('data') ? JSON.parse(this.option('data')) : {};
-        
-        await eventBus.emit(event, data);
-        console.log(`Event "${event}" emitted with data:`, data);
-    }
-}
 ```
 
 ## Migration from Direct Dependencies
