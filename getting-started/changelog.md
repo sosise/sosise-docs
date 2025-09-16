@@ -55,6 +55,13 @@
 3. **Add logging channel to** `src/config/logging.ts`
 ```typescript
     /**
+     * Cache channel for cache-related logs
+     */
+    cache: {
+        logFileNamePrefix: 'cache',
+    },
+    
+    /**
      * EventBus channel for event bus-related logs
      */
     eventbus: {
