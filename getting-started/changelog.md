@@ -52,9 +52,19 @@
    export default eventBusConfig;
    ```
 
-3. Add to your `.env` and `.env.example` and `.env.testing` new ENVs, you can take a look at `https://raw.githubusercontent.com/sosise/sosise/1.1.0/.env.example`
+3. **Add logging channel to** `src/config/logging.ts`
+```typescript
+    /**
+     * EventBus channel for event bus-related logs
+     */
+    eventbus: {
+        logFileNamePrefix: 'eventbus',
+    },
+```
 
-4. **Optional: Use Event Bus in your application**:
+4. Add to your `.env` and `.env.example` and `.env.testing` new ENVs, you can take a look at `https://raw.githubusercontent.com/sosise/sosise/1.1.0/.env.example`
+
+5. **Optional: Use Event Bus in your application**:
    - For in-process events, use the `memory` driver (default)
    - For distributed events across multiple services, use the `redis` driver
    - Consider using durable subscriptions for critical events that must not be lost
