@@ -1,5 +1,59 @@
 ### Changelog for Project Configuration
 
+## 1.1.1 - 17 September 2025
+### Accompanying Sosise-Core Version
+`1.1.1`
+
+### Updates
+- **Development Experience**: Replaced `tsc-watch` with `nodemon` for improved development workflow
+  - Automatic recompilation on file changes
+  - Better process management and restart behavior
+  - Consistent with other Sosise projects
+
+### Upgrade Steps
+1. **Update sosise-core**:
+   ```bash
+   npm install sosise-core@latest
+   # or
+   npm run update-sosise
+   ```
+
+2. **Install nodemon and remove tsc-watch**:
+   ```bash
+   npm install --save-dev nodemon@^3.1.10
+   npm remove tsc-watch
+   ```
+
+3. **Create `nodemon.json` configuration file**:
+   ```json
+   {
+     "watch": ["src/**/*"],
+     "ignore": [
+       "build/**/*",
+       "node_modules/**/*",
+       "docs/**/*",
+       "*.log"
+     ],
+     "ext": "ts,js,json",
+     "exec": "npm run build"
+   }
+   ```
+
+4. **Update `package.json` scripts**:
+   ```json
+   "scripts": {
+     "build": "rm -rf build ; tsc ; cp -R src/Artisan/FileTemplates build/Artisan/FileTemplates",
+     "watch": "nodemon",
+     "dev": "nodemon",
+     // ... other scripts
+   }
+   ```
+
+### Migration Notes
+- No breaking changes in this release
+- The `watch` and `dev` commands now use nodemon instead of tsc-watch
+- Development workflow remains the same: use `npm run watch` or `npm run dev` for development
+
 ## 1.1.0 - 13 September 2025
 ### Accompanying Sosise-Core Version
 `1.1.0`
