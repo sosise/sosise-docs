@@ -35,7 +35,7 @@
        "*.log"
      ],
      "ext": "ts,js,json",
-     "exec": "npm run build"
+     "exec": "npm run build && node build/server.js"
    }
    ```
 
