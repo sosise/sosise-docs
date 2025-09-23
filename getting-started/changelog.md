@@ -29,9 +29,9 @@
    {
      "watch": ["src/**/*"],
      "ignore": [
-       "build/**/*",
+       "storage/**/*",
+       "build/**/*", 
        "node_modules/**/*",
-       "docs/**/*",
        "*.log"
      ],
      "ext": "ts,js,json",
@@ -42,7 +42,7 @@
 4. **Update `package.json` scripts**:
    ```json
    "scripts": {
-     "build": "rm -rf build ; tsc ; cp -R src/Artisan/FileTemplates build/Artisan/FileTemplates",
+     // ... other scripts
      "watch": "nodemon",
      "dev": "nodemon",
      // ... other scripts
