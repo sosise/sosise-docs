@@ -1,5 +1,79 @@
 ### Changelog for Project Configuration
 
+## 1.1.3 - 01 October 2025
+### Accompanying Sosise-Core Version
+`1.1.2`
+
+### Updates
+- `nodemon` configuration has been optimized
+- `build-docker-image.sh` has been refactored
+- `package.json` scripts has been refactored
+
+### Upgrade Steps
+1. Replace `nodemon.json` with following content:
+```json
+{
+  "watch": [
+    "src/**/*",
+    "docs/**/*",
+    ".env"
+  ],
+  "ignore": [
+    "storage/**/*",
+    "build/**/*",
+    "docs/src/**/*",
+    "node_modules/**/*",
+    "*.log"
+  ],
+  "ext": "ts,js,json,html,md",
+  "exec": "npm run build && npm run start"
+}
+```
+
+2. Replace `build-docker-image.sh` with following content:
+```sh
+#!/usr/bin/env sh
+
+# Build app
+npm run build
+
+# Build Docker image
+IMAGE="sosise:$(date +%Y-%m-%d)"
+
+if [ "$(uname -m)" = "arm64" ]; then
+    echo "Building for AMD64 on ARM..."
+    docker buildx build --platform linux/amd64 -t "$IMAGE" -f docker/Dockerfile .
+else
+    echo "Building native image..."
+    docker build -t "$IMAGE" -f docker/Dockerfile .
+fi
+
+# Show run command
+echo "Run: docker run --rm --name sosise -p 10000:10000 $IMAGE"
+```
+
+3. Replace `package.json` scripts or integrate with yours:
+```json
+"scripts": {
+  "dev": "nodemon",
+  "watch": "nodemon",
+  "build": "npm run clean:docs && npm run clean:migrations && npm run copy-docs && tsc",
+  "start": "node build/server.js",
+  "clean:docs": "rm -rf docs/src/Types docs/src/Unifiers docs/src/Enums",
+  "clean:migrations": "rm -rf build/database/migrations",
+  "copy-docs": "cp -R src/app/Types src/app/Unifiers src/app/Enums docs/src/.",
+  "test": "jest -c ./build/config/jest.js --coverage",
+  "lint": "eslint .",
+  "lint:fix": "eslint . --fix",
+  "update-sosise": "npm install sosise-core@latest"
+},
+```
+
+
+
+
+
+
 ## 1.1.2 - 17 September 2025
 ### Accompanying Sosise-Core Version
 `1.1.1`
