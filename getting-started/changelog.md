@@ -31,7 +31,7 @@
 ```
 
 2. Replace `build-docker-image.sh` with following content:
-```sh
+```
 #!/usr/bin/env sh
 
 # Build app
@@ -68,11 +68,6 @@ echo "Run: docker run --rm --name sosise -p 10000:10000 $IMAGE"
   "update-sosise": "npm install sosise-core@latest"
 },
 ```
-
-
-
-
-
 
 ## 1.1.2 - 17 September 2025
 ### Accompanying Sosise-Core Version
