@@ -31,7 +31,7 @@
 ```
 
 2. Replace `build-docker-image.sh` with following content:
-```
+```sh
 #!/usr/bin/env sh
 
 # Build app
