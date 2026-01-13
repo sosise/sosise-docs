@@ -1,5 +1,57 @@
 ### Changelog for Project Configuration
 
+## 1.1.4 - 13 January 2026
+### Accompanying Sosise-Core Version
+`1.1.4`
+
+### Updates
+- **Multi-Agent Graph System**: New architecture for building LLM-powered multi-agent workflows
+  - `AgentGraphService` - orchestrator for agent execution with visual logging
+  - Worker-Validator pattern template for common validation workflows
+  - Three-tier memory system: agent-private, shared (thread-level), and global
+  - Two storage drivers: InMemory (development) and File (production)
+  - Automatic iteration tracking and protection against infinite loops
+  - Support for OpenAI and Groq LLM providers out of the box
+  - New Artisan commands: `ma:init` and `ma:create`
+
+### Upgrade Steps
+1. **Update sosise-core**:
+   ```bash
+   npm install sosise-core@latest
+   # or
+   npm run update-sosise
+   ```
+
+2. **Initialize multi-agent system** (optional):
+   ```bash
+   ./artisan ma:init [ServiceName]
+   ```
+   This creates all necessary files:
+   - `src/app/Services/MA/` - Service and agents
+   - `src/app/Repositories/LLM/` - LLM repositories (OpenAI, Groq)
+   - `src/app/Repositories/Prompt/` - Prompt repository
+   - `storage/ma/prompts/` - Prompt files
+   - `src/app/Console/Commands/MACommand.ts` - Run command
+
+3. **Add environment variables** to `.env`, `.env.example`, `.env.testing`:
+   ```env
+   # OpenAI
+   OPENAI_API_KEY=your-openai-key
+
+   # Groq (optional)
+   GROQ_API_KEY=your-groq-key
+   ```
+
+4. **Run the example**:
+   ```bash
+   ./artisan ma:run
+   ```
+
+### Migration Notes
+- This is a new feature and does not affect existing functionality
+- No breaking changes in this release
+- The multi-agent system is optional and only initialized when you run `ma:init`
+
 ## 1.1.3 - 01 October 2025
 ### Accompanying Sosise-Core Version
 `1.1.2`

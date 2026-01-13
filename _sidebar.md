@@ -5,6 +5,7 @@
     - [Docker](getting-started/docker)
     - [Project documentation](getting-started/docsify)
 - **Documentation**
+    - [Agent Graph](documentation/agent-graph)
     - [Artisan](documentation/artisan)
     - [Cache](documentation/cache)
     - [Controllers](documentation/controllers)
