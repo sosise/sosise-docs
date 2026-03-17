@@ -7,6 +7,7 @@
 > ⚠️ **Major release with breaking changes.** Follow the upgrade guide below step by step. Each step includes before/after code examples so you know exactly what to change in your project.
 
 ### New Features
+- **Multi-stage Docker build** — Dockerfile rewritten with multi-stage build. `docker-compose build` now handles `npm install` and TypeScript compilation inside the container. Production image contains only runtime dependencies (~85MB compressed). Alpine upgraded from 3.20 to 3.21, Node.js from v21 (current) to v22 LTS. Redis image updated to `alpine3.21`
 - **Log file rotation with gzip compression** — automatic management of log files: size-based rotation of active files (when exceeding `maxFileSizeMb`), gzip compression of old files, age-based deletion, and total directory size limit. Configure via `rotation` block in `src/config/logging.ts`
 - **PostgreSQL `migrate:fresh` support** — previously `migrate:fresh` only worked with MySQL and CockroachDB, now PostgreSQL is fully supported
 - **Server startup info for all DB drivers** — mysql2, PostgreSQL, CockroachDB now show host/port/database at startup
@@ -347,7 +348,21 @@ const loggingConfig = {
 
 ---
 
-#### Step 10 — Build and fix any remaining TypeScript errors
+#### Step 10 — Update Docker files
+
+The Dockerfile has been rewritten as a multi-stage build. You no longer need to run `npm install` and `npm run build` locally before `docker-compose build` — it is all handled inside the container.
+
+Replace your `docker/Dockerfile` with the new version from the skeleton repository.
+
+Update `docker-compose.yml`:
+- Remove the `version: "3.5"` line (deprecated in Docker Compose v2+)
+- Update Redis image from `redis:alpine3.20` to `redis:alpine3.21`
+
+Update `.dockerignore` with the new version from the skeleton repository.
+
+---
+
+#### Step 11 — Build and fix any remaining TypeScript errors
 
 ```bash
 npm run build
@@ -411,6 +426,7 @@ If any of these return results — you have files that still need updating.
 | @types/express 4 → 5 | Everyone | `npm install @types/express@^5.0.2 --save-dev` | `package.json` |
 | dotenv 16 → 17 | Everyone | `npm install dotenv@^17.3.1` + add `quiet: true` | `server.ts`, `artisan.ts`, `config/jest.ts` |
 | Log rotation added | Everyone | Add `rotation` block to `logging.ts` | `config/logging.ts` |
+| Docker multi-stage build | Anyone using Docker | Replace `Dockerfile`, `.dockerignore`, update `docker-compose.yml` | `docker/Dockerfile`, `.dockerignore`, `docker-compose.yml` |
 | Skeleton packages removed | Anyone who imported them directly | Install explicitly if needed | `package.json` |
 
 ### Migration Notes

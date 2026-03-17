@@ -32,7 +32,6 @@ Your Sosise project includes a minimal but complete development stack:
 
 ```yaml
 # docker-compose.yml
-version: "3.5"
 services:
   app:
     build:
@@ -47,7 +46,7 @@ services:
       - "./cron:/etc/crontabs/root"
       - "./logs:/var/www/app/storage/logs"
   redis:
-    image: redis:alpine3.20
+    image: redis:alpine3.21
     container_name: redis
     restart: unless-stopped
     entrypoint: redis-server --appendonly yes
@@ -67,29 +66,43 @@ services:
 Sosise uses a multi-process Alpine Linux container with supervisord:
 
 ```dockerfile
-# docker/Dockerfile
-FROM alpine:3.20
+# docker/Dockerfile (multi-stage build)
 
+# Stage 1: Build TypeScript
+FROM alpine:3.21 AS builder
 WORKDIR /var/www/app
+RUN apk add --no-cache nodejs npm
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY src/ ./src/
+COPY tsconfig.json ./tsconfig.json
+COPY docs/ ./docs/
+RUN npm run build
 
-# Install Node.js, supervisor, and cron
-RUN apk add --no-cache \
-    nodejs-current npm tzdata supervisor dcron
-
-# Copy supervisor configuration
+# Stage 2: Production image
+FROM alpine:3.21
+WORKDIR /var/www/app
+RUN apk add --no-cache nodejs npm tzdata supervisor dcron
 COPY ./docker/configs/supervisord/supervisord.conf /etc/supervisord.conf
-
-# Copy application code
-COPY . /var/www/app
-
+COPY ./docker/docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+COPY --from=builder /var/www/app/build ./build
+COPY --from=builder /var/www/app/docs ./docs
+COPY --from=builder /var/www/app/package.json ./package.json
+COPY --from=builder /var/www/app/package-lock.json ./package-lock.json
+COPY artisan ./artisan
+RUN npm ci --omit=dev
+RUN mkdir -p storage/logs storage/sessions storage/cache storage/framework
 ENTRYPOINT ["/docker-entrypoint.sh"]
 ```
+
+The multi-stage build ensures that TypeScript, ESLint, Jest, and other dev dependencies are **not** included in the production image, keeping it small (~85MB compressed).
 
 ### Container Architecture
 
 The container runs multiple processes via supervisord:
 
-- **Node.js Application** - Your Sosise API server
+- **Node.js Application** (v22 LTS) - Your Sosise API server
 - **Cron Daemon** - Scheduled tasks from your `cron` file
 - **Queue Workers** - Background job processing (if enabled)
 
@@ -177,7 +190,6 @@ QUEUE_DRIVER=redis
 
 ```yaml
 # docker-compose.prod.yml
-version: "3.5"
 services:
   app:
     image: your-registry/sosise-app:latest
@@ -188,10 +200,8 @@ services:
     volumes:
       - "./.env:/var/www/app/.env"
       - "./logs:/var/www/app/storage/logs"
-    environment:
-      - THREADS_AMOUNT=2
   redis:
-    image: redis:alpine3.20
+    image: redis:alpine3.21
     container_name: redis-prod
     restart: unless-stopped
     entrypoint: redis-server --appendonly yes
