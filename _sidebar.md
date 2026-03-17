@@ -21,7 +21,6 @@
     - [Middleware](documentation/middleware)
     - [Queues](documentation/queues)
     - [Routing](documentation/routing)
-    - [Sentry](documentation/sentry)
     - [Session](documentation/session)
     - [Unifiers](documentation/unifiers)
     - [Throttling](documentation/throttling)

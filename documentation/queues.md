@@ -146,7 +146,7 @@ export default class NotificationService {
 This creates a worker in `src/app/Console/QueueWorkers/EmailWorker.ts`:
 
 ```typescript
-import { Worker, QueueScheduler, Job } from 'bullmq';
+import { Worker, Job } from 'bullmq';
 import queueConfig from '../../../config/queue';
 import Handler from '../../Exceptions/Handler';
 import LoggerService from 'sosise-core/build/Services/Logger/LoggerService';
@@ -154,7 +154,7 @@ import IOC from 'sosise-core/build/ServiceProviders/IOC';
 
 export default class EmailWorker {
     private queueName = 'email-queue';
-    private redisConnection = queueConfig.connections.default;
+    private redisConnection = { host: queueConfig.redis.host, port: queueConfig.redis.port };
     private logger = IOC.make(LoggerService) as LoggerService;
 
     constructor() {
@@ -226,11 +226,6 @@ export default class EmailWorker {
      * Listen to the queue
      */
     private async listen(): Promise<void> {
-        // Instantiate queue scheduler for delayed jobs
-        const scheduler = new QueueScheduler(this.queueName, { 
-            connection: this.redisConnection 
-        });
-
         // Create worker
         const worker = new Worker(
             this.queueName, 

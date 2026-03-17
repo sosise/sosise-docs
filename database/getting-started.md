@@ -10,7 +10,7 @@ export default {
     default: 'main',
     connections: {
         main: {
-            client: 'postgresql', // or 'mysql', 'sqlite3', etc.
+            client: 'pg', // or 'mysql2', 'mssql', etc.
             connection: {
                 host: process.env.DB_HOST,
                 port: process.env.DB_PORT,
@@ -48,11 +48,16 @@ Whether you're building a simple blog or a complex e-commerce platform, Sosise's
 Sosise supports all major databases through Knex.js:
 
 - **PostgreSQL** - Recommended for production
-- **MySQL/MariaDB** - Popular web application choice  
-- **SQLite3** - Perfect for development and testing
+- **MySQL/MariaDB** - Popular web application choice
 - **Microsoft SQL Server** - Enterprise applications
-- **Oracle Database** - Large-scale enterprise
-- **Amazon Redshift** - Data warehousing
+- **CockroachDB** - Distributed SQL database
+
+> Install the database driver for your chosen database:
+> ```bash
+> npm install pg            # PostgreSQL / CockroachDB
+> npm install mysql2        # MySQL / MariaDB
+> npm install tedious       # Microsoft SQL Server
+> ```
 
 ## Database Configuration
 

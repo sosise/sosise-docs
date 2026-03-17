@@ -1,5 +1,426 @@
 ### Changelog for Project Configuration
 
+## 2.0.0 - 17 March 2026
+### Accompanying Sosise-Core Version
+`2.0.0`
+
+> ⚠️ **Major release with breaking changes.** Follow the upgrade guide below step by step. Each step includes before/after code examples so you know exactly what to change in your project.
+
+### New Features
+- **Log file rotation with gzip compression** — automatic management of log files: size-based rotation of active files (when exceeding `maxFileSizeMb`), gzip compression of old files, age-based deletion, and total directory size limit. Configure via `rotation` block in `src/config/logging.ts`
+- **PostgreSQL `migrate:fresh` support** — previously `migrate:fresh` only worked with MySQL and CockroachDB, now PostgreSQL is fully supported
+- **Server startup info for all DB drivers** — mysql2, PostgreSQL, CockroachDB now show host/port/database at startup
+- **Beautiful artisan help grouping** — commands are organized into visual groups (User-defined, Make, Multiagent, Migrate, Seed, Queue) in `./artisan --help`
+
+### Documentation Updates
+- Added install notes for packages that are no longer bundled with the skeleton:
+  - `database/getting-started.md` — database driver install instructions (`pg`, `mysql2`, `tedious`)
+  - `database/seeding.md` — `@faker-js/faker` install instruction
+  - `testing/getting-started.md` — `@faker-js/faker` install instruction
+  - `documentation/controllers.md` — `bcrypt` import and install instruction
+  - `documentation/artisan.md` — updated all command examples to Commander v14 API (`cli.opts()`, import `Command` from `BaseCommand`)
+  - `getting-started/directory-structure.md` — updated Unifier example from old `validatorjs` syntax to new `Validator` API
+
+### Updated packages
+| Package | Before | After |
+|---|---|---|
+| TypeScript | `4.x` | `5.x` |
+| Express | `4.x` | `5.x` |
+| BullMQ | `1.x` | `5.x` |
+| Commander | `6.x` | `14.x` |
+| Redis | `4.x` | `5.x` |
+| connect-redis | `5.x` | `9.x` |
+| Nodemailer | `6.x` | `8.x` |
+| ESLint | `9.x` | `10.x` |
+| @types/node | `14.x` | `22.x` |
+| @types/express | `4.x` | `5.x` |
+| @types/nodemailer | `6.x` | `7.x` |
+| @types/jest | `29.x` | `30.x` |
+| dotenv | `16.x` | `17.x` |
+| `faker` | `5.x` | replaced with `@faker-js/faker` |
+| `mysql` | `2.x` | replaced with `mysql2` |
+| `@sentry/node` | `5.x` | **removed** |
+| `sqlite3` | `5.x` | **removed** |
+| `body-parser` | `1.x` | **removed** (Express 5 built-in) |
+
+---
+
+### Upgrade guide
+
+> Go through **every** step. Check **every** file type listed — you may have multiple files of each kind in your project.
+
+---
+
+#### Step 1 — Update dependencies
+
+```bash
+npm install sosise-core@latest
+npm install dotenv@^17.3.1
+npm install typescript@^5.9.3 @types/express@^5.0.2 @types/node@^22.0.0 @types/jest@^30.0.0 --save-dev
+```
+
+**Update `dotenv.config()` calls** — dotenv v17 prints an advertising message by default. Add `quiet: true` to suppress it:
+
+In `src/server.ts`, `src/artisan.ts`, and `src/config/jest.ts`:
+
+Before:
+```typescript
+dotenv.config();
+```
+
+After:
+```typescript
+dotenv.config({ quiet: true });
+```
+
+For jest config with a custom path:
+```typescript
+dotenv.config({ path: './.env.testing', quiet: true });
+```
+
+---
+
+#### Step 2 — Remove Sentry
+
+Sentry has been completely removed from the framework.
+
+**2a. Delete the config file:**
+```bash
+rm -f src/config/sentry.ts
+```
+
+**2b. Update `src/app/Exceptions/Handler.ts`:**
+
+Remove these imports:
+```typescript
+// DELETE these lines:
+import * as Sentry from '@sentry/node';
+import sentryConfig from '../../config/sentry';
+```
+
+In `reportCommandException()`, remove the Sentry block:
+```typescript
+// DELETE this entire block:
+if (exception.sendToSentry !== undefined && exception.sendToSentry === true) {
+    Sentry.init(sentryConfig);
+    Sentry.captureException(exception);
+    await Sentry.flush();
+}
+```
+
+**2c. Update `.env`, `.env.example`, `.env.testing`:**
+```bash
+# DELETE this line from all env files:
+SENTRY_DSN=...
+```
+
+---
+
+#### Step 3 — Update every custom exception
+
+Check **every** file in `src/app/Exceptions/`. Remove the `sendToSentry` property:
+
+Before:
+```typescript
+export default class MyException extends Exception {
+    protected httpCode = 500;
+    protected code = 3000;
+    // If set to false no exception will be sent to sentry
+    protected sendToSentry = true;
+```
+
+After:
+```typescript
+export default class MyException extends Exception {
+    protected httpCode = 500;
+    protected code = 3000;
+```
+
+> Run: `grep -rn "sendToSentry" src/app/Exceptions/` — fix every file that shows up.
+
+---
+
+#### Step 4 — Update database config
+
+**If you use MySQL/MariaDB**, change the client name in `src/config/database.ts`:
+
+Before:
+```typescript
+client: 'mysql',
+```
+
+After:
+```typescript
+client: 'mysql2',
+```
+
+**If you had SQLite config** (even commented out), remove it — SQLite is no longer supported.
+
+---
+
+#### Step 5 — Update every custom command
+
+Check **every** file in `src/app/Console/Commands/`. Three changes per file:
+
+**5a. Fix import** — `Command` is now re-exported from `BaseCommand`, no separate `commander` install needed:
+
+Before:
+```typescript
+import commander from 'commander';
+import BaseCommand, { OptionType } from 'sosise-core/build/Command/BaseCommand';
+```
+
+After:
+```typescript
+import BaseCommand, { OptionType, Command } from 'sosise-core/build/Command/BaseCommand';
+```
+
+**5b. Fix `handle()` signature:**
+
+Before:
+```typescript
+public async handle(cli: commander.Command): Promise<void> {
+```
+
+After:
+```typescript
+public async handle(cli: Command): Promise<void> {
+```
+
+**5c. Fix option access — this is the most important change:**
+
+Before (Commander v6 — options were direct properties):
+```typescript
+if (cli.debug) { ... }
+console.log(cli.since);
+console.log(cli.limit);
+```
+
+After (Commander v14 — options are accessed via `cli.opts()`):
+```typescript
+const options = cli.opts();
+if (options.debug) { ... }
+console.log(options.since);
+console.log(options.limit);
+```
+
+> Run: `grep -rn "cli\." src/app/Console/Commands/` — every `cli.something` (except `cli.opts()`) needs to change to `options.something`.
+
+---
+
+#### Step 6 — Update every queue worker
+
+Check **every** file in `src/app/Console/QueueWorkers/`. Two changes per file:
+
+**6a. Fix import — remove `QueueScheduler`:**
+
+Before:
+```typescript
+import { Worker, QueueScheduler, Job } from 'bullmq';
+```
+
+After:
+```typescript
+import { Worker, Job } from 'bullmq';
+```
+
+**6b. Remove `QueueScheduler` instantiation in `listen()` method:**
+
+Before:
+```typescript
+private async listen(): Promise<void> {
+    // Instantiate queue scheduler
+    const scheduler = new QueueScheduler(this.queueName, { connection: this.redisConnection });
+
+    // Instantiate worker
+    const myWorker = new Worker(this.queueName, ...);
+```
+
+After:
+```typescript
+private async listen(): Promise<void> {
+    // Instantiate worker
+    const myWorker = new Worker(this.queueName, ...);
+```
+
+> `QueueScheduler` was removed in BullMQ v3. Its functionality (delayed job scheduling) is now built into the `Worker` class automatically.
+
+> Run: `grep -rn "QueueScheduler" src/` — fix every file that shows up.
+
+---
+
+#### Step 7 — Update every seed file
+
+Check **every** file in `src/database/seeds/`. If the file uses faker:
+
+**7a. Fix import:**
+
+Before:
+```typescript
+import * as faker from 'faker';
+```
+
+After:
+```typescript
+import { faker } from '@faker-js/faker';
+```
+
+**7b. Fix renamed API calls:**
+
+| Before (faker v5) | After (@faker-js/faker v9+) |
+|---|---|
+| `faker.name.firstName()` | `faker.person.firstName()` |
+| `faker.name.lastName()` | `faker.person.lastName()` |
+| `faker.name.findName()` | `faker.person.fullName()` |
+| `faker.address.city()` | `faker.location.city()` |
+| `faker.address.country()` | `faker.location.country()` |
+| `faker.address.streetAddress()` | `faker.location.streetAddress()` |
+| `faker.address.zipCode()` | `faker.location.zipCode()` |
+| `faker.datatype.number()` | `faker.number.int()` |
+| `faker.datatype.float()` | `faker.number.float()` |
+| `faker.datatype.uuid()` | `faker.string.uuid()` |
+| `faker.datatype.boolean()` | `faker.datatype.boolean()` (same) |
+| `faker.phone.phoneNumber()` | `faker.phone.number()` |
+| `faker.date.between('2020-01-01', '2024-12-31')` | `faker.date.between({ from: '2020-01-01', to: '2024-12-31' })` |
+| `faker.date.recent()` | `faker.date.recent()` (same) |
+| `faker.internet.email()` | `faker.internet.email()` (same) |
+| `faker.internet.url()` | `faker.internet.url()` (same) |
+| `faker.commerce.price()` | `faker.commerce.price()` (same) |
+| `faker.random.word()` | `faker.word.sample()` |
+| `faker.random.words()` | `faker.word.words()` |
+| `faker.image.imageUrl()` | `faker.image.url()` |
+
+Full migration guide: https://fakerjs.dev/guide/upgrading.html
+
+**7c. Install the package:**
+```bash
+npm install @faker-js/faker --save-dev
+```
+
+---
+
+#### Step 8 — Clean up removed packages
+
+```bash
+# Remove packages that no longer exist in the framework:
+npm uninstall @sentry/node @types/faker @types/bcrypt @types/uuid tslint 2>/dev/null
+
+# If you import any of these directly in YOUR code, install them back:
+npm install axios          # if you have: import axios from 'axios'
+npm install bcrypt         # if you have: import bcrypt from 'bcrypt'
+npm install uuid           # if you have: import { v4 } from 'uuid'
+npm install lodash         # if you have: import _ from 'lodash'
+npm install dayjs          # if you have: import dayjs from 'dayjs'
+npm install pg             # if you have: import pg from 'pg'
+```
+
+> These packages were removed from the skeleton's `package.json` because the skeleton code did not import them. They are still available as transitive dependencies through sosise-core, but if you import them in your own code, add them to your `package.json` explicitly.
+
+---
+
+#### Step 9 — Add log rotation config
+
+Add the `rotation` block to your `src/config/logging.ts`:
+
+```typescript
+const loggingConfig = {
+    // ...your existing fields (enableLoggingToConsole, enableLoggingToFiles, etc.)...
+
+    /**
+     * Log rotation settings
+     * Rotation runs on application startup and periodically
+     */
+    rotation: {
+        enabled: true,
+        maxFileSizeMb: 50,       // Rotate active file when it exceeds 50MB
+        compressAfterDays: 1,    // Gzip compress files older than 1 day
+        maxAgeDays: 14,          // Delete files older than 14 days
+        maxTotalSizeMb: 500,     // Keep total log directory under 500MB
+        checkIntervalHours: 1,   // Check every hour (also runs on startup)
+    },
+
+    // ...your existing channels...
+};
+```
+
+> Without this config, log files will accumulate indefinitely. This is a new required section in `logging.ts`.
+
+---
+
+#### Step 10 — Build and fix any remaining TypeScript errors
+
+```bash
+npm run build
+```
+
+TypeScript 5 may flag new errors that TypeScript 4 did not catch. Common issues:
+
+- **`@types/express` v5** may have slightly different types for `Request`/`Response`. If you get type errors in controllers, check Express 5 type changes.
+- **Stricter `null` checks** — TS5 may catch nullable values that TS4 allowed silently.
+
+---
+
+### Checklist — verify you haven't missed anything
+
+Run these commands in your project root to find files that need updating:
+
+```bash
+# Find remaining Sentry references:
+grep -rn "sentry\|Sentry\|sendToSentry" src/ --include="*.ts"
+
+# Find old commander import (should now import from BaseCommand):
+grep -rn "from 'commander'" src/ --include="*.ts"
+
+# Find old option access pattern in commands (cli.someOption without .opts()):
+grep -rn "cli\.\(debug\|force\|since\|limit\|name\|verbose\|output\)" src/app/Console/ --include="*.ts"
+
+# Find QueueScheduler usage:
+grep -rn "QueueScheduler" src/ --include="*.ts"
+
+# Find old faker import:
+grep -rn "from 'faker'" src/ --include="*.ts"
+
+# Find old mysql client config:
+grep -rn "client: 'mysql'" src/config/ --include="*.ts"
+
+# Find dotenv.config() without quiet option:
+grep -rn "dotenv.config()" src/ --include="*.ts"
+
+# Find sqlite references:
+grep -rn "sqlite" src/ --include="*.ts"
+```
+
+If any of these return results — you have files that still need updating.
+
+---
+
+### Summary of all changes
+
+| What changed | Who is affected | Action required | Files to check |
+|---|---|---|---|
+| Sentry removed | Everyone (was in skeleton) | Delete config, clean Handler.ts, remove sendToSentry | `config/sentry.ts`, `Exceptions/Handler.ts`, `Exceptions/*.ts`, `.env` |
+| mysql → mysql2 | Anyone using MySQL | Change `client: 'mysql'` → `'mysql2'` | `config/database.ts` |
+| SQLite3 removed | Anyone using SQLite | Switch to PostgreSQL/MySQL/MSSQL | `config/database.ts` |
+| Commander 6 → 14 | Anyone with custom commands | Import `Command` from `BaseCommand`, use `cli.opts()` | `Console/Commands/*Command.ts` |
+| BullMQ 1 → 5 | Anyone with queue workers | Remove QueueScheduler | `Console/QueueWorkers/*.ts` |
+| faker → @faker-js/faker | Anyone with seed files using faker | Update import + API methods | `database/seeds/*.ts` |
+| Express 4 → 5 | No action needed | Internal change — body parsing, session init handled by framework | — |
+| Redis 4 → 5 | No action needed | Internal change — scan cursor types handled by framework | — |
+| connect-redis 5 → 9 | No action needed | Internal change — session Redis init handled by framework | — |
+| TypeScript 4 → 5 | Everyone | `npm install typescript@^5.9.3 --save-dev` | `package.json` |
+| @types/express 4 → 5 | Everyone | `npm install @types/express@^5.0.2 --save-dev` | `package.json` |
+| dotenv 16 → 17 | Everyone | `npm install dotenv@^17.3.1` + add `quiet: true` | `server.ts`, `artisan.ts`, `config/jest.ts` |
+| Log rotation added | Everyone | Add `rotation` block to `logging.ts` | `config/logging.ts` |
+| Skeleton packages removed | Anyone who imported them directly | Install explicitly if needed | `package.json` |
+
+### Migration Notes
+- This is a major version — test thoroughly after migration
+- Run `npm run build` after each step to catch errors incrementally
+- If you need Sentry, integrate the latest `@sentry/node` SDK directly in your `Handler.ts`
+- If you need SQLite, install `sqlite3` yourself — note that `migrate:fresh` will not support it
+
+---
+
 ## 1.1.4 - 13 January 2026
 ### Accompanying Sosise-Core Version
 `1.1.4`

@@ -14,7 +14,7 @@ cd my-awesome-api
 
 # Install dependencies and start coding
 npm install
-npm run serve
+npm run dev
 ```
 
 Your API server is now running at `http://localhost:10000`! 🚀
@@ -81,7 +81,7 @@ cp .env.example .env
 npm run build
 
 # Start development server
-npm run serve
+npm run dev
 ```
 
 ## Project Setup
@@ -99,25 +99,31 @@ cp .env.example .env
 
 ```bash
 # .env
-NODE_ENV=development
-APP_PORT=10000
-APP_URL=http://localhost:10000
+APP_NAME=Sosise
+APP_ENV=local
+LISTEN_PORT=10000
 
-# Database Configuration
-DB_CONNECTION=mysql
-DB_HOST=localhost
-DB_PORT=3306
-DB_DATABASE=my_database
-DB_USERNAME=root
-DB_PASSWORD=password
+# Logging
+LOGGING_TO_CONSOLE_ENABLE=true
+LOGGING_TO_FILES_ENABLE=true
+LOGGING_LEVEL=31
 
-# Session Secret (generate a strong key)
-SESSION_SECRET=your-super-secret-session-key-min-32-chars
+# Database
+DEFAULT_DB_CONNECTION=project
+DB_PROJECT_HOST=localhost
+DB_PROJECT_PORT=3306
+DB_PROJECT_DATABASE=my_database
+DB_PROJECT_USERNAME=root
+DB_PROJECT_PASSWORD=root
+
+# Session
+SESSION_DRIVER=file
+SESSION_SECRET=your-super-secret-session-key
 
 # Optional: Cache & Queue (Redis)
-REDIS_HOST=localhost
-REDIS_PORT=6379
-REDIS_PASSWORD=
+QUEUE_REDIS_HOST=redis
+QUEUE_REDIS_PORT=6379
+CACHE_DRIVER=memory
 ```
 
 ### Database Setup
@@ -141,7 +147,7 @@ Test your installation:
 
 ```bash
 # Start the development server
-npm run serve
+npm run dev
 
 # In another terminal, test the API
 curl http://localhost:10000/
@@ -157,7 +163,7 @@ curl http://localhost:10000/
 
 ```bash
 # Start development server with hot reload
-npm run serve
+npm run dev
 
 # Run tests
 npm run test

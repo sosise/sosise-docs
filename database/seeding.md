@@ -16,6 +16,8 @@ Populate your database with test data using Sosise seeders - perfect for develop
 ./artisan seed
 ```
 
+> To use Faker in your seeds, install it first: `npm install @faker-js/faker --save-dev`
+
 ```typescript
 // Example seeder with Faker data
 import BaseSchema from 'sosise-core/build/Database/BaseSchema';

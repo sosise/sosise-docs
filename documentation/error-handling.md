@@ -58,7 +58,6 @@ import ExceptionResponse from 'sosise-core/build/Types/ExceptionResponse';
 export default class ProductNotFoundError extends Exception {
     protected httpCode = 404;
     protected code = 3001;
-    protected sendToSentry = true;
     protected loggingChannel = 'default';
 
     constructor(productId: number) {
@@ -87,9 +86,6 @@ export default class ValidationError extends Exception {
     
     // Unique error code for client identification
     protected code = 3002;
-    
-    // Whether to report to Sentry monitoring
-    protected sendToSentry = false; // Don't spam Sentry with validation errors
     
     // Which logging channel to use (see src/config/logging.ts)
     protected loggingChannel = 'validation';
@@ -278,21 +274,6 @@ export default class OrderService {
                 error // Chain the original error
             );
         }
-    }
-}
-```
-
-### Conditional Sentry Reporting
-
-```typescript
-class DatabaseConnectionError extends Exception {
-    protected httpCode = 500;
-    protected code = 2001;
-    protected loggingChannel = 'database';
-    
-    // Only send to Sentry in production
-    protected get sendToSentry(): boolean {
-        return process.env.NODE_ENV === 'production';
     }
 }
 ```

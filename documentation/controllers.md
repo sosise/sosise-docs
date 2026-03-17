@@ -166,8 +166,11 @@ export default class UserController {
 
 ### Service (Business Logic)
 
+> If you use bcrypt, install it first: `npm install bcrypt` and `npm install @types/bcrypt --save-dev`
+
 ```typescript
 // src/app/Services/UserService.ts
+import bcrypt from 'bcrypt';
 import UserRepository from '../Repositories/UserRepository';
 import EmailService from './EmailService';
 

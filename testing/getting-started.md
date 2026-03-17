@@ -618,6 +618,8 @@ describe('User CRUD API', () => {
 
 ### Database Helper
 
+> If you use Faker in test helpers, install it first: `npm install @faker-js/faker --save-dev`
+
 ```typescript
 // tests/Helpers/DatabaseHelper.ts
 import Database from 'sosise-core/build/Database/Database';
@@ -638,17 +640,11 @@ export default class DatabaseHelper {
     public static async cleanDatabase(): Promise<void> {
         const db = Database.getConnection().client;
         
-        // Disable foreign key checks
-        await db.raw('PRAGMA foreign_keys = OFF');
-        
-        // Clear all tables
+        // Clear all tables (use TRUNCATE for PostgreSQL/MySQL, DELETE for others)
         const tables = ['users', 'sessions', 'password_resets'];
         for (const table of tables) {
             await db(table).del();
         }
-        
-        // Re-enable foreign key checks
-        await db.raw('PRAGMA foreign_keys = ON');
     }
 
     public static async closeTestDatabase(): Promise<void> {
@@ -855,8 +851,6 @@ import DatabaseHelper from './Helpers/DatabaseHelper';
 beforeAll(async () => {
     // Set test environment
     process.env.NODE_ENV = 'testing';
-    process.env.DB_DATABASE = ':memory:';
-    
     // Suppress console output during tests
     if (!process.env.DEBUG_TESTS) {
         console.log = jest.fn();

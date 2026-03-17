@@ -78,8 +78,7 @@ This creates a new command file in `app/Console/Commands/SendEmailReportCommand.
 Here's what a basic custom command looks like:
 
 ```typescript
-import commander from 'commander';
-import BaseCommand from 'sosise-core/build/Command/BaseCommand';
+import BaseCommand, { OptionType, Command } from 'sosise-core/build/Command/BaseCommand';
 
 export default class SendEmailReportCommand extends BaseCommand {
     // The command name (how you'll call it)
@@ -89,7 +88,7 @@ export default class SendEmailReportCommand extends BaseCommand {
     protected description: string = 'Send daily email report to managers';
 
     // The actual work the command does
-    public async handle(cli: commander.Command): Promise<void> {
+    public async handle(cli: Command): Promise<void> {
         console.log('Generating daily report...');
         
         // Your command logic here
@@ -146,14 +145,16 @@ export default class BackupCommand extends BaseCommand {
         },
     ];
 
-    public async handle(cli: commander.Command): Promise<void> {
+    public async handle(cli: Command): Promise<void> {
+        const options = cli.opts();
+
         // Check if compress flag was provided
-        if (cli.compress) {
+        if (options.compress) {
             console.log('Creating compressed backup...');
         }
 
         // Get the path value (uses default if not provided)
-        const backupPath = cli.path;
+        const backupPath = options.path;
         console.log(`Backing up to: ${backupPath}`);
         
         // Your backup logic here
@@ -200,9 +201,10 @@ export default class ProcessOrdersCommand extends BaseCommand {
         }
     ];
 
-    public async handle(cli: commander.Command): Promise<void> {
-        const limit = parseInt(cli.limit);
-        const isDryRun = cli.dryRun;
+    public async handle(cli: Command): Promise<void> {
+        const options = cli.opts();
+        const limit = parseInt(options.limit);
+        const isDryRun = options.dryRun;
 
         console.log(`Processing ${limit} orders${isDryRun ? ' (dry run)' : ''}...`);
 
@@ -249,8 +251,9 @@ export default class CleanupFilesCommand extends BaseCommand {
         }
     ];
 
-    public async handle(cli: commander.Command): Promise<void> {
-        const days = parseInt(cli.days);
+    public async handle(cli: Command): Promise<void> {
+        const options = cli.opts();
+        const days = parseInt(options.days);
         
         console.log(`Cleaning up files older than ${days} days...`);
 
@@ -280,7 +283,7 @@ export default class ImportDataCommand extends BaseCommand {
     // Prevent this command from running if it's already running
     protected singleExecution: boolean = true;
 
-    public async handle(cli: commander.Command): Promise<void> {
+    public async handle(cli: Command): Promise<void> {
         console.log('Starting data import...');
         // Long-running import process
         await this.importData();
@@ -326,7 +329,7 @@ import EmailService from '../Services/EmailService';
 import OrderService from '../Services/OrderService';
 
 export default class ProcessOrdersCommand extends BaseCommand {
-    public async handle(cli: commander.Command): Promise<void> {
+    public async handle(cli: Command): Promise<void> {
         // Use your services through IoC
         const orderService = IOC.make(OrderService) as OrderService;
         const emailService = IOC.make(EmailService) as EmailService;
@@ -343,7 +346,7 @@ export default class ProcessOrdersCommand extends BaseCommand {
 ### 4. Handle Errors Gracefully
 
 ```typescript
-public async handle(cli: commander.Command): Promise<void> {
+    public async handle(cli: Command): Promise<void> {
     try {
         console.log('Starting process...');
         await this.doSomethingThatMightFail();
@@ -358,7 +361,7 @@ public async handle(cli: commander.Command): Promise<void> {
 ### 5. Provide Progress Feedback
 
 ```typescript
-public async handle(cli: commander.Command): Promise<void> {
+    public async handle(cli: Command): Promise<void> {
     const items = await this.getItemsToProcess();
     
     console.log(`Processing ${items.length} items...`);

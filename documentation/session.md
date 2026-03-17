@@ -52,39 +52,61 @@ Sosise provides a unified session API that works with multiple storage backends 
 Configure sessions in `src/config/session.ts`:
 
 ```typescript
-export default {
+const sessionConfig = {
     // Enable session handling
     enabled: true,
-    
-    // Storage driver
-    driver: 'file', // 'file', 'memory', 'redis'
-    
-    // Session configuration
-    name: 'sosise-session',
-    secret: process.env.SESSION_SECRET || 'your-secret-key',
-    
+
+    // Storage driver: 'file', 'memory', 'redis'
+    driver: process.env.SESSION_DRIVER || 'file',
+
+    // Secret used to sign the session cookie
+    secret: process.env.SESSION_SECRET || 'change-it!!!',
+
+    // Session cookie name
+    name: 'sosise',
+
+    // Session drivers configuration
+    drivers: {
+        // Production-ready memory storage
+        memory: {},
+
+        // File storage
+        file: {
+            path: process.cwd() + '/storage/sessions',
+        },
+
+        // Redis storage
+        redis: {
+            host: process.env.SESSION_REDIS_HOST || 'redis',
+            port: Number(process.env.SESSION_REDIS_PORT || 6379),
+            prefix: 'session-',
+            ttl: 86400, // 24 hours in seconds
+        },
+    },
+
     // Cookie settings
     cookie: {
-        secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-        httpOnly: true, // Prevent XSS attacks
-        maxAge: 24 * 60 * 60 * 1000, // 24 hours
-        sameSite: 'strict' // CSRF protection
+        maxAge: 3600000, // 1 hour in milliseconds
+        httpOnly: true,
+        path: '/',
+        secure: false, // Set to true in production with HTTPS
+        sameSite: undefined,
     },
-    
-    // File driver settings
-    fileStore: {
-        path: 'storage/sessions',
-        ttl: 86400 // 24 hours in seconds
-    },
-    
-    // Redis driver settings (if using Redis)
-    redisStore: {
-        host: process.env.REDIS_HOST || 'localhost',
-        port: parseInt(process.env.REDIS_PORT || '6379'),
-        password: process.env.REDIS_PASSWORD,
-        database: 2
-    }
+
+    // Force the session to be saved back to the store
+    resave: true,
+
+    // Save uninitialized sessions
+    saveUninitialized: true,
+
+    // Rolling sessions (reset expiration on each response)
+    rolling: false,
+
+    // Trust reverse proxy for secure cookies
+    proxy: true,
 };
+
+export default sessionConfig;
 ```
 
 ### Environment Variables

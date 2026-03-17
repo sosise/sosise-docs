@@ -385,35 +385,32 @@ Request validation and data transformation:
 
 ```typescript
 // src/app/Unifiers/CreateUserUnifier.ts
-export default class CreateUserUnifier extends Unifier {
-    constructor(data: any) {
-        super();
-        this.setData(data);
-    }
-    
-    public rules(): ValidationRules {
-        return {
-            name: 'required|string|min:2|max:100',
-            email: 'required|email|unique:users,email',
-            password: 'required|string|min:8',
-            role: 'string|in:admin,user'
-        };
-    }
-    
-    public get name(): string {
-        return this.get('name');
-    }
-    
-    public get email(): string {
-        return this.get('email').toLowerCase();
-    }
-    
-    public get password(): string {
-        return this.get('password');
-    }
-    
-    public get role(): string {
-        return this.get('role', 'user');
+import Validator from 'sosise-core/build/Validator/Validator';
+import ValidationException from 'sosise-core/build/Exceptions/Validation/ValidationException';
+
+export default class CreateUserUnifier {
+    public name: string;
+    public email: string;
+    public password: string;
+    public role: string;
+
+    constructor(params: any) {
+        // Validate input
+        const validator = new Validator(params);
+        validator.field('name').required().shouldBeString().min(2).max(100);
+        validator.field('email').required().email();
+        validator.field('password').required().shouldBeString().min(8);
+        validator.field('role').shouldBeString().inList(['admin', 'user']);
+
+        if (validator.fails()) {
+            throw new ValidationException('Validation failed', validator.errors);
+        }
+
+        // Assign validated data
+        this.name = params.name;
+        this.email = params.email.toLowerCase();
+        this.password = params.password;
+        this.role = params.role || 'user';
     }
 }
 ```

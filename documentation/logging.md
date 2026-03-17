@@ -422,39 +422,83 @@ export default class ReportService {
 
 ## Log File Management
 
-### Daily Rotation
+### Automatic Rotation with Gzip Compression
 
-Logs automatically rotate daily:
+Sosise automatically manages log files with configurable rotation. Files are created daily, compressed with gzip when they age, and deleted when they expire. Oversized active files are split into numbered chunks.
+
+Configure in `src/config/logging.ts`:
+
+```typescript
+rotation: {
+    enabled: true,
+
+    // Rotate active file when it exceeds 50MB
+    // File is renamed with a numeric suffix and compressed
+    // New empty file is created automatically on next write
+    maxFileSizeMb: 50,
+
+    // Gzip compress files older than 1 day
+    // Numbered chunks from today are compressed immediately
+    compressAfterDays: 1,
+
+    // Delete files (including compressed) older than 14 days
+    maxAgeDays: 14,
+
+    // Keep total log directory under 500MB
+    // When exceeded, oldest files are deleted first
+    // The currently active log file is NEVER deleted
+    maxTotalSizeMb: 500,
+
+    // Check for rotation every hour (also runs on startup)
+    checkIntervalHours: 1,
+}
+```
+
+### How Rotation Works
+
+Rotation runs **on application startup** and **periodically** (every `checkIntervalHours`). It executes four phases in order:
+
+1. **Size rotation** — Active log files (today's date) exceeding `maxFileSizeMb` are renamed with a numeric suffix and gzip compressed. Example: `sosise-2026-03-17.log` (60MB) → `sosise-2026-03-17.1.log.gz` (compressed). A new empty `sosise-2026-03-17.log` is created automatically on next write.
+
+2. **Compression** — Log files older than `compressAfterDays` are gzip compressed. Numbered chunks from today (e.g. `sosise-2026-03-17.1.log`) are compressed immediately regardless of age.
+
+3. **Age deletion** — All files (`.log` and `.log.gz`) older than `maxAgeDays` are deleted.
+
+4. **Total size enforcement** — If the total directory size exceeds `maxTotalSizeMb`, the oldest files are deleted first until under the limit. **Active log files are never deleted**, even if they alone exceed the limit.
+
+### Example Log Directory
 
 ```
 storage/logs/
-├── sosise-2023-12-23.log
-├── sosise-2023-12-24.log
-├── sosise-2023-12-25.log  ← Today's logs
-├── payments-2023-12-25.log
-└── security-2023-12-25.log
+├── sosise-2026-03-17.log          ← active (being written to)
+├── sosise-2026-03-17.1.log.gz     ← rotated chunk from today (61KB compressed from 60MB)
+├── sosise-2026-03-16.log          ← yesterday (not yet compressed, compressAfterDays=1)
+├── sosise-2026-03-15.log.gz       ← 2 days ago (compressed)
+├── sosise-2026-03-14.log.gz       ← 3 days ago (compressed)
+├── payments-2026-03-17.log        ← payments channel, active
+├── payments-2026-03-15.log.gz     ← payments channel, compressed
+└── security-2026-03-17.log        ← security channel, active
 ```
 
-### Log Cleanup Service
+### Lifecycle of a Log File
 
-```typescript
-export default class LogCleanupService {
-    constructor(private logger: LoggerService) {}
-
-    public async cleanupOldLogs(): Promise<void> {
-        const cutoffDate = new Date();
-        cutoffDate.setDate(cutoffDate.getDate() - 30); // Keep 30 days
-        
-        this.logger.info('Starting log cleanup', { cutoffDate });
-        
-        const deletedFiles = await this.deleteOldLogFiles(cutoffDate);
-        
-        this.logger.info('Log cleanup completed', { 
-            deletedFiles: deletedFiles.length 
-        });
-    }
-}
 ```
+Day 0 (today):    sosise-2026-03-17.log        ← active, being written to
+                  sosise-2026-03-17.1.log.gz   ← rotated chunk (if file exceeded maxFileSizeMb)
+Day 1 (yesterday): sosise-2026-03-16.log       ← not yet compressed
+Day 2:            sosise-2026-03-15.log.gz      ← gzip compressed
+...
+Day 14:           sosise-2026-03-03.log.gz      ← last day before deletion
+Day 15:           (deleted by maxAgeDays)
+```
+
+### Safety
+
+- Only files matching the pattern `*-YYYY-MM-DD.log` or `*-YYYY-MM-DD.N.log.gz` are processed
+- Non-log files (`.gitignore`, `README`, etc.) are never touched
+- Active log files (today's date, no numeric suffix) are never deleted by the size enforcement phase
+- Each file operation is wrapped in try/catch — if a file is locked, it is skipped
+- Rotation results are logged to console (not to file) to avoid recursion
 
 ## Best Practices
 
@@ -539,12 +583,14 @@ this.logger.info('Application started');
 
 Sosise's logging system provides:
 
-- ✅ Automatic daily log rotation
-- ✅ Environment-specific formatting
+- ✅ Automatic log rotation with gzip compression
+- ✅ Size-based rotation of active files
+- ✅ Age-based deletion of old files
+- ✅ Total directory size limit enforcement
+- ✅ Environment-specific formatting (pretty for local, JSON for production)
 - ✅ Multiple logging channels
 - ✅ Structured logging with context
 - ✅ Integration with exception handling
 - ✅ Easy service injection
-- ✅ Performance and security monitoring
 
 Use logging extensively to monitor your application's health and debug issues efficiently!
