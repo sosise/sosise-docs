@@ -168,8 +168,14 @@ docker exec sosise tail -f storage/logs/sosise.log
 
 ```bash
 # .env.production
-NODE_ENV=production
-APP_PORT=10000
+APP_ENV=production
+LISTEN_PORT=10000
+
+# HTTP server
+HTTP_JSON_BODY_LIMIT=1mb
+HTTP_REQUEST_TIMEOUT_MS=120000
+HTTP_HEADERS_TIMEOUT_MS=30000
+HTTP_SOCKET_TIMEOUT_MS=300000
 
 # Database (external)
 DB_HOST=your-production-db-host
@@ -317,6 +323,10 @@ docker-compose logs redis
 2. **Redis clustering** for high availability
 3. **Log aggregation** with ELK or similar
 4. **Container orchestration** with Kubernetes/Docker Swarm
+5. **Ingress body limits** no larger than the application limit
+6. **Proxy and client timeout budgets** longer than the endpoint application deadline
+
+The HTTP values above are an example production policy, not universal defaults. Keep request and header limits bounded, and tune socket and proxy response timeouts per endpoint. See [HTTP Server](../documentation/http-server.md).
 
 ## Summary
 

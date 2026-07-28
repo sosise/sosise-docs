@@ -12,6 +12,7 @@
     - [Error Handling](documentation/error-handling)
     - [EventBus](documentation/eventbus)
     - [HTTP Client](documentation/http-client)
+    - [HTTP Server](documentation/http-server)
     - [HTTP Request](documentation/http-request)
     - [HTTP Response](documentation/http-response)
     - [Helpers](documentation/helpers)

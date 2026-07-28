@@ -39,6 +39,14 @@ Error handling is crucial for building robust applications. Sosise provides a co
 
 The framework handles all exceptions through `src/app/Exceptions/Handler.ts` and provides tools for creating custom exceptions with meaningful error codes, proper HTTP status codes, and structured responses.
 
+## Transport and Parser Errors
+
+Node.js request and header timeout failures occur before Express route handling and normally produce HTTP `408`; they do not pass through `Handler.ts`.
+
+Express parser failures, including an oversized body with type `entity.too.large`, do reach the application exception handler. A custom handler should preserve a valid middleware `status` or `statusCode` when clients must receive the original `4xx` response, while continuing to hide unsafe internal details in production. The stock generic fallback treats unrecognized errors as `500`, so test oversized-body behavior when customizing `HTTP_JSON_BODY_LIMIT`.
+
+See [HTTP Server](http-server.md) for ingress timeout and body-limit configuration.
+
 ## Creating Custom Exceptions
 
 ### Using Artisan Command

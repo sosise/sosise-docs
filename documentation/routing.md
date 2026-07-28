@@ -91,6 +91,8 @@ router.post('/users', (request: Request, response: Response, next: NextFunction)
 });
 ```
 
+JSON and URL-encoded bodies are parsed before route handlers and dynamic middleware. Their global size limit is configured with `HTTP_JSON_BODY_LIMIT`; multipart uploads require separate middleware. See [HTTP Server](http-server.md) and [HTTP Request](http-request.md).
+
 ## Response Methods
 
 Send responses back to the client using these common methods:

@@ -367,6 +367,14 @@ const slowClient = new HttpClient({
 });
 ```
 
+Outbound `HttpClient.timeout` is independent of inbound `HTTP_REQUEST_TIMEOUT_MS`. Budget retries and backoff so the complete downstream operation fits within the endpoint deadline:
+
+```text
+downstream timeout + retries/backoff < endpoint deadline < proxy timeout < caller timeout
+```
+
+For long-running inbound requests, also review the socket and reverse proxy guidance in [HTTP Server](http-server.md).
+
 ### 3. Use Environment Variables
 
 Store API URLs and keys in environment variables:

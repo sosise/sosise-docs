@@ -112,7 +112,7 @@ Centralized configuration management:
 // src/config/app.ts
 export default {
     name: process.env.APP_NAME || 'Sosise App',
-    port: parseInt(process.env.APP_PORT || '10000'),
+    listenPort: Number(process.env.LISTEN_PORT || process.env.PORT || 10000),
     environment: process.env.NODE_ENV || 'development',
     timezone: 'UTC'
 };
@@ -142,6 +142,8 @@ export default {
 - `logging.ts` - Logging configuration
 - `mailer.ts` - Email settings
 - `queue.ts` - Background job configuration
+
+HTTP body limits and server timeouts are read directly from the environment by `sosise-core`; a separate `src/config/http.ts` file is not required. See [HTTP Server](../documentation/http-server.md).
 
 ### `/src/routes` - API Route Definitions
 

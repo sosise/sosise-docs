@@ -24,8 +24,8 @@ Your API server is now running at `http://localhost:10000`! 🚀
 Before diving in, make sure you have these tools installed:
 
 ### Required
-- **Node.js** (v16.0.0 or higher)
-- **npm** (v8.0.0 or higher) or **yarn** (v1.22.0 or higher)
+- **Node.js 22 LTS** (v22.13.0 or higher recommended)
+- **npm 10** or higher
 
 ### Optional but Recommended
 - **Docker** and **Docker Compose** for containerized development
@@ -34,8 +34,8 @@ Before diving in, make sure you have these tools installed:
 
 ```bash
 # Verify your installation
-node --version   # Should be v16.0.0+
-npm --version    # Should be v8.0.0+
+node --version   # Should be v22.13.0+
+npm --version    # Should be v10+
 ```
 
 ## Installation Methods
@@ -103,6 +103,12 @@ APP_NAME=Sosise
 APP_ENV=local
 LISTEN_PORT=10000
 
+# HTTP server
+HTTP_JSON_BODY_LIMIT=10mb
+HTTP_REQUEST_TIMEOUT_MS=300000
+HTTP_HEADERS_TIMEOUT_MS=60000
+HTTP_SOCKET_TIMEOUT_MS=0
+
 # Logging
 LOGGING_TO_CONSOLE_ENABLE=true
 LOGGING_TO_FILES_ENABLE=true
@@ -125,6 +131,18 @@ QUEUE_REDIS_HOST=redis
 QUEUE_REDIS_PORT=6379
 CACHE_DRIVER=memory
 ```
+
+HTTP timeout values are milliseconds. Do not leave timeout variables blank: omit them to preserve Node.js defaults. The header timeout must not exceed the request timeout. See [HTTP Server](../documentation/http-server.md) for detailed semantics and production proxy guidance.
+
+### Upgrade an Existing Project to 2.0.1
+
+```bash
+npm install sosise-core@2.0.1
+npm ls sosise-core --depth=0
+npm run build
+```
+
+Copy the HTTP server settings above into `.env`, `.env.example`, and `.env.testing`.
 
 ### Database Setup
 

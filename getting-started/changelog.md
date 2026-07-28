@@ -1,5 +1,38 @@
 ### Changelog for Project Configuration
 
+## 2.0.1 - 28 July 2026
+### Accompanying Sosise-Core Version
+`2.0.1`
+
+### New Features
+- Added `HTTP_JSON_BODY_LIMIT` for JSON and URL-encoded request bodies.
+- Added validated `HTTP_REQUEST_TIMEOUT_MS`, `HTTP_HEADERS_TIMEOUT_MS`, and `HTTP_SOCKET_TIMEOUT_MS` server settings.
+- Missing timeout variables preserve Node.js runtime defaults; `HTTP_SOCKET_TIMEOUT_MS=0` explicitly disables established-socket inactivity timeout.
+- Server startup now rejects invalid timeout values and `HTTP_HEADERS_TIMEOUT_MS` values greater than `HTTP_REQUEST_TIMEOUT_MS`.
+
+### Important Body Limit Change
+The effective JSON and URL-encoded body limit changed from Express's implicit `100kb` default to the Sosise `10mb` fallback. Configure a smaller value when possible and enforce an equal or stricter limit at the reverse proxy.
+
+### Upgrade
+
+```bash
+npm install sosise-core@2.0.1
+npm ls sosise-core --depth=0
+```
+
+Add these values to `.env`, `.env.example`, and `.env.testing`:
+
+```dotenv
+HTTP_JSON_BODY_LIMIT=10mb
+HTTP_REQUEST_TIMEOUT_MS=300000
+HTTP_HEADERS_TIMEOUT_MS=60000
+HTTP_SOCKET_TIMEOUT_MS=0
+```
+
+Existing lockfiles remain on `2.0.0` until the dependency is explicitly updated. See [HTTP Server](../documentation/http-server.md) for validation rules, security guidance, reverse proxy alignment, and long-running endpoint behavior.
+
+---
+
 ## 2.0.0 - 17 March 2026
 ### Accompanying Sosise-Core Version
 `2.0.0`
