@@ -1,5 +1,64 @@
 ### Changelog for Project Configuration
 
+## 2.1.0 - 5 August 2026
+### Accompanying Sosise-Core Version
+`2.1.0`
+
+### New Features
+- **Optional transport middlewares** — `HTTP_COMPRESSION`, `HTTP_JSON_PARSER`, `HTTP_URLENCODED_PARSER` and `HTTP_RAW_PARSER` switch off the global gzip compression and body parsers, so streamed uploads, request proxying and Server-Sent Events can work with untouched request and response streams. Every switch defaults to `true`, so existing applications are unaffected.
+- **Configurable raw body limit** — `HTTP_RAW_BODY_LIMIT` replaces the previously hardcoded `150mb` raw parser limit.
+- **Graceful shutdown** — `Server.stop()` stops accepting connections, releases idle keep-alive sockets immediately, waits up to `HTTP_SHUTDOWN_TIMEOUT_MS` for in-flight requests, then destroys the rest. It also releases session-store resources: the file-store reap timer, the memory-store interval and the Redis session client.
+- **`Server.start()`** — resolves once the server actually listens and returns the Node.js HTTP server. A port that cannot be acquired now rejects the promise instead of raising an unhandled `error` event.
+- Middleware switches accept only `true` or `false`; any other value fails startup validation instead of silently disabling a middleware because of a typo.
+
+### Upgrade
+
+```bash
+npm install sosise-core@2.1.0
+npm ls sosise-core --depth=0
+```
+
+Add these values to `.env`, `.env.example`, and `.env.testing`:
+
+```dotenv
+HTTP_RAW_BODY_LIMIT=150mb
+HTTP_SHUTDOWN_TIMEOUT_MS=10000
+
+HTTP_COMPRESSION=true
+HTTP_JSON_PARSER=true
+HTTP_URLENCODED_PARSER=true
+HTTP_RAW_PARSER=true
+```
+
+Wire the termination signals in `src/server.ts` so the new lifecycle is actually used:
+
+```typescript
+const server = new Server();
+
+// Shut down gracefully when the process manager asks the application to terminate
+for (const signal of ['SIGTERM', 'SIGINT'] as const) {
+    process.on(signal, () => {
+        server.stop().then(
+            () => process.exit(0),
+            (error) => {
+                console.error(error);
+                process.exit(1);
+            },
+        );
+    });
+}
+
+// A startup failure must terminate the process instead of becoming an unhandled rejection
+server.run().catch((error) => {
+    console.error(error);
+    process.exit(1);
+});
+```
+
+Keep `HTTP_SHUTDOWN_TIMEOUT_MS` below the termination grace period of your orchestrator. See [HTTP Server](../documentation/http-server.md) for when to disable each middleware and how the shutdown sequence behaves.
+
+---
+
 ## 2.0.1 - 28 July 2026
 ### Accompanying Sosise-Core Version
 `2.0.1`
