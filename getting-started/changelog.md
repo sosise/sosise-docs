@@ -1,5 +1,19 @@
 ### Changelog for Project Configuration
 
+## 2.1.1 - 5 August 2026
+### Accompanying Sosise-Core Version
+`2.1.1`
+
+### New Features
+- ./artisan migrate:fresh fixed
+
+### Upgrade
+
+```bash
+npm install sosise-core@2.1.0
+npm ls sosise-core --depth=0
+```
+
 ## 2.1.0 - 5 August 2026
 ### Accompanying Sosise-Core Version
 `2.1.0`
