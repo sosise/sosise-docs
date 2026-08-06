@@ -135,6 +135,49 @@ eventBus.onDurable('order.created', async (payload) => {
 });
 ```
 
+`onDurable()` returns a promise. Ignore it and the subscription is set up in the background,
+with any failure reported to the log — that is the call above. Await it when the application
+has to know the subscription is live before it continues, for example during startup:
+
+```typescript
+// Resolves after past events were replayed and the subscription is active,
+// rejects if the subscription could not be established
+await eventBus.onDurable('order.created', async (payload) => {
+    await processOrder(payload.data);
+});
+```
+
+Prefer awaiting it in bootstrap code. Without the `await` a Redis that is down leaves you
+with an application that believes it is subscribed and only says otherwise in the log.
+
+#### How durable delivery works
+
+Every `emit()` appends the event to the Redis list `durable:{event}` and publishes a
+wake-up on `live:{event}`, both in one transaction. Each service tracks how far it got in
+`position:durable:{event}:{serviceName}`.
+
+Durable handlers are fed **only** from that stored position. A live message never calls a
+durable handler directly, it merely wakes the reader up. The position advances only after
+the handler returned, so a handler that throws receives the same event again on the next
+wake-up or reconnect.
+
+Consequences worth planning for:
+
+- **Delivery is at-least-once, handlers must be idempotent.** Processing the same event
+  twice has to be harmless.
+- **A failing handler blocks its event.** Nothing after it is delivered until it succeeds.
+  Catch what you can recover from and let genuine failures retry.
+- **The position is shared by every durable handler of the same event.** Register all
+  durable subscriptions during startup: a handler added later does not receive the history
+  the other handlers already consumed, and if one handler fails the event is redelivered to
+  all of them.
+- **The service name matters.** Two services with the same `serviceName` share one
+  position and will each miss events the other consumed.
+- **Durable lists are not trimmed.** `durable:{event}` keeps every event ever emitted;
+  `ttlMinutes` only makes the reader skip an expired event, it does not remove the entry.
+  Watch the memory of your Redis instance and prune the keys yourself if an event is
+  emitted at high volume. Built-in retention is planned for a later release.
+
 ### Event Payload Structure
 
 All events receive a standardized payload:
@@ -317,14 +360,17 @@ await eventBus.emit('verification.code', { code: '123456' }, 5);
 ### Event Inspection
 
 ```typescript
-// Get all event patterns with listeners
+// Get all event patterns with listeners, exactly as they were subscribed
 const events = eventBus.eventNames();
-console.log('Active event listeners:', events);
+console.log('Active event listeners:', events);   // ['user.created', 'order.*']
 
 // Count listeners for specific event
 const count = eventBus.listenerCount('user.created');
 console.log(`Listeners for user.created: ${count}`);
 ```
+
+Inspection and unsubscription always use the pattern you subscribed with. The Redis
+channel name is an implementation detail and never appears in `eventNames()`.
 
 ## Real-World Examples
 
@@ -589,10 +635,11 @@ eventBus.on('order.created', async (payload) => {
 ### 4. Use Durable Subscriptions for Critical Events
 
 ```typescript
-// ✅ Use onDurable for events that must not be missed
-eventBus.onDurable('payment.received', async (payload) => {
-    // Critical: Update user balance
-    await updateUserBalance(payload.data);
+// ✅ Use durable subscriptions for events that must not be missed, and make the
+// handler idempotent, delivery is at-least-once
+await eventBus.onDurable('payment.received', async (payload) => {
+    // Critical: Update user balance, guarded so a redelivery cannot double credit
+    await creditOnce(payload.data.paymentId, payload.data.amount);
 });
 
 // ✅ Use regular on() for real-time, non-critical events
@@ -601,6 +648,10 @@ eventBus.on('user.online', async (payload) => {
     await updateOnlineStatus(payload.data.userId, true);
 });
 ```
+
+A durable handler that throws keeps its event at the head of the queue and blocks
+everything behind it until it succeeds. Swallow the errors you can recover from, and let
+the ones you cannot recover from retry.
 
 ### 5. Set Appropriate TTL for Time-Sensitive Events
 

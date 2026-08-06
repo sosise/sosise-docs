@@ -1,5 +1,60 @@
 ### Changelog for Project Configuration
 
+## 2.2.0 - 6 August 2026
+### Accompanying Sosise-Core Version
+`2.2.0`
+
+### Updates
+- **Redis EventBus durable delivery fixed**: `onDurable()` kept redelivering the oldest events and never delivered new ones
+  - Cursor now reads the unprocessed part of the list and counts progress from its tail
+  - Progress is saved per event, so a failing handler gets the event again instead of being skipped
+  - Durable handlers are fed only by the cursor, a live event just wakes it up
+  - A saved position of `0` is no longer mistaken for "nothing processed"
+  - A corrupt saved position fails loudly, and only for the subscriptions that read it
+- **`onDurable()` is now awaitable**: returns `Promise<void>` that resolves once past events were replayed and the subscription is live
+  - Ignore the result to keep the previous fire-and-forget behaviour
+  - Await it during startup so a Redis outage cannot leave the application thinking it is subscribed
+- **`off()`, `removeAllListeners()` and `listenerCount()` now work in the Redis driver**: handlers were stored under an internal `live:` key while lookups used the plain pattern
+- **Duplicate live delivery fixed**: overlapping patterns and reconnects each delivered the same event twice
+- **Durable replay now matches the same events as live delivery**: `user.*` no longer picks up `user.created.v2`
+- **`emit()` is atomic**: the stored event and its wake-up are published in one transaction
+
+### Upgrade Steps
+1. **Update sosise-core**:
+   ```bash
+   npm install sosise-core@latest
+   # or
+   npm run update-sosise
+   ```
+
+2. **Add environment variables** to `.env`, `.env.example`, `.env.testing`:
+   ```env
+   EVENTBUS_REDIS_HOST=redis
+   EVENTBUS_REDIS_PORT=6379
+   EVENTBUS_REDIS_PASSWORD=
+   EVENTBUS_REDIS_DB=0
+   EVENTBUS_SERVICE_NAME=default-service
+   ```
+
+3. **Check `serviceName` in `src/config/eventbus.ts`**: older skeletons shipped `'default-service4'`, a leftover debugging value. Changing it makes durable delivery start from a fresh position.
+
+4. **Await durable subscriptions during startup** (optional but recommended):
+   ```typescript
+   await eventBus.onDurable('order.created', async (payload) => {
+       await processOrder(payload.data);
+   });
+   ```
+
+### Migration Notes
+- `onDurable()` returns a promise instead of `void`. Existing call sites that ignore it keep working, no code changes required
+- `eventNames()` no longer returns the internal `live:` prefix. Adjust any code that parsed that output
+- Durable delivery is at-least-once, handlers must be idempotent
+- All durable handlers of one event share a single position. Register them during startup: a handler added later does not receive history the others already consumed
+- The Memory driver still throws on `onDurable()`, synchronously, so a wrong driver surfaces even without an `await`
+- Durable lists are not trimmed yet, they grow with every emitted event. Retention is planned for a later release
+
+---
+
 ## 2.1.1 - 5 August 2026
 ### Accompanying Sosise-Core Version
 `2.1.1`
@@ -13,6 +68,8 @@
 npm install sosise-core@2.1.0
 npm ls sosise-core --depth=0
 ```
+
+---
 
 ## 2.1.0 - 5 August 2026
 ### Accompanying Sosise-Core Version
