@@ -1,5 +1,40 @@
 ### Changelog for Project Configuration
 
+## 2.2.1 - 6 August 2026
+### Accompanying Sosise-Core Version
+`2.2.1`
+
+### Updates
+- **Redis EventBus subscriptions survive an explicit `disconnect()` / `connect()`**: the new connection was left without any subscription, so live handlers stopped receiving events and durable handlers stopped being woken up
+  - `connect()` now subscribes every registered pattern again and resolves only after that
+  - A connection the Redis client restores on its own is unaffected, nothing is subscribed twice
+  - A pattern that fails to resubscribe is reported and retried by the next `connect()`
+- **Silent event loss after a Redis data loss fixed**: the durable position was cached in the process and never re-read, so a Redis restarted without persistence, flushed, or failed over to an empty replica made a running consumer skip every event until the list grew back to its former length
+  - The position is now read from Redis on each drain instead of once per process
+  - A list shorter than its position is reported and replayed instead of being trusted
+
+### Upgrade Steps
+1. **Update sosise-core**:
+   ```bash
+   npm install sosise-core@latest
+   # or
+   npm run update-sosise
+   ```
+
+2. **Enable persistence on the EventBus Redis** if it is not enabled yet:
+   ```conf
+   appendonly yes
+   ```
+   Durable events live only in Redis. Losing them still loses the events, the fix only stops the consumers from silently skipping ahead afterwards.
+
+### Migration Notes
+- No code changes required
+- Only applications that call `disconnect()` and `connect()` themselves were affected by the subscription bug. A dropped connection restored by the Redis client always worked
+- The position is now read from Redis on every drain. Replicas of one service therefore see each other's progress: an event is processed by at least one replica, sometimes by several. Durable subscriptions broadcast to services, they are not a work queue — use the queue when work has to be distributed
+- While Redis is down, `emit()` retries three times and then throws after roughly 40 seconds. It never reports success for an event that was not stored
+
+---
+
 ## 2.2.0 - 6 August 2026
 ### Accompanying Sosise-Core Version
 `2.2.0`

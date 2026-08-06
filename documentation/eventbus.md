@@ -171,12 +171,47 @@ Consequences worth planning for:
   durable subscriptions during startup: a handler added later does not receive the history
   the other handlers already consumed, and if one handler fails the event is redelivered to
   all of them.
-- **The service name matters.** Two services with the same `serviceName` share one
-  position and will each miss events the other consumed.
+- **The service name matters.** The position belongs to the `serviceName`, not to the
+  process. Several replicas of one service therefore share it: an event is processed by at
+  least one of them, sometimes by several, and which replica gets it is not predictable.
+  Durable subscriptions broadcast to services, they are not a work queue — use the queue
+  (BullMQ) when work has to be distributed across replicas.
+- **Redis has to keep its data.** Everything durable lives in Redis; a Redis without
+  persistence loses the stored events when it restarts, and no consumer can get them back.
+  Enable `appendonly` or RDB snapshots on the instance you point the EventBus at. The
+  position is re-read from Redis on every drain, so a Redis that did lose its data makes
+  the consumers replay what is left instead of silently skipping ahead — but the events
+  that were in the lost list are gone.
 - **Durable lists are not trimmed.** `durable:{event}` keeps every event ever emitted;
   `ttlMinutes` only makes the reader skip an expired event, it does not remove the entry.
   Watch the memory of your Redis instance and prune the keys yourself if an event is
   emitted at high volume. Built-in retention is planned for a later release.
+
+#### Reconnects
+
+A connection that drops on its own is restored by the Redis client, subscriptions included,
+and the durable readers then catch up with whatever was emitted while it was down.
+
+An explicit `disconnect()` is different: it closes the connections for good, and the next
+`connect()` opens new ones. Handlers registered with `on()` and `onDurable()` survive that,
+because `connect()` subscribes every registered pattern again before it resolves:
+
+```typescript
+await eventBus.disconnect();
+// ... maintenance, a failover, whatever
+await eventBus.connect();
+
+// Both live and durable handlers registered earlier are active again
+```
+
+Await `connect()` before emitting. It resolves once the subscriptions are back, so an event
+emitted after it cannot slip past a handler that is still being resubscribed.
+
+While Redis is unreachable, `emit()` retries three times and then throws an
+`EventBusException` — around 40 seconds in the worst case. It never reports success for an
+event that was not stored, so treat a throw as "not emitted" and decide in the caller whether
+to retry or fail the request. Do not emit from a path that must answer quickly without
+handling that exception.
 
 ### Event Payload Structure
 
