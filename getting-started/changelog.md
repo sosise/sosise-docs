@@ -20,16 +20,16 @@
    npm run update-sosise
    ```
 
-2. **Update `src/app/Exceptions/Handler.ts`**, in both `reportHttpException` and `reportCommandException`:
-   ```typescript
-   message: exception?.message ?? String(exception),
-   data: {
-       stack: String(exception?.stack ?? exception)
-           .split('\n')
-           .map((element: string) => element.trim()),
-   },
-   ```
-   Also use `exception?.handle` and `exception?.constructor?.name` there. A handler that was never customised can be copied from the skeleton as a whole.
+2. **Update `src/app/Exceptions/Handler.ts`** so that a value thrown without a stack, e.g. `throw 'message'`, no longer crashes it. Replace every occurrence of the left column with the right one, find and replace in the editor does it in one go:
+
+   | Find | Replace with |
+   |---|---|
+   | `typeof exception.handle` | `typeof exception?.handle` |
+   | `exception.constructor.name` | `exception?.constructor?.name` |
+   | `message: exception.message,` | `message: exception?.message ?? String(exception),` |
+   | `exception.stack.split('\n')` | `String(exception?.stack ?? exception).split('\n')` |
+
+   If the handler was never customised, copy the [whole file from the skeleton](https://github.com/sosise/sosise/blob/2.2.2/src/app/Exceptions/Handler.ts) instead.
 
 ### Migration Notes
 - No code changes required for the pid lock fix
