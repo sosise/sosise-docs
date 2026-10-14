@@ -1,5 +1,43 @@
 ### Changelog for Project Configuration
 
+## 2.2.2 - 14 October 2026
+### Accompanying Sosise-Core Version
+`2.2.2`
+
+### Updates
+- **Single-execution commands no longer block themselves forever**: a leftover pid file made every next run exit with `Command ... is running` once the stale pid appeared in the command's own arguments, e.g. `/tmp/800.pid` and `--limit 800`
+  - The stored pid is compared with the process id as a whole instead of being searched for anywhere in the `ps` output
+  - A stale pid the OS has given to the current run or to its `./artisan` wrapper is ignored
+- **Double execution is detected on macOS and Debian/Ubuntu images**: plain `ps` printed only the executable name there (procps) or only the processes of the current terminal (macOS), so a running command was never noticed. Alpine was not affected
+- **Pid files are removed when the command exits**: on success, on failure and when the command calls `process.exit()` itself. A killed process still leaves one, the next run removes it
+- **The exception handler no longer crashes on values thrown without a stack**: `throw 'message'` failed in `reportCommandException` and `reportHttpException` on `exception.stack.split`
+
+### Upgrade Steps
+1. **Update sosise-core**:
+   ```bash
+   npm install sosise-core@latest
+   # or
+   npm run update-sosise
+   ```
+
+2. **Update `src/app/Exceptions/Handler.ts`**, in both `reportHttpException` and `reportCommandException`:
+   ```typescript
+   message: exception?.message ?? String(exception),
+   data: {
+       stack: String(exception?.stack ?? exception)
+           .split('\n')
+           .map((element: string) => element.trim()),
+   },
+   ```
+   Also use `exception?.handle` and `exception?.constructor?.name` there. A handler that was never customised can be copied from the skeleton as a whole.
+
+### Migration Notes
+- No code changes required for the pid lock fix
+- On macOS and Debian/Ubuntu images `singleExecution` now really prevents parallel runs: a cron job that used to overlap itself skips the run while the previous one is still working
+- The check needs `ps` in the image. Alpine ships it with BusyBox, Debian slim images need the `procps` package. Without `ps` the command runs unprotected, as before
+
+---
+
 ## 2.2.1 - 6 August 2026
 ### Accompanying Sosise-Core Version
 `2.2.1`

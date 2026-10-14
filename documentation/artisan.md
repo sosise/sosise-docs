@@ -296,6 +296,13 @@ export default class ImportDataCommand extends BaseCommand {
 }
 ```
 
+How it works:
+- Every run writes `/tmp/<pid>.pid` with the command signature and its process id, and removes it when the process exits — on success, on failure and on `process.exit()`
+- A new run looks for pid files with the same signature and exits with `Command <signature> is running` only when that process id is alive and its command line carries the signature
+- A pid file left by a killed process is removed by the next run
+- The check reads the process list with `ps`, so the image must provide it: Alpine ships it with BusyBox, Debian slim images need the `procps` package. Without `ps` the command runs unprotected
+- Runs are compared within one machine or container only. Replicas in separate containers do not see each other — use a [queue](queues.md) when work must not be done twice across them
+
 ## Best Practices
 
 ### 1. Use Clear Command Names
