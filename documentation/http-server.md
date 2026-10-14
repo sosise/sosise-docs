@@ -28,6 +28,8 @@ HTTP_COMPRESSION=true
 HTTP_JSON_PARSER=true
 HTTP_URLENCODED_PARSER=true
 HTTP_RAW_PARSER=true
+
+HTTP_TRUST_PROXY=1
 ```
 
 `HTTP_JSON_BODY_LIMIT`
@@ -65,6 +67,14 @@ HTTP_RAW_PARSER=true
 
 `HTTP_RAW_PARSER`
 : Registers the global raw body parser. The starter value is `true`.
+
+`HTTP_TRUST_PROXY`
+: The Express `trust proxy` setting: `true`, `false`, a number of proxies between the application and
+  the client, or a comma-separated list of trusted addresses, subnets and presets such as
+  `loopback, 10.0.0.0/8`. It decides `request.ip`, `request.protocol` and secure cookies, and
+  [throttling](throttling.md?id=behind-proxyload-balancer) keys by `request.ip`. Express validates the list at
+  startup. Without the variable Sosise keeps its historical behaviour: one trusted proxy when sessions
+  are enabled, none otherwise. The starter value is `1`.
 
 Middleware switches accept only `true` or `false`. Any other value, including a
 blank one, fails startup validation rather than silently disabling a middleware
@@ -209,6 +219,10 @@ termination grace period of your orchestrator, for example Kubernetes
 `terminationGracePeriodSeconds` or the Docker stop timeout.
 
 ## Reverse Proxy
+
+Set `HTTP_TRUST_PROXY` to the number of proxies in front of the application, for example `2` for a load
+balancer in front of nginx. Too small, and every request appears to come from the proxy. Too large, and
+the client's own `X-Forwarded-For` entries are believed.
 
 The effective behavior is always determined by the shortest timeout or
 smallest body limit in the client, proxy, and application chain. A typical

@@ -8,7 +8,7 @@ Protect your API from abuse with Sosise's built-in throttling system!
 // Enable in src/config/throttling.ts
 export default {
     isEnabled: true,
-    clientIpHeader: 'X-Forwarded-For',
+    clientIpHeader: null, // Key by the address Express resolves, see "IP Address Handling"
     skipSubnets: ['10.0.0.0/24'], // Skip internal networks
     routeRules: [
         {
@@ -64,10 +64,11 @@ const throttlingConfig = {
     isEnabled: true,
 
     /**
-     * HTTP header used to determine client's IP address
-     * This header must be set by a trusted proxy or load balancer
+     * Where the client IP address comes from
+     * null takes the address Express resolves through the proxies HTTP_TRUST_PROXY trusts
+     * A header name reads that header instead, only safe when a trusted proxy overwrites it
      */
-    clientIpHeader: 'X-Forwarded-For',
+    clientIpHeader: null,
 
     /**
      * List of CIDR subnets that are skipped (not throttled)
@@ -146,17 +147,35 @@ routeRules: [
 
 ### Behind Proxy/Load Balancer
 
-When running behind nginx, Cloudflare, or other proxies:
+Set `clientIpHeader: null` and tell Express how many proxies stand in front of the application:
 
 ```typescript
-// For nginx with X-Forwarded-For
-clientIpHeader: 'X-Forwarded-For'
+// src/config/throttling.ts
+clientIpHeader: null,
+```
 
-// For Cloudflare
+```dotenv
+# One nginx in front of the application, two for a load balancer plus nginx
+HTTP_TRUST_PROXY=1
+```
+
+With `null` the key is `request.ip`. Express walks `X-Forwarded-For` from the right through exactly the
+number of proxies `HTTP_TRUST_PROXY` trusts (see [HTTP Server](http-server.md?id=configuration)), so the
+address is the one your outermost trusted proxy saw, and a client cannot choose it.
+
+!> Do not key by `X-Forwarded-For` itself. nginx (`$proxy_add_x_forwarded_for`), haproxy (`option forwardfor`)
+and AWS ALB append to the header the client sent, and a header name in `clientIpHeader` reads its leftmost
+entry, which is whatever the client wrote. Changing it on every request gives every request a fresh limit.
+
+A header name is still supported for a header that your trusted edge **overwrites** on every request and
+the application cannot be reached around it, for example:
+
+```typescript
+// haproxy: http-request set-header X-Real-IP %[src]
+clientIpHeader: 'X-Real-IP'
+
+// Cloudflare, when the origin accepts traffic from Cloudflare only
 clientIpHeader: 'CF-Connecting-IP'
-
-// For AWS ALB
-clientIpHeader: 'X-Forwarded-For'
 ```
 
 ### Skip Internal Networks
@@ -180,7 +199,7 @@ skipSubnets: [
 // src/config/throttling.ts
 export default {
     isEnabled: true,
-    clientIpHeader: 'X-Forwarded-For',
+    clientIpHeader: null,
     skipSubnets: ['10.0.0.0/8', '127.0.0.1/32'],
     routeRules: [
         // Authentication endpoints - strict limits
@@ -271,8 +290,9 @@ export default {
 
 ### Security
 
-- Always use trusted proxy headers only
-- Never accept client-provided IP headers directly
+- Prefer `clientIpHeader: null` with `HTTP_TRUST_PROXY` set to the real number of proxies
+- Never key by `X-Forwarded-For` or any header a client can send unchanged
+- A wrong `HTTP_TRUST_PROXY` fails one of two ways: too small and every client shares the address of the proxy, too large and clients can choose their address again
 - Monitor for circumvention attempts
 
 ### Tuning Limits

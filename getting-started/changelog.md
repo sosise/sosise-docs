@@ -1,5 +1,45 @@
 ### Changelog for Project Configuration
 
+## 2.3.0 - 14 October 2026
+### Accompanying Sosise-Core Version
+`2.3.0`
+
+### Updates
+- **Throttling can no longer be bypassed by forging `X-Forwarded-For`**: behind a proxy that appends to the header (nginx `$proxy_add_x_forwarded_for`, haproxy `option forwardfor`, AWS ALB) the limit was keyed by the leftmost entry, which the client writes, so a new value on every request gave every request a fresh limit
+  - `clientIpHeader: null` keys by `request.ip`, the address Express resolves through the trusted proxies
+  - A header name still works as before, for a header a trusted proxy overwrites
+  - IPv6-mapped addresses such as `::ffff:10.0.0.5` now match `skipSubnets` written as IPv4
+- **`HTTP_TRUST_PROXY` sets the Express `trust proxy` setting**: a number of proxies, `true`, `false` or a list of trusted addresses, applied with or without sessions
+
+### Upgrade Steps
+1. **Update sosise-core**:
+   ```bash
+   npm install sosise-core@latest
+   # or
+   npm run update-sosise
+   ```
+
+2. **Add environment variables** to `.env`, `.env.example`, `.env.testing`, with the number of proxies in front of the application:
+   ```env
+   HTTP_TRUST_PROXY=1
+   ```
+
+3. **Update `src/config/throttling.ts`** so the limit is keyed by the resolved address:
+
+   | Find | Replace with |
+   |---|---|
+   | `clientIpHeader: 'X-Forwarded-For',` | `clientIpHeader: null,` |
+
+   The [whole file from the skeleton](https://github.com/sosise/sosise/blob/2.3.0/src/config/throttling.ts) carries the explanation in its comment.
+
+### Migration Notes
+- No code changes required: an application that keeps a header name in `clientIpHeader` is throttled exactly as before
+- An application behind proxies that append `X-Forwarded-For` should switch to `null`, it is the case the old setting was open to
+- With `HTTP_TRUST_PROXY` set, the implicit single trusted proxy that sessions used to set is replaced by its value
+- `HTTP_TRUST_PROXY` also changes `request.ip`, `request.protocol` and secure cookies everywhere in the application, set it to the real number of proxies
+
+---
+
 ## 2.2.2 - 14 October 2026
 ### Accompanying Sosise-Core Version
 `2.2.2`
